@@ -1,0 +1,68 @@
+[
+  {
+    "id": "bus-01",
+    "name": "Saffar Prime Executive",
+    "operator": "SaffarPK Fleet",
+    "category": "Executive",
+    "registrationNumber": "SKR-9821",
+    "totalSeats": 40,
+    "rating": 4.8,
+    "amenities": [
+      "High-speed Air Conditioning",
+      "USB Charging Ports",
+      "Complimentary Mineral Water",
+      "Emergency First-Aid",
+      "CCTV Monitored"
+    ],
+    "layout": {
+      "rows": 10,
+      "leftSeatsPerRow": 2,
+      "rightSeatsPerRow": 2,
+      "hasBackRow": true
+    }
+  },
+  {
+    "id": "bus-02",
+    "name": "Saffar Standard Express",
+    "operator": "SaffarPK Fleet",
+    "category": "Standard",
+    "registrationNumber": "GHK-4412",
+    "totalSeats": 44,
+    "rating": 4.4,
+    "amenities": [
+      "Air Conditioning",
+      "Overhead Luggage Rack",
+      "CCTV Monitored"
+    ],
+    "layout": {
+      "rows": 11,
+      "leftSeatsPerRow": 2,
+      "rightSeatsPerRow": 2,
+      "hasBackRow": true
+    }
+  },
+  {
+    "id": "bus-03",
+    "name": "Saffar Royal Business Class",
+    "operator": "SaffarPK Fleet",
+    "category": "Royal",
+    "registrationNumber": "SND-1007",
+    "totalSeats": 28,
+    "rating": 4.95,
+    "amenities": [
+      "Ultra-Reclining Leather Seats",
+      "High-speed Air Conditioning",
+      "USB & Type-C Charging",
+      "Onboard Snacks & Chai",
+      "High-speed Wi-Fi",
+      "Personal Reading Lights"
+    ],
+    "layout": {
+      "rows": 9,
+      "leftSeatsPerRow": 1,
+      "rightSeatsPerRow": 2,
+      "hasBackRow": true
+    }
+  }
+]
+

@@ -1,0 +1,66 @@
+{
+  "corridor": {
+    "id": "sukkur-obuaro-corridor",
+    "title": "Sukkur - Obuaro Corridor (N-5 Highway)",
+    "province": "Sindh, Pakistan",
+    "totalDistanceKm": 118,
+    "approxDurationMinutes": 135
+  },
+  "stops": [
+    {
+      "id": "sukkur",
+      "name": "Sukkur",
+      "urduName": "سکھر",
+      "sequence": 1,
+      "landmark": "Military Road / Saffar Main Terminal",
+      "latitude": 27.7052,
+      "longitude": 68.8574
+    },
+    {
+      "id": "pano-aqil",
+      "name": "Pano Aqil",
+      "urduName": "پنو عاقل",
+      "sequence": 2,
+      "landmark": "N-5 Cantt Mor Stop",
+      "latitude": 27.8576,
+      "longitude": 69.1121
+    },
+    {
+      "id": "ghotki",
+      "name": "Ghotki",
+      "urduName": "گھوٹکی",
+      "sequence": 3,
+      "landmark": "Ghotki Bypass Main Terminal",
+      "latitude": 28.0064,
+      "longitude": 69.3161
+    },
+    {
+      "id": "mirpur-mathelo",
+      "name": "Mirpur Mathelo",
+      "urduName": "میرپور ماتھیلو",
+      "sequence": 4,
+      "landmark": "FFC Chowk / N-5 Highway",
+      "latitude": 28.0227,
+      "longitude": 69.5489
+    },
+    {
+      "id": "daharki",
+      "name": "Daharki",
+      "urduName": "ڈھرکی",
+      "sequence": 5,
+      "landmark": "Engro Mor / Railway Crossing",
+      "latitude": 28.0436,
+      "longitude": 69.6781
+    },
+    {
+      "id": "obuaro",
+      "name": "Obuaro",
+      "urduName": "اوباڑو",
+      "sequence": 6,
+      "landmark": "Obuaro City Terminal / Sindh-Punjab Border Mor",
+      "latitude": 28.1633,
+      "longitude": 69.7314
+    }
+  ]
+}
+

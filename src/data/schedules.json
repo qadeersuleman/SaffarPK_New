@@ -1,0 +1,129 @@
+[
+  {
+    "id": "SCH-101",
+    "routeId": "sukkur-obuaro",
+    "busId": "bus-01",
+    "busName": "Saffar Prime Executive",
+    "busCategory": "Executive",
+    "departureTime": "07:00 AM",
+    "arrivalTime": "09:15 AM",
+    "originStopId": "sukkur",
+    "destinationStopId": "obuaro",
+    "availableSeatsCount": 24,
+    "status": "on_time",
+    "stopTimings": [
+      { "stopId": "sukkur", "stopName": "Sukkur", "scheduledTime": "07:00 AM", "sequence": 1 },
+      { "stopId": "pano-aqil", "stopName": "Pano Aqil", "scheduledTime": "07:35 AM", "sequence": 2 },
+      { "stopId": "ghotki", "stopName": "Ghotki", "scheduledTime": "08:10 AM", "sequence": 3 },
+      { "stopId": "mirpur-mathelo", "stopName": "Mirpur Mathelo", "scheduledTime": "08:35 AM", "sequence": 4 },
+      { "stopId": "daharki", "stopName": "Daharki", "scheduledTime": "08:55 AM", "sequence": 5 },
+      { "stopId": "obuaro", "stopName": "Obuaro", "scheduledTime": "09:15 AM", "sequence": 6 }
+    ]
+  },
+  {
+    "id": "SCH-102",
+    "routeId": "sukkur-obuaro",
+    "busId": "bus-02",
+    "busName": "Saffar Standard Express",
+    "busCategory": "Standard",
+    "departureTime": "08:30 AM",
+    "arrivalTime": "10:55 AM",
+    "originStopId": "sukkur",
+    "destinationStopId": "obuaro",
+    "availableSeatsCount": 31,
+    "status": "on_time",
+    "stopTimings": [
+      { "stopId": "sukkur", "stopName": "Sukkur", "scheduledTime": "08:30 AM", "sequence": 1 },
+      { "stopId": "pano-aqil", "stopName": "Pano Aqil", "scheduledTime": "09:10 AM", "sequence": 2 },
+      { "stopId": "ghotki", "stopName": "Ghotki", "scheduledTime": "09:45 AM", "sequence": 3 },
+      { "stopId": "mirpur-mathelo", "stopName": "Mirpur Mathelo", "scheduledTime": "10:10 AM", "sequence": 4 },
+      { "stopId": "daharki", "stopName": "Daharki", "scheduledTime": "10:35 AM", "sequence": 5 },
+      { "stopId": "obuaro", "stopName": "Obuaro", "scheduledTime": "10:55 AM", "sequence": 6 }
+    ]
+  },
+  {
+    "id": "SCH-103",
+    "routeId": "sukkur-obuaro",
+    "busId": "bus-03",
+    "busName": "Saffar Royal Business Class",
+    "busCategory": "Royal",
+    "departureTime": "10:00 AM",
+    "arrivalTime": "12:10 PM",
+    "originStopId": "sukkur",
+    "destinationStopId": "obuaro",
+    "availableSeatsCount": 14,
+    "status": "boarding",
+    "stopTimings": [
+      { "stopId": "sukkur", "stopName": "Sukkur", "scheduledTime": "10:00 AM", "sequence": 1 },
+      { "stopId": "pano-aqil", "stopName": "Pano Aqil", "scheduledTime": "10:35 AM", "sequence": 2 },
+      { "stopId": "ghotki", "stopName": "Ghotki", "scheduledTime": "11:05 AM", "sequence": 3 },
+      { "stopId": "mirpur-mathelo", "stopName": "Mirpur Mathelo", "scheduledTime": "11:30 AM", "sequence": 4 },
+      { "stopId": "daharki", "stopName": "Daharki", "scheduledTime": "11:50 AM", "sequence": 5 },
+      { "stopId": "obuaro", "stopName": "Obuaro", "scheduledTime": "12:10 PM", "sequence": 6 }
+    ]
+  },
+  {
+    "id": "SCH-104",
+    "routeId": "sukkur-obuaro",
+    "busId": "bus-01",
+    "busName": "Saffar Prime Executive",
+    "busCategory": "Executive",
+    "departureTime": "01:30 PM",
+    "arrivalTime": "03:45 PM",
+    "originStopId": "sukkur",
+    "destinationStopId": "obuaro",
+    "availableSeatsCount": 19,
+    "status": "on_time",
+    "stopTimings": [
+      { "stopId": "sukkur", "stopName": "Sukkur", "scheduledTime": "01:30 PM", "sequence": 1 },
+      { "stopId": "pano-aqil", "stopName": "Pano Aqil", "scheduledTime": "02:05 PM", "sequence": 2 },
+      { "stopId": "ghotki", "stopName": "Ghotki", "scheduledTime": "02:40 PM", "sequence": 3 },
+      { "stopId": "mirpur-mathelo", "stopName": "Mirpur Mathelo", "scheduledTime": "03:05 PM", "sequence": 4 },
+      { "stopId": "daharki", "stopName": "Daharki", "scheduledTime": "03:25 PM", "sequence": 5 },
+      { "stopId": "obuaro", "stopName": "Obuaro", "scheduledTime": "03:45 PM", "sequence": 6 }
+    ]
+  },
+  {
+    "id": "SCH-105",
+    "routeId": "sukkur-obuaro",
+    "busId": "bus-02",
+    "busName": "Saffar Standard Express",
+    "busCategory": "Standard",
+    "departureTime": "04:00 PM",
+    "arrivalTime": "06:20 PM",
+    "originStopId": "sukkur",
+    "destinationStopId": "obuaro",
+    "availableSeatsCount": 38,
+    "status": "on_time",
+    "stopTimings": [
+      { "stopId": "sukkur", "stopName": "Sukkur", "scheduledTime": "04:00 PM", "sequence": 1 },
+      { "stopId": "pano-aqil", "stopName": "Pano Aqil", "scheduledTime": "04:40 PM", "sequence": 2 },
+      { "stopId": "ghotki", "stopName": "Ghotki", "scheduledTime": "05:15 PM", "sequence": 3 },
+      { "stopId": "mirpur-mathelo", "stopName": "Mirpur Mathelo", "scheduledTime": "05:40 PM", "sequence": 4 },
+      { "stopId": "daharki", "stopName": "Daharki", "scheduledTime": "06:00 PM", "sequence": 5 },
+      { "stopId": "obuaro", "stopName": "Obuaro", "scheduledTime": "06:20 PM", "sequence": 6 }
+    ]
+  },
+  {
+    "id": "SCH-106",
+    "routeId": "sukkur-obuaro",
+    "busId": "bus-03",
+    "busName": "Saffar Royal Business Class",
+    "busCategory": "Royal",
+    "departureTime": "06:30 PM",
+    "arrivalTime": "08:45 PM",
+    "originStopId": "sukkur",
+    "destinationStopId": "obuaro",
+    "availableSeatsCount": 8,
+    "status": "on_time",
+    "stopTimings": [
+      { "stopId": "sukkur", "stopName": "Sukkur", "scheduledTime": "06:30 PM", "sequence": 1 },
+      { "stopId": "pano-aqil", "stopName": "Pano Aqil", "scheduledTime": "07:05 PM", "sequence": 2 },
+      { "stopId": "ghotki", "stopName": "Ghotki", "scheduledTime": "07:35 PM", "sequence": 3 },
+      { "stopId": "mirpur-mathelo", "stopName": "Mirpur Mathelo", "scheduledTime": "08:00 PM", "sequence": 4 },
+      { "stopId": "daharki", "stopName": "Daharki", "scheduledTime": "08:25 PM", "sequence": 5 },
+      { "stopId": "obuaro", "stopName": "Obuaro", "scheduledTime": "08:45 PM", "sequence": 6 }
+    ]
+  }
+]
+

@@ -1,0 +1,25 @@
+{
+  "currency": "PKR",
+  "rates": [
+    { "from": "sukkur", "to": "pano-aqil", "Standard": 250, "Executive": 350, "Royal": 500 },
+    { "from": "sukkur", "to": "ghotki", "Standard": 450, "Executive": 600, "Royal": 850 },
+    { "from": "sukkur", "to": "mirpur-mathelo", "Standard": 650, "Executive": 850, "Royal": 1100 },
+    { "from": "sukkur", "to": "daharki", "Standard": 800, "Executive": 1000, "Royal": 1300 },
+    { "from": "sukkur", "to": "obuaro", "Standard": 950, "Executive": 1200, "Royal": 1500 },
+
+    { "from": "pano-aqil", "to": "ghotki", "Standard": 250, "Executive": 350, "Royal": 500 },
+    { "from": "pano-aqil", "to": "mirpur-mathelo", "Standard": 450, "Executive": 600, "Royal": 850 },
+    { "from": "pano-aqil", "to": "daharki", "Standard": 600, "Executive": 800, "Royal": 1050 },
+    { "from": "pano-aqil", "to": "obuaro", "Standard": 750, "Executive": 950, "Royal": 1250 },
+
+    { "from": "ghotki", "to": "mirpur-mathelo", "Standard": 250, "Executive": 350, "Royal": 500 },
+    { "from": "ghotki", "to": "daharki", "Standard": 380, "Executive": 500, "Royal": 700 },
+    { "from": "ghotki", "to": "obuaro", "Standard": 550, "Executive": 700, "Royal": 950 },
+
+    { "from": "mirpur-mathelo", "to": "daharki", "Standard": 200, "Executive": 280, "Royal": 400 },
+    { "from": "mirpur-mathelo", "to": "obuaro", "Standard": 350, "Executive": 480, "Royal": 650 },
+
+    { "from": "daharki", "to": "obuaro", "Standard": 200, "Executive": 280, "Royal": 400 }
+  ]
+}
+
