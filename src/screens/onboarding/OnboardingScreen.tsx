@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,11 +6,16 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
-  Dimensions,
+  Animated,
 } from 'react-native';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Button } from '../../components/buttons/Button';
-import { BusIcon, LocationPinIcon, ShieldIcon } from '../../components/icons/AppIcons';
+import {
+  BusIllustration,
+  ShieldIcon,
+  LocationPinIcon,
+  BusIcon,
+} from '../../components/icons/AppIcons';
 
 interface OnboardingScreenProps {
   onComplete: () => void;
@@ -20,34 +25,53 @@ const SLIDES = [
   {
     id: '1',
     title: 'Sukkur ⇄ Obuaro Corridor',
-    subtitle: 'Direct & Guaranteed Travel',
+    subtitle: 'Direct Express Transit',
     description:
-      'Seamless intercity travel connecting Sukkur, Pano Aqil, Ghotki, Mirpur Mathelo, Daharki, and Obuaro with guaranteed seat reservations.',
-    icon: (size: number) => <BusIcon size={size} color={colors.primary} />,
+      'Guaranteed seats connecting Sukkur, Pano Aqil, Ghotki, Mirpur Mathelo, Daharki, and Obuaro along the N-5 Highway with punctual departures.',
+    renderHero: () => <BusIllustration width={300} height={140} />,
   },
   {
     id: '2',
     title: 'Reserve Your Preferred Seat',
-    subtitle: 'Interactive Visual Layout',
+    subtitle: 'Interactive Visual Cabin',
     description:
-      'Pick window or aisle seats, family-friendly spaces, and executive luxury recliners with a 10-minute instant hold.',
-    icon: (size: number) => <ShieldIcon size={size} color={colors.primary} />,
+      'Choose window or aisle seats, executive luxury recliners, and family-dedicated rows with our 10-minute instant seat hold.',
+    renderHero: () => (
+      <View style={styles.iconHeroBox}>
+        <View style={styles.outerShieldRing}>
+          <ShieldIcon size={64} color={colors.primary} />
+        </View>
+        <Text style={styles.heroSubTag}>Guaranteed Reservation • No Overcrowding</Text>
+      </View>
+    ),
   },
   {
     id: '3',
     title: 'Live Tracking & Instant Pay',
     subtitle: 'Zero Guesswork, 100% Peace of Mind',
     description:
-      'Track your bus along the N-5 Highway in real-time and pay seamlessly via Easypaisa, JazzCash, or on-board boarding.',
-    icon: (size: number) => <LocationPinIcon size={size} color={colors.primary} />,
+      'Track your bus along the N-5 corridor in real-time and pay seamlessly via Easypaisa, JazzCash, or on-board boarding.',
+    renderHero: () => (
+      <View style={styles.iconHeroBox}>
+        <View style={styles.outerPinRing}>
+          <LocationPinIcon size={64} color={colors.primary} />
+        </View>
+        <Text style={styles.heroSubTag}>Live GPS Speed & Stop Estimates</Text>
+      </View>
+    ),
   },
 ];
 
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   const handleNext = () => {
     if (currentIndex < SLIDES.length - 1) {
+      Animated.sequence([
+        Animated.timing(fadeAnim, { toValue: 0.2, duration: 150, useNativeDriver: true }),
+        Animated.timing(fadeAnim, { toValue: 1, duration: 250, useNativeDriver: true }),
+      ]).start();
       setCurrentIndex(currentIndex + 1);
     } else {
       onComplete();
@@ -62,8 +86,11 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
       {/* Top Bar with Skip */}
       <View style={styles.topBar}>
-        <View style={styles.brandBadge}>
-          <Text style={styles.brandText}>Saffar<Text style={{ color: colors.primary }}>PK</Text></Text>
+        <View style={styles.brandRow}>
+          <BusIcon size={26} color={colors.primary} />
+          <Text style={styles.brandText}>
+            Saffar<Text style={{ color: colors.primary }}>PK</Text>
+          </Text>
         </View>
         {currentIndex < SLIDES.length - 1 && (
           <TouchableOpacity activeOpacity={0.7} onPress={onComplete} style={styles.skipBtn}>
@@ -72,19 +99,14 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
         )}
       </View>
 
-      {/* Hero Illustration / Icon Card */}
+      {/* Hero Showcase Area */}
       <View style={styles.heroSection}>
-        <View style={styles.cardIllustration}>
-          <View style={styles.circleBg}>
-            {slide.icon(72)}
-          </View>
-          <View style={styles.corridorTag}>
-            <Text style={styles.corridorTagText}>N-5 Highway Route</Text>
-          </View>
-        </View>
+        <Animated.View style={[styles.heroCard, { opacity: fadeAnim }]}>
+          {slide.renderHero()}
+        </Animated.View>
       </View>
 
-      {/* Slide Details */}
+      {/* Details Bottom Card */}
       <View style={styles.detailsSection}>
         {/* Pagination Dots */}
         <View style={styles.paginationRow}>
@@ -120,7 +142,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#0F172A',
     justifyContent: 'space-between',
   },
   topBar: {
@@ -130,24 +152,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.md,
   },
-  brandBadge: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.md,
-    backgroundColor: '#262626',
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   brandText: {
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 22,
+    fontWeight: '900',
     color: colors.textWhite,
+    letterSpacing: -0.5,
   },
   skipBtn: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
+    backgroundColor: '#1E293B',
+    borderRadius: borderRadius.full,
   },
   skipText: {
     ...typography.label,
-    color: colors.textMuted,
+    fontSize: 13,
+    color: '#94A3B8',
   },
   heroSection: {
     flex: 1,
@@ -155,82 +180,91 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
   },
-  cardIllustration: {
+  heroCard: {
     width: '100%',
-    height: 240,
-    borderRadius: borderRadius.xxl,
-    backgroundColor: '#212121',
-    borderWidth: 1,
-    borderColor: '#2F2F2F',
-    justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.lg,
+    justifyContent: 'center',
   },
-  circleBg: {
-    width: 130,
-    height: 130,
-    borderRadius: 65,
-    backgroundColor: '#2A2A2A',
-    justifyContent: 'center',
+  iconHeroBox: {
     alignItems: 'center',
-    borderWidth: 1.5,
+    justifyContent: 'center',
+  },
+  outerShieldRing: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+    borderWidth: 2,
     borderColor: 'rgba(249, 115, 22, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
   },
-  corridorTag: {
-    marginTop: spacing.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 4,
-    borderRadius: borderRadius.full,
-    backgroundColor: 'rgba(249, 115, 22, 0.15)',
+  outerPinRing: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+    borderWidth: 2,
+    borderColor: 'rgba(56, 189, 248, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
   },
-  corridorTagText: {
+  heroSubTag: {
     ...typography.caption,
-    color: colors.primaryLight,
+    fontSize: 13,
+    color: '#CBD5E1',
     fontWeight: '700',
+    marginTop: spacing.xs,
   },
   detailsSection: {
     backgroundColor: colors.background,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: 36,
+    borderTopRightRadius: 36,
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.xxl,
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.xxxl,
+    ...shadows.lg,
   },
   paginationRow: {
     flexDirection: 'row',
     gap: 8,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   dot: {
     height: 6,
-    width: 8,
+    width: 10,
     borderRadius: 3,
-    backgroundColor: '#D1D5DB',
+    backgroundColor: '#CBD5E1',
   },
   dotActive: {
-    width: 28,
+    width: 32,
     backgroundColor: colors.primary,
   },
   subtitle: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.primaryDark,
     textTransform: 'uppercase',
     fontWeight: '800',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
   },
   title: {
     ...typography.h2,
+    fontSize: 26,
+    lineHeight: 32,
     color: colors.textPrimary,
-    marginTop: 4,
+    marginTop: 6,
     marginBottom: spacing.sm,
   },
   description: {
-    ...typography.bodyMedium,
+    ...typography.bodyLarge,
     color: colors.textSecondary,
-    lineHeight: 22,
+    lineHeight: 24,
     marginBottom: spacing.xl,
   },
   bottomButtons: {
-    marginTop: spacing.sm,
+    marginTop: spacing.xs,
   },
 });

@@ -12,7 +12,7 @@ import { colors, typography, spacing, borderRadius, shadows } from '../../theme'
 import { Header } from '../../components/common/Header';
 import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/buttons/Button';
-import { BusIcon, LocationPinIcon } from '../../components/icons/AppIcons';
+import { BusIcon } from '../../components/icons/AppIcons';
 import { Booking } from '../../types';
 
 interface TripsScreenProps {
@@ -38,7 +38,7 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      <Header title="My Bookings" subtitle="SaffarPK Trip History" showBack={false} />
+      <Header title="My Bookings" subtitle="SaffarPK Trip Records" showBack={false} />
 
       {/* Tabs */}
       <View style={styles.tabBar}>
@@ -56,7 +56,7 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
           style={[styles.tabItem, tab === 'completed' ? styles.tabItemActive : null]}
         >
           <Text style={[styles.tabText, tab === 'completed' ? styles.tabTextActive : null]}>
-            Completed Trips
+            Past Trips
           </Text>
         </TouchableOpacity>
       </View>
@@ -68,21 +68,21 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyBox}>
-            <BusIcon size={48} color={colors.textMuted} />
-            <Text style={styles.emptyTitle}>No {tab} bookings found</Text>
+            <BusIcon size={64} color={colors.textMuted} />
+            <Text style={styles.emptyTitle}>No {tab} trips found</Text>
             <Text style={styles.emptySub}>
-              Book guaranteed seats on the Sukkur ⇄ Obuaro corridor today.
+              Book guaranteed seats along the Sukkur ⇄ Obuaro corridor today.
             </Text>
             <Button
               title="Book a Journey"
               onPress={onNewBooking}
-              style={{ marginTop: spacing.lg }}
+              style={{ marginTop: spacing.xl, minWidth: 200 }}
             />
           </View>
         }
         renderItem={({ item }) => (
           <TouchableOpacity
-            activeOpacity={0.9}
+            activeOpacity={0.92}
             onPress={() => onSelectBooking(item)}
             style={styles.tripCard}
           >
@@ -108,11 +108,11 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
 
             <View style={styles.tripCardFooter}>
               <Text style={styles.seatsInfo}>
-                Seats: <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{item.seats.join(', ')}</Text>
+                Seats: <Text style={{ fontWeight: '800', color: colors.textPrimary }}>{item.seats.join(', ')}</Text>
               </Text>
               <View style={styles.cardActions}>
                 <Button
-                  title="Track"
+                  title="Track Coach"
                   size="small"
                   variant="outline"
                   onPress={() => onTrackBus(item)}
@@ -139,14 +139,16 @@ const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.xs,
     backgroundColor: colors.background,
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#E2E8F0',
   },
   tabItem: {
     flex: 1,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.md,
     alignItems: 'center',
-    borderBottomWidth: 2,
+    borderBottomWidth: 3,
     borderBottomColor: 'transparent',
   },
   tabItemActive: {
@@ -154,7 +156,8 @@ const styles = StyleSheet.create({
   },
   tabText: {
     ...typography.caption,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '800',
     color: colors.textSecondary,
   },
   tabTextActive: {
@@ -162,15 +165,15 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: spacing.lg,
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   tripCard: {
     backgroundColor: colors.surface,
-    padding: spacing.lg,
-    borderRadius: borderRadius.xl,
-    borderWidth: 1,
-    borderColor: colors.border,
-    ...shadows.sm,
+    padding: spacing.xl,
+    borderRadius: borderRadius.xxl,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    ...shadows.md,
   },
   tripCardHeader: {
     flexDirection: 'row',
@@ -179,45 +182,56 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   busName: {
-    ...typography.h4,
+    ...typography.h3,
+    fontSize: 18,
     color: colors.textPrimary,
   },
   refText: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
+    fontWeight: '700',
+    marginTop: 2,
   },
   routeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.surfaceSubtle,
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
+    backgroundColor: '#F8FAFC',
+    padding: spacing.lg,
+    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   timeText: {
     ...typography.caption,
-    fontWeight: '800',
+    fontSize: 13,
+    fontWeight: '900',
     color: colors.primaryDark,
   },
   stationName: {
-    ...typography.h4,
+    ...typography.h3,
+    fontSize: 19,
     color: colors.textPrimary,
+    marginTop: 2,
   },
   arrowText: {
-    fontSize: 18,
+    fontSize: 22,
     color: colors.primary,
+    fontWeight: '900',
   },
   tripCardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: spacing.md,
-    paddingTop: spacing.sm,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    marginTop: spacing.lg,
+    paddingTop: spacing.md,
+    borderTopWidth: 1.5,
+    borderTopColor: '#F1F5F9',
   },
   seatsInfo: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textSecondary,
   },
   cardActions: {
@@ -231,14 +245,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
   },
   emptyTitle: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 22,
     color: colors.textPrimary,
     marginTop: spacing.md,
   },
   emptySub: {
-    ...typography.bodyMedium,
+    ...typography.bodyLarge,
     color: colors.textSecondary,
     textAlign: 'center',
     marginTop: spacing.xs,
+    lineHeight: 22,
   },
 });

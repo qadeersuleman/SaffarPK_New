@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -24,15 +24,33 @@ export const Input: React.FC<InputProps> = ({
   rightIcon,
   containerStyle,
   style,
+  onFocus,
+  onBlur,
   ...rest
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputRow, error ? styles.inputError : null]}>
+      <View
+        style={[
+          styles.inputRow,
+          isFocused ? styles.inputFocused : null,
+          error ? styles.inputError : null,
+        ]}
+      >
         {icon && <View style={styles.iconContainer}>{icon}</View>}
         <TextInput
           placeholderTextColor={colors.textMuted}
+          onFocus={e => {
+            setIsFocused(true);
+            onFocus?.(e);
+          }}
+          onBlur={e => {
+            setIsFocused(false);
+            onBlur?.(e);
+          }}
           style={[styles.input, style]}
           {...rest}
         />
@@ -49,32 +67,39 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.label,
+    fontSize: 13,
     color: colors.textPrimary,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs + 2,
+    letterSpacing: 0.2,
   },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderWidth: 1.5,
-    borderColor: colors.border,
+    borderColor: '#E2E8F0',
     borderRadius: borderRadius.lg,
-    paddingHorizontal: spacing.md,
-    minHeight: 52,
+    paddingHorizontal: spacing.lg,
+    minHeight: 56,
+  },
+  inputFocused: {
+    borderColor: colors.primary,
+    backgroundColor: '#FFFDF9',
   },
   inputError: {
     borderColor: colors.error,
   },
   iconContainer: {
-    marginRight: spacing.sm,
+    marginRight: spacing.md,
   },
   rightIconContainer: {
-    marginLeft: spacing.sm,
+    marginLeft: spacing.md,
   },
   input: {
     flex: 1,
     color: colors.textPrimary,
-    fontSize: 15,
+    fontSize: 16,
+    fontWeight: '500',
     paddingVertical: spacing.sm,
   },
   errorText: {
@@ -83,4 +108,3 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
 });
-

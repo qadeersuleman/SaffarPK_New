@@ -20,26 +20,28 @@ export const Card: React.FC<CardProps> = ({
       case 'outlined':
         return {
           backgroundColor: colors.surface,
-          borderWidth: 1,
-          borderColor: colors.border,
+          borderWidth: 1.5,
+          borderColor: '#E2E8F0',
         };
       case 'dark':
         return {
-          backgroundColor: colors.dark,
+          backgroundColor: '#1E1E24',
           borderWidth: 1,
-          borderColor: colors.borderDark,
+          borderColor: '#2D3139',
           ...shadows.md,
         };
       case 'orangeSubtle':
         return {
           backgroundColor: '#FFF7ED',
-          borderWidth: 1,
+          borderWidth: 1.5,
           borderColor: colors.borderOrange,
         };
       case 'elevated':
       default:
         return {
           backgroundColor: colors.surface,
+          borderWidth: 1,
+          borderColor: '#F1F5F9',
           ...shadows.md,
         };
     }
@@ -50,12 +52,12 @@ export const Card: React.FC<CardProps> = ({
       case 'none':
         return 0;
       case 'small':
-        return spacing.sm;
+        return spacing.md;
       case 'large':
-        return spacing.xl;
+        return spacing.xxl;
       case 'medium':
       default:
-        return spacing.lg;
+        return spacing.xl;
     }
   };
 
@@ -75,8 +77,7 @@ export const Card: React.FC<CardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: borderRadius.xl,
+    borderRadius: borderRadius.xxl,
     overflow: 'hidden',
   },
 });
-

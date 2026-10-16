@@ -6,8 +6,8 @@ import {
   Animated,
   StatusBar,
 } from 'react-native';
-import { colors, typography, spacing } from '../../theme';
-import { BusIcon } from '../../components/icons/AppIcons';
+import { colors, typography, spacing, borderRadius } from '../../theme';
+import { BusIllustration } from '../../components/icons/AppIcons';
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -15,42 +15,55 @@ interface SplashScreenProps {
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.85)).current;
-  const busMoveAnim = useRef(new Animated.Value(-60)).current;
+  const scaleAnim = useRef(new Animated.Value(0.9)).current;
+  const busTranslateX = useRef(new Animated.Value(-120)).current;
+  const progressAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 900,
+        duration: 800,
         useNativeDriver: true,
       }),
       Animated.spring(scaleAnim, {
         toValue: 1,
         friction: 6,
+        tension: 50,
+        useNativeDriver: true,
+      }),
+      Animated.spring(busTranslateX, {
+        toValue: 0,
+        friction: 7,
         tension: 40,
         useNativeDriver: true,
       }),
-      Animated.timing(busMoveAnim, {
-        toValue: 0,
-        duration: 1000,
-        useNativeDriver: true,
+      Animated.timing(progressAnim, {
+        toValue: 1,
+        duration: 2200,
+        useNativeDriver: false,
       }),
     ]).start();
 
     const timer = setTimeout(() => {
       onFinish();
-    }, 2400);
+    }, 2500);
 
     return () => clearTimeout(timer);
-  }, [fadeAnim, scaleAnim, busMoveAnim, onFinish]);
+  }, [fadeAnim, scaleAnim, busTranslateX, progressAnim, onFinish]);
+
+  const progressWidth = progressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0%', '100%'],
+  });
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
-      {/* Glow Backdrop */}
+
+      {/* Ambient Radial Glow */}
       <View style={styles.glowCircle} />
+      <View style={styles.glowCircle2} />
 
       <Animated.View
         style={[
@@ -61,9 +74,10 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
           },
         ]}
       >
-        <Animated.View style={{ transform: [{ translateY: busMoveAnim }] }}>
-          <View style={styles.iconCircle}>
-            <BusIcon size={56} color={colors.primary} />
+        {/* Animated Luxury Bus Illustration */}
+        <Animated.View style={{ transform: [{ translateX: busTranslateX }] }}>
+          <View style={styles.illustrationCard}>
+            <BusIllustration width={300} height={140} />
           </View>
         </Animated.View>
 
@@ -72,18 +86,18 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
         </Text>
         <Text style={styles.tagline}>Your journey, just a tap away.</Text>
 
-        <View style={styles.routeTag}>
+        <View style={styles.routePill}>
+          <View style={styles.routePulseDot} />
           <Text style={styles.routeText}>Sukkur ⇄ Obuaro Express Corridor</Text>
         </View>
       </Animated.View>
 
+      {/* Bottom Loading Progress Bar */}
       <View style={styles.footer}>
-        <View style={styles.dotRow}>
-          <View style={[styles.dot, styles.dotActive]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
+        <View style={styles.progressBarBg}>
+          <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
         </View>
-        <Text style={styles.footerText}>Reliable • Comfortable • Punctual</Text>
+        <Text style={styles.footerNote}>Premium Intercity Transit • Sindh, Pakistan</Text>
       </View>
     </View>
   );
@@ -92,92 +106,104 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#0F172A', // Deep modern obsidian
     justifyContent: 'center',
     alignItems: 'center',
     padding: spacing.xl,
   },
   glowCircle: {
     position: 'absolute',
+    top: '25%',
     width: 320,
     height: 320,
     borderRadius: 160,
     backgroundColor: '#F97316',
-    opacity: 0.12,
+    opacity: 0.15,
+  },
+  glowCircle2: {
+    position: 'absolute',
+    bottom: '20%',
+    width: 260,
+    height: 260,
+    borderRadius: 130,
+    backgroundColor: '#38BDF8',
+    opacity: 0.08,
   },
   content: {
     alignItems: 'center',
+    width: '100%',
   },
-  iconCircle: {
-    width: 104,
-    height: 104,
-    borderRadius: 52,
-    backgroundColor: '#262626',
-    borderWidth: 2,
-    borderColor: colors.primary,
-    justifyContent: 'center',
+  illustrationCard: {
+    paddingVertical: spacing.lg,
     alignItems: 'center',
-    marginBottom: spacing.xl,
-    shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.4,
-    shadowRadius: 16,
-    elevation: 8,
+    justifyContent: 'center',
   },
   logoTitle: {
     ...typography.h1,
-    fontSize: 42,
-    lineHeight: 48,
+    fontSize: 48,
+    lineHeight: 54,
     color: colors.textWhite,
-    letterSpacing: -1,
+    letterSpacing: -1.2,
+    marginTop: spacing.md,
   },
   logoHighlight: {
     color: colors.primary,
   },
   tagline: {
-    ...typography.bodyMedium,
-    color: colors.textMuted,
+    ...typography.bodyLarge,
+    fontSize: 17,
+    color: '#94A3B8',
     marginTop: spacing.sm,
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
+    textAlign: 'center',
   },
-  routeTag: {
+  routePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginTop: spacing.xl,
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-    borderRadius: 999,
-    backgroundColor: 'rgba(249, 115, 22, 0.15)',
-    borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.3)',
+    paddingVertical: spacing.sm + 2,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(249, 115, 22, 0.14)',
+    borderWidth: 1.5,
+    borderColor: 'rgba(249, 115, 22, 0.4)',
+  },
+  routePulseDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.primary,
   },
   routeText: {
-    color: colors.primaryLight,
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.4,
+    color: '#FED7AA',
+    fontSize: 13,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
   footer: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 50,
+    width: '80%',
     alignItems: 'center',
   },
-  dotRow: {
-    flexDirection: 'row',
-    gap: 6,
-    marginBottom: spacing.sm,
+  progressBarBg: {
+    width: '100%',
+    height: 4,
+    backgroundColor: '#1E293B',
+    borderRadius: 2,
+    overflow: 'hidden',
+    marginBottom: spacing.md,
   },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#374151',
-  },
-  dotActive: {
+  progressBarFill: {
+    height: '100%',
     backgroundColor: colors.primary,
-    width: 18,
+    borderRadius: 2,
   },
-  footerText: {
+  footerNote: {
     ...typography.caption,
-    color: colors.textSecondary,
+    fontSize: 12,
+    color: '#64748B',
     letterSpacing: 0.8,
     textTransform: 'uppercase',
   },

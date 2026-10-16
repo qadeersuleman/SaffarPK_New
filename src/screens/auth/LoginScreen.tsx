@@ -10,11 +10,16 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { colors, typography, spacing, borderRadius } from '../../theme';
+import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Button } from '../../components/buttons/Button';
 import { Input } from '../../components/inputs/Input';
 import { Card } from '../../components/cards/Card';
-import { BusIcon, ShieldIcon } from '../../components/icons/AppIcons';
+import {
+  BusIcon,
+  ShieldIcon,
+  PhoneIcon,
+  UserIcon,
+} from '../../components/icons/AppIcons';
 
 interface LoginScreenProps {
   onSuccess: (user: { name: string; phone: string }) => void;
@@ -61,9 +66,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
           {/* Header Banner */}
           <View style={styles.header}>
             <View style={styles.logoBadge}>
-              <BusIcon size={28} color={colors.primary} />
+              <BusIcon size={32} color={colors.primary} />
             </View>
-            <Text style={styles.title}>Welcome to Saffar<Text style={{ color: colors.primary }}>PK</Text></Text>
+            <Text style={styles.title}>
+              Saffar<Text style={{ color: colors.primary }}>PK</Text>
+            </Text>
             <Text style={styles.subtitle}>Sukkur ⇄ Obuaro Express Corridor</Text>
           </View>
 
@@ -73,29 +80,31 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
               <>
                 <Text style={styles.cardHeading}>Sign In or Register</Text>
                 <Text style={styles.cardSubheading}>
-                  Enter your mobile details to manage your tickets and track bookings.
+                  Enter your details to manage your tickets and track live buses.
                 </Text>
 
                 <Input
-                  label="Full Passenger Name"
-                  placeholder="e.g. Ali Raza"
+                  label="FULL PASSENGER NAME"
+                  placeholder="e.g. Tariq Mehmood"
                   value={name}
                   onChangeText={setName}
+                  icon={<UserIcon size={20} color={colors.textSecondary} />}
                 />
 
                 <Input
-                  label="Pakistani Mobile Number"
+                  label="PAKISTANI MOBILE NUMBER"
                   placeholder="03001234567"
                   keyboardType="phone-pad"
                   maxLength={11}
                   value={phone}
                   onChangeText={setPhone}
+                  icon={<PhoneIcon size={20} color={colors.textSecondary} />}
                 />
 
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
                 <View style={styles.securityNote}>
-                  <ShieldIcon size={16} color={colors.textSecondary} />
+                  <ShieldIcon size={18} color={colors.success} />
                   <Text style={styles.securityText}>We will send a 4-digit SMS OTP</Text>
                 </View>
 
@@ -109,16 +118,17 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
               <>
                 <Text style={styles.cardHeading}>Verify Phone Number</Text>
                 <Text style={styles.cardSubheading}>
-                  Code sent to <Text style={{ fontWeight: '700', color: colors.textPrimary }}>{phone}</Text>
+                  Code sent via SMS to <Text style={{ fontWeight: '800', color: colors.textPrimary }}>{phone}</Text>
                 </Text>
 
                 <Input
-                  label="4-Digit OTP Code"
+                  label="4-DIGIT SMS CODE"
                   placeholder="1234"
                   keyboardType="number-pad"
                   maxLength={4}
                   value={otp}
                   onChangeText={setOtp}
+                  style={{ fontSize: 24, letterSpacing: 8, textAlign: 'center' }}
                 />
 
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -159,7 +169,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#0F172A',
   },
   scrollContent: {
     padding: spacing.lg,
@@ -171,93 +181,109 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   logoBadge: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#262626',
-    borderWidth: 1.5,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: '#1E293B',
+    borderWidth: 2,
     borderColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
+    ...shadows.glowOrange,
   },
   title: {
-    ...typography.h2,
+    ...typography.h1,
+    fontSize: 34,
     color: colors.textWhite,
   },
   subtitle: {
     ...typography.caption,
-    color: colors.primaryLight,
+    fontSize: 13,
+    color: '#FED7AA',
     marginTop: 4,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 1,
+    fontWeight: '700',
   },
   card: {
     backgroundColor: colors.surface,
     padding: spacing.xl,
+    borderRadius: borderRadius.xxl,
+    ...shadows.lg,
   },
   cardHeading: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 22,
     color: colors.textPrimary,
   },
   cardSubheading: {
     ...typography.bodyMedium,
     color: colors.textSecondary,
     marginTop: 4,
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   securityNote: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginVertical: spacing.sm,
+    gap: 8,
+    marginVertical: spacing.md,
+    backgroundColor: '#F0FDF4',
+    padding: spacing.md,
+    borderRadius: borderRadius.md,
   },
   securityText: {
     ...typography.caption,
-    color: colors.textSecondary,
+    fontSize: 13,
+    color: '#15803D',
+    fontWeight: '600',
   },
   errorText: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.error,
     marginBottom: spacing.sm,
   },
   actionBtn: {
-    marginTop: spacing.md,
+    marginTop: spacing.sm,
   },
   changePhoneBtn: {
     alignSelf: 'center',
-    marginVertical: spacing.sm,
+    marginVertical: spacing.md,
   },
   changePhoneText: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.primary,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: spacing.lg,
+    marginVertical: spacing.xl,
   },
   line: {
     flex: 1,
-    height: 1,
-    backgroundColor: colors.border,
+    height: 1.5,
+    backgroundColor: '#E2E8F0',
   },
   orText: {
     marginHorizontal: spacing.md,
     ...typography.caption,
     color: colors.textMuted,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   guestBtn: {
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    paddingVertical: spacing.md,
-    borderRadius: borderRadius.lg,
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+    minHeight: 52,
+    borderRadius: borderRadius.xl,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   guestBtnText: {
     ...typography.label,
+    fontSize: 15,
     color: colors.textPrimary,
   },
 });

@@ -272,14 +272,14 @@ export const RootNavigator: React.FC = () => {
         )}
       </View>
 
-      {/* Bottom Navigation Bar */}
+      {/* Modern High-End Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => setActiveTab('home')}
-          style={styles.navItem}
+          style={[styles.navItem, activeTab === 'home' ? styles.navItemActive : null]}
         >
-          <BusIcon size={20} color={activeTab === 'home' ? colors.primary : colors.textMuted} />
+          <BusIcon size={24} color={activeTab === 'home' ? colors.primary : '#94A3B8'} />
           <Text
             style={[
               styles.navLabel,
@@ -293,9 +293,9 @@ export const RootNavigator: React.FC = () => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => setActiveTab('trips')}
-          style={styles.navItem}
+          style={[styles.navItem, activeTab === 'trips' ? styles.navItemActive : null]}
         >
-          <CalendarIcon size={20} color={activeTab === 'trips' ? colors.primary : colors.textMuted} />
+          <CalendarIcon size={24} color={activeTab === 'trips' ? colors.primary : '#94A3B8'} />
           <Text
             style={[
               styles.navLabel,
@@ -309,9 +309,9 @@ export const RootNavigator: React.FC = () => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => setActiveTab('track')}
-          style={styles.navItem}
+          style={[styles.navItem, activeTab === 'track' ? styles.navItemActive : null]}
         >
-          <LocationPinIcon size={20} color={activeTab === 'track' ? colors.primary : colors.textMuted} />
+          <LocationPinIcon size={24} color={activeTab === 'track' ? colors.primary : '#94A3B8'} />
           <Text
             style={[
               styles.navLabel,
@@ -325,9 +325,9 @@ export const RootNavigator: React.FC = () => {
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => setActiveTab('profile')}
-          style={styles.navItem}
+          style={[styles.navItem, activeTab === 'profile' ? styles.navItemActive : null]}
         >
-          <UserIcon size={20} color={activeTab === 'profile' ? colors.primary : colors.textMuted} />
+          <UserIcon size={24} color={activeTab === 'profile' ? colors.primary : '#94A3B8'} />
           <Text
             style={[
               styles.navLabel,
@@ -355,25 +355,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: colors.surface,
-    paddingVertical: spacing.sm + 2,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    paddingVertical: spacing.md,
+    borderTopWidth: 1.5,
+    borderTopColor: '#E2E8F0',
+    minHeight: 68,
     ...shadows.lg,
   },
   navItem: {
     alignItems: 'center',
-    gap: 2,
-    minWidth: 64,
+    gap: 4,
+    minWidth: 70,
+    paddingVertical: 4,
+    borderRadius: borderRadius.md,
+  },
+  navItemActive: {
+    transform: [{ scale: 1.05 }],
   },
   navLabel: {
     ...typography.caption,
-    fontSize: 10,
-    fontWeight: '600',
-    color: colors.textMuted,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#94A3B8',
   },
   navLabelActive: {
     color: colors.primary,
-    fontWeight: '800',
+    fontWeight: '900',
   },
 });
-

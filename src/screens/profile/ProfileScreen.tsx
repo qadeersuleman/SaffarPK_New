@@ -14,7 +14,12 @@ import { colors, typography, spacing, borderRadius } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Card } from '../../components/cards/Card';
 import { Button } from '../../components/buttons/Button';
-import { ShieldIcon, UserIcon, BusIcon } from '../../components/icons/AppIcons';
+import {
+  ShieldIcon,
+  UserIcon,
+  BusIcon,
+  PhoneIcon,
+} from '../../components/icons/AppIcons';
 
 interface ProfileScreenProps {
   user?: { name: string; phone: string };
@@ -27,8 +32,8 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
 
   const handleContactSupport = () => {
     Alert.alert(
-      'SaffarPK Terminal Helpline',
-      'Sukkur Main Terminal: 071-5612345\nGhotki Highway Bypass: 0723-681122\nWhatsApp Support: +92 300 1234567\nHours: 24/7 Daily'
+      'SaffarPK Terminal Contacts',
+      'Sukkur Central Terminal: 071-5612345\nGhotki Bypass Terminal: 0723-681122\nObuaro Station Gate: 0723-559900\nWhatsApp Care: +92 300 1234567\nService Hours: 24/7 Daily'
     );
   };
 
@@ -42,30 +47,30 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
         {/* User Card */}
         <Card variant="elevated" style={styles.userCard}>
           <View style={styles.avatarCircle}>
-            <UserIcon size={32} color={colors.primary} />
+            <UserIcon size={36} color={colors.primary} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.userName}>{user?.name || 'Guest Traveler'}</Text>
             <Text style={styles.userPhone}>{user?.phone || 'Browsing as Guest'}</Text>
             <View style={styles.memberTag}>
-              <Text style={styles.memberTagText}>Verified Passenger</Text>
+              <Text style={styles.memberTagText}>Verified Corridor Passenger</Text>
             </View>
           </View>
         </Card>
 
         {/* Notifications & Trip Alerts */}
         <Card variant="elevated" style={styles.sectionCard}>
-          <Text style={styles.cardHeading}>Trip Notifications</Text>
+          <Text style={styles.cardHeading}>Trip Notifications & Alerts</Text>
 
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>SMS Ticket & OTP</Text>
+              <Text style={styles.settingLabel}>SMS Ticket & Digital Pass</Text>
               <Text style={styles.settingSub}>Receive boarding links on your phone</Text>
             </View>
             <Switch
               value={smsAlerts}
               onValueChange={setSmsAlerts}
-              trackColor={{ false: colors.border, true: colors.primary }}
+              trackColor={{ false: '#CBD5E1', true: colors.primary }}
               thumbColor={colors.surface}
             />
           </View>
@@ -74,13 +79,13 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
 
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>Bus Delay Alerts</Text>
-              <Text style={styles.settingSub}>Real-time updates if highway traffic occurs</Text>
+              <Text style={styles.settingLabel}>Highway Delay & Weather Alerts</Text>
+              <Text style={styles.settingSub}>Instant SMS notifications if N-5 traffic occurs</Text>
             </View>
             <Switch
               value={delayUpdates}
               onValueChange={setDelayUpdates}
-              trackColor={{ false: colors.border, true: colors.primary }}
+              trackColor={{ false: '#CBD5E1', true: colors.primary }}
               thumbColor={colors.surface}
             />
           </View>
@@ -91,16 +96,16 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
           <Text style={styles.cardHeading}>Help & Terminal Support</Text>
 
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.75}
             onPress={handleContactSupport}
             style={styles.menuItem}
           >
             <View style={styles.menuIconCircle}>
-              <BusIcon size={18} color={colors.primary} />
+              <PhoneIcon size={20} color={colors.primary} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.menuTitle}>Terminal Helplines & WhatsApp</Text>
-              <Text style={styles.menuSub}>Sukkur, Ghotki & Obuaro station contacts</Text>
+              <Text style={styles.menuSub}>Direct line to Sukkur, Ghotki & Obuaro managers</Text>
             </View>
             <Text style={styles.menuChevron}>›</Text>
           </TouchableOpacity>
@@ -108,17 +113,17 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
           <View style={styles.divider} />
 
           <TouchableOpacity
-            activeOpacity={0.7}
+            activeOpacity={0.75}
             onPress={() =>
               Alert.alert(
                 'Luggage Policy',
-                'Each passenger is entitled to 15 kg of check-in luggage plus 1 personal bag. Hazardous materials and prohibited cargo are strictly banned.'
+                'Each passenger is entitled to 15 kg of check-in luggage plus 1 personal laptop bag. Fragile items must be carried onboard.'
               )
             }
             style={styles.menuItem}
           >
             <View style={styles.menuIconCircle}>
-              <ShieldIcon size={18} color={colors.primary} />
+              <ShieldIcon size={20} color={colors.primary} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.menuTitle}>Luggage & Travel Policy</Text>
@@ -133,10 +138,10 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
           title={user ? 'Sign Out' : 'Sign In with Phone'}
           variant="outline"
           onPress={onLogout}
-          style={{ marginTop: spacing.md }}
+          style={{ marginTop: spacing.sm }}
         />
 
-        <Text style={styles.versionText}>SaffarPK v1.0.0 • Made for Sindh Express Corridor</Text>
+        <Text style={styles.versionText}>SaffarPK v1.0.0 • Upper Sindh Express Highway</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -156,46 +161,51 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.lg,
-    padding: spacing.lg,
+    padding: spacing.xl,
+    borderRadius: borderRadius.xxl,
   },
   avatarCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
     backgroundColor: '#FFF7ED',
-    borderWidth: 1.5,
+    borderWidth: 2,
     borderColor: colors.borderOrange,
     alignItems: 'center',
     justifyContent: 'center',
   },
   userName: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 22,
     color: colors.textPrimary,
   },
   userPhone: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textSecondary,
     marginTop: 2,
   },
   memberTag: {
-    marginTop: 6,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-    backgroundColor: colors.successLight,
-    borderRadius: borderRadius.sm,
+    marginTop: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 3,
+    backgroundColor: '#DCFCE7',
+    borderRadius: borderRadius.full,
     alignSelf: 'flex-start',
   },
   memberTagText: {
     ...typography.caption,
-    fontSize: 10,
-    fontWeight: '700',
-    color: colors.success,
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#15803D',
   },
   sectionCard: {
-    padding: spacing.lg,
+    padding: spacing.xl,
+    borderRadius: borderRadius.xxl,
   },
   cardHeading: {
-    ...typography.h4,
+    ...typography.h3,
+    fontSize: 18,
     color: colors.textPrimary,
     marginBottom: spacing.md,
   },
@@ -203,52 +213,59 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
   },
   settingLabel: {
     ...typography.label,
+    fontSize: 15,
     color: colors.textPrimary,
   },
   settingSub: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
     marginTop: 2,
   },
   divider: {
-    height: 1,
-    backgroundColor: colors.border,
+    height: 1.5,
+    backgroundColor: '#F1F5F9',
     marginVertical: spacing.md,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingVertical: spacing.sm,
   },
   menuIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.surfaceSubtle,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
     alignItems: 'center',
     justifyContent: 'center',
   },
   menuTitle: {
     ...typography.label,
+    fontSize: 15,
     color: colors.textPrimary,
   },
   menuSub: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
     marginTop: 2,
   },
   menuChevron: {
-    fontSize: 20,
+    fontSize: 24,
     color: colors.textMuted,
     fontWeight: 'bold',
   },
   versionText: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textMuted,
     textAlign: 'center',
     marginTop: spacing.md,

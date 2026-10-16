@@ -14,7 +14,12 @@ import { Header } from '../../components/common/Header';
 import { Card } from '../../components/cards/Card';
 import { Button } from '../../components/buttons/Button';
 import { Input } from '../../components/inputs/Input';
-import { ShieldIcon, CheckIcon } from '../../components/icons/AppIcons';
+import {
+  ShieldIcon,
+  CheckIcon,
+  EasypaisaLogo,
+  JazzCashLogo,
+} from '../../components/icons/AppIcons';
 import { PaymentMethod } from '../../types';
 
 interface PaymentScreenProps {
@@ -33,16 +38,25 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   const [method, setMethod] = useState<PaymentMethod>('easypaisa');
   const [walletNumber, setWalletNumber] = useState(passengerPhone);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [processingStep, setProcessingStep] = useState('Initiating transaction...');
 
   const handlePay = () => {
     setIsProcessing(true);
+    setProcessingStep('Connecting to payment gateway...');
 
-    // Simulate payment API transaction with webhook confirmation
+    setTimeout(() => {
+      setProcessingStep('Reserving seat hold & verifying MPIN...');
+    }, 1000);
+
+    setTimeout(() => {
+      setProcessingStep('Generating electronic ticket reference...');
+    }, 1800);
+
     setTimeout(() => {
       setIsProcessing(false);
       const fakeTxnId = `TXN-PK-${Math.floor(100000 + Math.random() * 900000)}`;
       onPaymentSuccess(method, fakeTxnId);
-    }, 2000);
+    }, 2600);
   };
 
   return (
@@ -50,49 +64,47 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
       <StatusBar barStyle="dark-content" />
 
       <Header
-        title="Payment Method"
-        subtitle={`Amount Payable: PKR ${amount}`}
+        title="Payment Gateway"
+        subtitle={`Amount: PKR ${amount}`}
         showBack
         onBack={onBack}
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Demo Mode Notice */}
+        {/* Testing Mode Disclaimer */}
         <View style={styles.demoBanner}>
-          <ShieldIcon size={16} color="#B45309" />
+          <ShieldIcon size={20} color="#B45309" />
           <View style={{ flex: 1 }}>
-            <Text style={styles.demoTitle}>TESTING / DEMO MODE</Text>
+            <Text style={styles.demoTitle}>SECURE DEMO MODE ACTIVE</Text>
             <Text style={styles.demoDesc}>
-              Real wallet APIs (Easypaisa/JazzCash) will be connected in production. No real money will be charged.
+              Simulated payment pipeline. No real balance will be deducted from your account.
             </Text>
           </View>
         </View>
 
-        {/* Payment Amount Card */}
+        {/* Amount Display */}
         <Card variant="elevated" style={styles.amountCard}>
           <Text style={styles.amountLabel}>Total Payable Amount</Text>
           <Text style={styles.amountValue}>PKR {amount}</Text>
-          <Text style={styles.amountCurrency}>Pakistan Rupees</Text>
+          <Text style={styles.amountCurrency}>Pakistan National Rupees</Text>
         </Card>
 
-        {/* Method Selectors */}
-        <Text style={styles.sectionTitle}>Select Digital Wallet</Text>
+        {/* Digital Wallets Section */}
+        <Text style={styles.sectionTitle}>Select Payment Method</Text>
 
         {/* Easypaisa */}
         <TouchableOpacity
-          activeOpacity={0.85}
+          activeOpacity={0.88}
           onPress={() => setMethod('easypaisa')}
           style={[
             styles.methodCard,
             method === 'easypaisa' ? styles.methodCardActive : null,
           ]}
         >
-          <View style={styles.methodIconBoxGreen}>
-            <Text style={styles.walletIconText}>EP</Text>
-          </View>
+          <EasypaisaLogo size={44} />
           <View style={{ flex: 1 }}>
             <Text style={styles.methodTitle}>Easypaisa</Text>
-            <Text style={styles.methodDesc}>Instant mobile wallet or debit card</Text>
+            <Text style={styles.methodDesc}>Instant mobile wallet & OTC account</Text>
           </View>
           {method === 'easypaisa' && (
             <View style={styles.checkCircle}>
@@ -103,19 +115,17 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
         {/* JazzCash */}
         <TouchableOpacity
-          activeOpacity={0.85}
+          activeOpacity={0.88}
           onPress={() => setMethod('jazzcash')}
           style={[
             styles.methodCard,
             method === 'jazzcash' ? styles.methodCardActive : null,
           ]}
         >
-          <View style={styles.methodIconBoxRed}>
-            <Text style={styles.walletIconText}>JC</Text>
-          </View>
+          <JazzCashLogo size={44} />
           <View style={{ flex: 1 }}>
             <Text style={styles.methodTitle}>JazzCash</Text>
-            <Text style={styles.methodDesc}>Pay using JazzCash mobile account</Text>
+            <Text style={styles.methodDesc}>Pay using JazzCash mobile number</Text>
           </View>
           {method === 'jazzcash' && (
             <View style={styles.checkCircle}>
@@ -124,21 +134,21 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           )}
         </TouchableOpacity>
 
-        {/* Quick Demo Pay */}
+        {/* 1-Click Instant Demo Pay */}
         <TouchableOpacity
-          activeOpacity={0.85}
+          activeOpacity={0.88}
           onPress={() => setMethod('demo')}
           style={[
             styles.methodCard,
             method === 'demo' ? styles.methodCardActive : null,
           ]}
         >
-          <View style={styles.methodIconBoxOrange}>
-            <Text style={styles.walletIconText}>⚡</Text>
+          <View style={styles.demoIconCircle}>
+            <Text style={{ fontSize: 20 }}>⚡</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.methodTitle}>1-Click Demo Pay</Text>
-            <Text style={styles.methodDesc}>Simulate instant verified transaction</Text>
+            <Text style={styles.methodTitle}>Instant 1-Tap Demo Pay</Text>
+            <Text style={styles.methodDesc}>Fast simulate approved transaction</Text>
           </View>
           {method === 'demo' && (
             <View style={styles.checkCircle}>
@@ -147,11 +157,11 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
           )}
         </TouchableOpacity>
 
-        {/* Wallet Number Input */}
+        {/* Phone Input for Wallets */}
         {method !== 'demo' && (
           <Card variant="outlined" style={styles.walletInputCard}>
             <Input
-              label={`${method === 'easypaisa' ? 'Easypaisa' : 'JazzCash'} Account Mobile Number`}
+              label={`${method === 'easypaisa' ? 'EASYPAISA' : 'JAZZCASH'} WALLET MOBILE NUMBER`}
               placeholder="03001234567"
               keyboardType="phone-pad"
               maxLength={11}
@@ -159,17 +169,18 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
               onChangeText={setWalletNumber}
             />
             <Text style={styles.walletHelpText}>
-              You will receive an approval MPIN prompt on your phone.
+              A USSD popup or mobile app push approval will be requested.
             </Text>
           </Card>
         )}
 
-        {/* Pay Button / Loading State */}
+        {/* Pay Action Section */}
         <View style={styles.actionSection}>
           {isProcessing ? (
             <View style={styles.processingBox}>
               <ActivityIndicator size="large" color={colors.primary} />
-              <Text style={styles.processingText}>Securing seats & verifying transaction...</Text>
+              <Text style={styles.processingText}>{processingStep}</Text>
+              <Text style={styles.processingSub}>Please do not close or navigate back</Text>
             </View>
           ) : (
             <Button
@@ -197,49 +208,55 @@ const styles = StyleSheet.create({
   demoBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing.md,
     backgroundColor: '#FEF3C7',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#FDE68A',
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
+    padding: spacing.md + 2,
+    borderRadius: borderRadius.xl,
   },
   demoTitle: {
     ...typography.caption,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '900',
     color: '#92400E',
-    letterSpacing: 0.5,
+    letterSpacing: 0.6,
   },
   demoDesc: {
     ...typography.caption,
+    fontSize: 12,
     color: '#B45309',
-    fontSize: 11,
     marginTop: 2,
   },
   amountCard: {
     padding: spacing.xl,
     alignItems: 'center',
     backgroundColor: colors.surface,
+    borderRadius: borderRadius.xxl,
   },
   amountLabel: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
+    letterSpacing: 1,
+    fontWeight: '800',
   },
   amountValue: {
     ...typography.h1,
-    fontSize: 36,
+    fontSize: 42,
     color: colors.primaryDark,
-    marginTop: 4,
+    marginTop: 6,
   },
   amountCurrency: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textMuted,
     marginTop: 2,
   },
   sectionTitle: {
-    ...typography.h4,
+    ...typography.h3,
+    fontSize: 19,
     color: colors.textPrimary,
     marginTop: spacing.sm,
   },
@@ -247,10 +264,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surface,
-    padding: spacing.md,
-    borderRadius: borderRadius.xl,
-    borderWidth: 1.5,
-    borderColor: colors.border,
+    padding: spacing.lg,
+    borderRadius: borderRadius.xxl,
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
     gap: spacing.md,
   },
   methodCardActive: {
@@ -258,60 +275,42 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF7ED',
     ...shadows.sm,
   },
-  methodIconBoxGreen: {
+  demoIconCircle: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#059669',
+    backgroundColor: '#FFEDD5',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  methodIconBoxRed: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#DC2626',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  methodIconBoxOrange: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  walletIconText: {
-    color: colors.textWhite,
-    fontWeight: '900',
-    fontSize: 16,
   },
   methodTitle: {
-    ...typography.label,
+    ...typography.h4,
+    fontSize: 17,
     color: colors.textPrimary,
   },
   methodDesc: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
     marginTop: 2,
   },
   checkCircle: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   walletInputCard: {
-    padding: spacing.md,
-    marginTop: spacing.xs,
+    padding: spacing.lg,
+    borderRadius: borderRadius.xl,
   },
   walletHelpText: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
-    marginTop: 2,
+    marginTop: 4,
   },
   actionSection: {
     marginTop: spacing.lg,
@@ -319,11 +318,22 @@ const styles = StyleSheet.create({
   processingBox: {
     alignItems: 'center',
     padding: spacing.xl,
-    gap: spacing.md,
+    gap: spacing.sm,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.xxl,
+    borderWidth: 1.5,
+    borderColor: colors.borderOrange,
   },
   processingText: {
-    ...typography.bodyMedium,
+    ...typography.label,
+    fontSize: 16,
     color: colors.primaryDark,
-    fontWeight: '700',
+    fontWeight: '800',
+    marginTop: spacing.sm,
+  },
+  processingSub: {
+    ...typography.caption,
+    fontSize: 12,
+    color: colors.textMuted,
   },
 });

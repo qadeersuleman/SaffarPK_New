@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
-import { colors, typography, spacing } from '../../theme';
+import { colors, typography, spacing, borderRadius } from '../../theme';
 import { ArrowBackIcon } from '../icons/AppIcons';
 
 interface HeaderProps {
@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
             onPress={onBack}
             style={[styles.backButton, dark && styles.darkBackButton]}
           >
-            <ArrowBackIcon color={dark ? colors.textWhite : colors.dark} size={24} />
+            <ArrowBackIcon color={dark ? colors.textWhite : colors.dark} size={22} />
           </TouchableOpacity>
         )}
         <View style={styles.titleContainer}>
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingVertical: spacing.md + 2,
     backgroundColor: colors.background,
   },
   darkContainer: {
@@ -74,25 +74,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
   },
   darkBackButton: {
-    backgroundColor: '#262626',
-    borderColor: '#383838',
+    backgroundColor: '#26262B',
+    borderColor: '#383842',
   },
   titleContainer: {
     flex: 1,
   },
   title: {
     ...typography.h3,
+    fontSize: 20,
     color: colors.textPrimary,
   },
   darkTitle: {
@@ -100,6 +101,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textSecondary,
     marginTop: 2,
   },
@@ -110,4 +112,3 @@ const styles = StyleSheet.create({
     marginLeft: spacing.md,
   },
 });
-

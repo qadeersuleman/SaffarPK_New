@@ -18,18 +18,18 @@ export const Badge: React.FC<BadgeProps> = ({
   const getBadgeStyle = (): { bg: string; text: string; border?: string } => {
     switch (variant) {
       case 'success':
-        return { bg: colors.successLight, text: colors.success };
+        return { bg: '#DCFCE7', text: '#15803D', border: '#BBF7D0' };
       case 'warning':
-        return { bg: colors.warningLight, text: colors.warning };
+        return { bg: '#FEF3C7', text: '#B45309', border: '#FDE68A' };
       case 'dark':
-        return { bg: colors.dark, text: colors.textWhite };
+        return { bg: '#1E293B', text: colors.textWhite };
       case 'category':
         return { bg: '#FFF7ED', text: colors.primary, border: colors.borderOrange };
       case 'muted':
-        return { bg: '#F3F4F6', text: colors.textSecondary };
+        return { bg: '#F1F5F9', text: '#475569', border: '#E2E8F0' };
       case 'primary':
       default:
-        return { bg: colors.primaryLight, text: colors.primaryDark };
+        return { bg: '#FFEDD5', text: '#C2410C', border: '#FED7AA' };
     }
   };
 
@@ -53,15 +53,16 @@ export const Badge: React.FC<BadgeProps> = ({
 
 const styles = StyleSheet.create({
   badge: {
-    paddingHorizontal: spacing.sm + 2,
-    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 5,
     borderRadius: borderRadius.full,
     alignSelf: 'flex-start',
   },
   text: {
     ...typography.caption,
-    fontWeight: '700',
-    letterSpacing: 0.2,
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.4,
+    textTransform: 'uppercase',
   },
 });
-

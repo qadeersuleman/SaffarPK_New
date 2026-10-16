@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
   SafeAreaView,
   StatusBar,
@@ -16,7 +15,6 @@ import { Card } from '../../components/cards/Card';
 import {
   BusIcon,
   LocationPinIcon,
-  ClockIcon,
 } from '../../components/icons/AppIcons';
 import { ALL_STOPS } from '../../utils/routeUtils';
 
@@ -31,10 +29,9 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
   busPlate = 'SKR-9821',
   onBack,
 }) => {
-  // Current bus simulation along stops
-  const [currentStopIndex, setCurrentStopIndex] = useState(2); // At Ghotki
+  const [currentStopIndex] = useState(2); // At Ghotki
   const [speed, setSpeed] = useState(72); // 72 km/h
-  const [etaMinutes, setEtaMinutes] = useState(14); // 14 mins to next stop
+  const [etaMinutes, setEtaMinutes] = useState(14); // 14 mins
 
   const pulseAnim = useState(new Animated.Value(1))[0];
 
@@ -54,7 +51,6 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
       ])
     ).start();
 
-    // Minor simulation fluctuation
     const interval = setInterval(() => {
       setSpeed(Math.floor(68 + Math.random() * 8));
       setEtaMinutes(prev => (prev > 1 ? prev - 1 : 12));
@@ -63,7 +59,6 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
     return () => clearInterval(interval);
   }, [pulseAnim]);
 
-  const currentStop = ALL_STOPS[currentStopIndex];
   const nextStop = ALL_STOPS[Math.min(ALL_STOPS.length - 1, currentStopIndex + 1)];
 
   return (
@@ -71,7 +66,7 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
       <StatusBar barStyle="light-content" />
 
       <Header
-        title="Live Bus Tracking"
+        title="Live Highway Tracking"
         subtitle={`${busName} • ${busPlate}`}
         showBack
         onBack={onBack}
@@ -91,7 +86,7 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
         <View style={styles.vDivider} />
 
         <View style={styles.statusCol}>
-          <Text style={styles.statusLabel}>CRUISING SPEED</Text>
+          <Text style={styles.statusLabel}>GPS SPEED</Text>
           <Text style={styles.statusValue}>{speed} km/h</Text>
         </View>
 
@@ -108,10 +103,10 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
         <Card variant="elevated" style={styles.etaCard}>
           <View style={styles.etaHeader}>
             <View style={styles.etaIconCircle}>
-              <LocationPinIcon size={20} color={colors.primary} />
+              <LocationPinIcon size={24} color={colors.primary} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.etaSub}>APPROACHING NEXT STOP</Text>
+              <Text style={styles.etaSub}>APPROACHING NEXT TERMINAL</Text>
               <Text style={styles.etaTitle}>{nextStop.name}</Text>
               <Text style={styles.etaLandmark}>{nextStop.landmark}</Text>
             </View>
@@ -119,9 +114,9 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
           </View>
         </Card>
 
-        {/* Visual Corridor Progress Timeline */}
+        {/* Visual Highway Progression Timeline */}
         <View style={styles.corridorTrackCard}>
-          <Text style={styles.corridorHeading}>Corridor Live Route Progression</Text>
+          <Text style={styles.corridorHeading}>Corridor Live Progression</Text>
           <Text style={styles.corridorSub}>Sukkur to Obuaro Express Highway (118 km)</Text>
 
           <View style={styles.timelineList}>
@@ -137,7 +132,7 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
                     {isCurrent ? (
                       <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
                         <View style={styles.busMarker}>
-                          <BusIcon size={16} color={colors.textWhite} />
+                          <BusIcon size={18} color={colors.textWhite} />
                         </View>
                       </Animated.View>
                     ) : (
@@ -177,12 +172,12 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
                     <Text style={styles.stopLandmarkText}>{stop.landmark}</Text>
                     {isCurrent && (
                       <View style={styles.currentTag}>
-                        <Text style={styles.currentTagText}>📍 Bus passed recently</Text>
+                        <Text style={styles.currentTagText}>📍 Coach departing Ghotki Bypass</Text>
                       </View>
                     )}
                     {idx === currentStopIndex + 1 && (
                       <View style={styles.nextTag}>
-                        <Text style={styles.nextTagText}>⏳ Expected in {etaMinutes} mins</Text>
+                        <Text style={styles.nextTagText}>⏳ Estimated arrival in {etaMinutes} mins</Text>
                       </View>
                     )}
                   </View>
@@ -192,15 +187,15 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
           </View>
         </View>
 
-        {/* Driver Emergency Contact */}
+        {/* Driver Card */}
         <Card variant="dark" style={styles.driverCard}>
           <View style={styles.driverRow}>
             <View style={styles.driverAvatar}>
-              <Text style={{ fontSize: 22 }}>👨‍✈️</Text>
+              <Text style={{ fontSize: 26 }}>👨‍✈️</Text>
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.driverName}>Captain Ghulam Rasool</Text>
-              <Text style={styles.driverSub}>Senior Highway Pilot • Sukkur Hub</Text>
+              <Text style={styles.driverSub}>Senior Highway Pilot • Sukkur Central Hub</Text>
             </View>
           </View>
         </Card>
@@ -212,17 +207,17 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#0F172A',
   },
   statusBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#1F1F1F',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#2F2F2F',
-    paddingVertical: spacing.md,
+    backgroundColor: '#1E293B',
+    borderTopWidth: 1.5,
+    borderBottomWidth: 1.5,
+    borderColor: '#334155',
+    paddingVertical: spacing.md + 2,
     paddingHorizontal: spacing.lg,
   },
   statusCol: {
@@ -230,128 +225,137 @@ const styles = StyleSheet.create({
   },
   statusLabel: {
     ...typography.caption,
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '800',
-    color: colors.textMuted,
-    letterSpacing: 0.5,
+    color: '#94A3B8',
+    letterSpacing: 0.8,
   },
   liveBadgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    marginTop: 2,
+    gap: 6,
+    marginTop: 3,
   },
   livePulseDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.success,
+    backgroundColor: '#22C55E',
   },
   liveText: {
     ...typography.caption,
-    color: colors.success,
-    fontWeight: '700',
-    fontSize: 10,
+    color: '#22C55E',
+    fontWeight: '800',
+    fontSize: 12,
   },
   vDivider: {
-    width: 1,
-    height: 24,
-    backgroundColor: '#333',
+    width: 1.5,
+    height: 28,
+    backgroundColor: '#334155',
   },
   statusValue: {
     ...typography.label,
+    fontSize: 16,
     color: colors.textWhite,
+    fontWeight: '800',
     marginTop: 2,
   },
   statusValueHighlight: {
     ...typography.label,
+    fontSize: 16,
     color: colors.primary,
-    fontWeight: '800',
+    fontWeight: '900',
     marginTop: 2,
   },
   scrollContent: {
     padding: spacing.lg,
     paddingBottom: spacing.xxxl,
     backgroundColor: colors.background,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    borderTopLeftRadius: 36,
+    borderTopRightRadius: 36,
   },
   etaCard: {
-    padding: spacing.lg,
+    padding: spacing.xl,
     marginBottom: spacing.lg,
+    borderRadius: borderRadius.xxl,
   },
   etaHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   etaIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.primaryLight,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#FFEDD5',
     alignItems: 'center',
     justifyContent: 'center',
   },
   etaSub: {
     ...typography.caption,
-    fontSize: 10,
-    fontWeight: '800',
+    fontSize: 11,
+    fontWeight: '900',
     color: colors.primaryDark,
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
   etaTitle: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 22,
     color: colors.textPrimary,
+    marginTop: 2,
   },
   etaLandmark: {
     ...typography.caption,
     color: colors.textSecondary,
-    fontSize: 11,
+    fontSize: 13,
+    marginTop: 2,
   },
   corridorTrackCard: {
     backgroundColor: colors.surface,
-    padding: spacing.lg,
+    padding: spacing.xl,
     borderRadius: borderRadius.xxl,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
     ...shadows.md,
   },
   corridorHeading: {
-    ...typography.h4,
+    ...typography.h3,
+    fontSize: 20,
     color: colors.textPrimary,
   },
   corridorSub: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textSecondary,
-    marginTop: 2,
-    marginBottom: spacing.lg,
+    marginTop: 3,
+    marginBottom: spacing.xl,
   },
   timelineList: {
     paddingLeft: spacing.xs,
   },
   timelineItem: {
     flexDirection: 'row',
-    minHeight: 64,
+    minHeight: 70,
   },
   nodeColumn: {
     alignItems: 'center',
-    width: 32,
-    marginRight: spacing.md,
+    width: 36,
+    marginRight: spacing.lg,
   },
   busMarker: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.glowOrange,
   },
   normalDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
     marginTop: 2,
   },
   pastDot: {
@@ -359,14 +363,14 @@ const styles = StyleSheet.create({
   },
   futureDot: {
     backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
+    borderWidth: 2.5,
+    borderColor: '#CBD5E1',
   },
   trackSegment: {
     width: 3,
     flex: 1,
-    backgroundColor: colors.border,
-    marginVertical: 2,
+    backgroundColor: '#E2E8F0',
+    marginVertical: 3,
   },
   pastSegment: {
     backgroundColor: colors.success,
@@ -376,7 +380,7 @@ const styles = StyleSheet.create({
   },
   stopInfoBox: {
     flex: 1,
-    paddingBottom: spacing.md,
+    paddingBottom: spacing.lg,
   },
   stopNameRow: {
     flexDirection: 'row',
@@ -384,75 +388,85 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   stopName: {
-    ...typography.label,
+    ...typography.h4,
+    fontSize: 17,
     color: colors.textPrimary,
   },
   currentStopName: {
     color: colors.primaryDark,
-    fontWeight: '800',
-    fontSize: 15,
+    fontWeight: '900',
+    fontSize: 18,
   },
   urduText: {
-    fontSize: 15,
+    fontSize: 18,
     color: colors.textSecondary,
+    fontWeight: '800',
   },
   stopLandmarkText: {
     ...typography.caption,
     color: colors.textMuted,
-    fontSize: 11,
+    fontSize: 13,
+    marginTop: 2,
   },
   currentTag: {
-    marginTop: 4,
+    marginTop: 6,
     backgroundColor: '#FFF7ED',
     alignSelf: 'flex-start',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.borderOrange,
   },
   currentTagText: {
     ...typography.caption,
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '800',
     color: colors.primaryDark,
   },
   nextTag: {
-    marginTop: 4,
+    marginTop: 6,
     backgroundColor: '#FEF3C7',
     alignSelf: 'flex-start',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-    borderRadius: borderRadius.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 4,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
   nextTagText: {
     ...typography.caption,
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '800',
     color: '#92400E',
   },
   driverCard: {
-    marginTop: spacing.lg,
-    padding: spacing.md,
+    marginTop: spacing.xl,
+    padding: spacing.lg,
+    borderRadius: borderRadius.xxl,
   },
   driverRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   driverAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#2A2A2A',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#2A2A36',
     alignItems: 'center',
     justifyContent: 'center',
   },
   driverName: {
-    ...typography.label,
+    ...typography.h4,
+    fontSize: 17,
     color: colors.textWhite,
   },
   driverSub: {
     ...typography.caption,
-    color: colors.textMuted,
-    fontSize: 11,
+    fontSize: 13,
+    color: '#94A3B8',
+    marginTop: 2,
   },
 });

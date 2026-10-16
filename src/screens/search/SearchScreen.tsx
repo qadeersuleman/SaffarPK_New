@@ -14,8 +14,10 @@ import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/buttons/Button';
 import {
   BusIcon,
-  ClockIcon,
   StarIcon,
+  AcIcon,
+  PlugIcon,
+  WifiIcon,
 } from '../../components/icons/AppIcons';
 import { RouteStop, BusSchedule } from '../../types';
 import schedulesData from '../../data/schedules.json';
@@ -44,7 +46,7 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
 
   const durationMin = getEstimatedDurationMinutes(origin.id, destination.id);
 
-  // Map schedules with enriched vehicle data and stop timings
+  // Map schedules with vehicle data and stop timings
   const enrichedSchedules: BusSchedule[] = (schedulesData as any[]).map(item => {
     const bus = busesData.find(b => b.id === item.busId) || (busesData[0] as any);
     const originTiming = item.stopTimings?.find((st: any) => st.stopId === origin.id)?.scheduledTime || item.departureTime;
@@ -104,13 +106,13 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
         </View>
 
         <View style={styles.sortRow}>
-          <Text style={styles.sortLabel}>Sort by:</Text>
+          <Text style={styles.sortLabel}>SORT BY</Text>
           <TouchableOpacity
             onPress={() => setSortBy(sortBy === 'departure' ? 'fare' : 'departure')}
             style={styles.sortToggle}
           >
             <Text style={styles.sortToggleText}>
-              {sortBy === 'departure' ? '⏰ Departure Time' : '💰 Lowest Price'}
+              {sortBy === 'departure' ? '🕒 Departure Time' : '💰 Lowest Fare'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -124,16 +126,16 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <BusIcon size={48} color={colors.textMuted} />
-            <Text style={styles.emptyTitle}>No Buses Found</Text>
+            <BusIcon size={56} color={colors.textMuted} />
+            <Text style={styles.emptyTitle}>No Coaches Available</Text>
             <Text style={styles.emptySub}>
-              Try selecting another bus class or time filter.
+              Please check back shortly or choose another bus class.
             </Text>
           </View>
         }
         renderItem={({ item }) => (
           <TouchableOpacity
-            activeOpacity={0.9}
+            activeOpacity={0.92}
             onPress={() => onSelectSchedule(item, item.baseFare)}
             style={styles.busCard}
           >
@@ -142,7 +144,7 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
               <View style={styles.busInfo}>
                 <Text style={styles.busName}>{item.busName}</Text>
                 <View style={styles.ratingRow}>
-                  <StarIcon size={14} color="#F59E0B" />
+                  <StarIcon size={16} color="#F59E0B" />
                   <Text style={styles.ratingText}>{item.bus.rating}</Text>
                   <Text style={styles.busPlate}>• {item.bus.registrationNumber}</Text>
                 </View>
@@ -168,13 +170,13 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
               </View>
 
               <View style={styles.durationLineBox}>
-                <Text style={styles.durationText}>~{durationMin}m</Text>
+                <Text style={styles.durationText}>~{durationMin} mins</Text>
                 <View style={styles.arrowLine}>
                   <View style={styles.arrowDot} />
                   <View style={styles.lineH} />
                   <View style={styles.arrowHead} />
                 </View>
-                <Text style={styles.directText}>Express</Text>
+                <Text style={styles.directText}>N-5 Express</Text>
               </View>
 
               <View style={[styles.timeNode, { alignItems: 'flex-end' }]}>
@@ -183,20 +185,29 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
               </View>
             </View>
 
-            {/* Amenities tags */}
+            {/* Amenities tags with SVG icons */}
             <View style={styles.amenitiesRow}>
-              {item.bus.amenities.slice(0, 3).map((amenity, idx) => (
-                <View key={idx} style={styles.amenityTag}>
-                  <Text style={styles.amenityText}>{amenity}</Text>
+              <View style={styles.amenityChip}>
+                <AcIcon size={14} color="#0284C7" />
+                <Text style={styles.amenityText}>Full AC</Text>
+              </View>
+              <View style={styles.amenityChip}>
+                <PlugIcon size={14} color="#D97706" />
+                <Text style={styles.amenityText}>Charging Port</Text>
+              </View>
+              {item.busCategory !== 'Standard' && (
+                <View style={styles.amenityChip}>
+                  <WifiIcon size={14} color="#059669" />
+                  <Text style={styles.amenityText}>High-Speed WiFi</Text>
                 </View>
-              ))}
+              )}
             </View>
 
             {/* Card Footer: Seats & Price */}
             <View style={styles.cardFooter}>
               <View>
                 <Text style={styles.seatsLeftText}>
-                  🟢 <Text style={{ fontWeight: '700' }}>{item.availableSeatsCount}</Text> seats available
+                  🟢 <Text style={{ fontWeight: '800' }}>{item.availableSeatsCount}</Text> seats left
                 </Text>
                 <Text style={styles.perPassengerText}>per passenger</Text>
               </View>
@@ -236,12 +247,12 @@ const styles = StyleSheet.create({
     marginVertical: spacing.xs,
   },
   chip: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs + 2,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
     borderRadius: borderRadius.full,
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
   },
   chipActive: {
     backgroundColor: colors.dark,
@@ -249,8 +260,9 @@ const styles = StyleSheet.create({
   },
   chipText: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textSecondary,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   chipTextActive: {
     color: colors.textWhite,
@@ -259,30 +271,37 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: spacing.xs,
+    marginTop: spacing.sm,
   },
   sortLabel: {
     ...typography.caption,
+    fontSize: 11,
+    fontWeight: '800',
     color: colors.textMuted,
+    letterSpacing: 0.6,
   },
   sortToggle: {
-    paddingVertical: 2,
+    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    borderRadius: borderRadius.md,
+    backgroundColor: '#FFF7ED',
   },
   sortToggleText: {
     ...typography.caption,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '800',
     color: colors.primaryDark,
   },
   listContent: {
     padding: spacing.lg,
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   busCard: {
     backgroundColor: colors.surface,
-    borderRadius: borderRadius.xl,
-    padding: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderRadius: borderRadius.xxl,
+    padding: spacing.xl,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
     ...shadows.md,
   },
   cardTopRow: {
@@ -295,44 +314,51 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   busName: {
-    ...typography.h4,
+    ...typography.h3,
+    fontSize: 19,
     color: colors.textPrimary,
   },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 2,
+    marginTop: 3,
   },
   ratingText: {
     ...typography.caption,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '800',
     color: colors.textPrimary,
   },
   busPlate: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textMuted,
   },
   timingSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: colors.surfaceSubtle,
-    borderRadius: borderRadius.lg,
-    padding: spacing.md,
-    marginVertical: spacing.xs,
+    backgroundColor: '#F8FAFC',
+    borderRadius: borderRadius.xl,
+    padding: spacing.lg,
+    marginVertical: spacing.sm,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
   },
   timeNode: {
-    minWidth: 80,
+    minWidth: 90,
   },
   timeText: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 22,
     color: colors.textPrimary,
   },
   stopNameText: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textSecondary,
-    fontWeight: '600',
+    fontWeight: '700',
     marginTop: 2,
   },
   durationLineBox: {
@@ -342,8 +368,8 @@ const styles = StyleSheet.create({
   durationText: {
     ...typography.caption,
     color: colors.textSecondary,
-    fontWeight: '700',
-    fontSize: 10,
+    fontWeight: '800',
+    fontSize: 11,
   },
   arrowLine: {
     flexDirection: 'row',
@@ -352,78 +378,84 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   arrowDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: colors.primary,
   },
   lineH: {
     flex: 1,
-    height: 1.5,
+    height: 2,
     backgroundColor: colors.borderOrange,
   },
   arrowHead: {
-    width: 6,
-    height: 6,
-    borderTopWidth: 1.5,
-    borderRightWidth: 1.5,
+    width: 8,
+    height: 8,
+    borderTopWidth: 2,
+    borderRightWidth: 2,
     borderColor: colors.primary,
     transform: [{ rotate: '45deg' }],
   },
   directText: {
     ...typography.caption,
     color: colors.success,
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
   },
   amenitiesRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: 8,
     marginVertical: spacing.sm,
   },
-  amenityTag: {
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
-    borderRadius: borderRadius.sm,
+  amenityChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#F1F5F9',
+    paddingHorizontal: spacing.md,
+    paddingVertical: 5,
+    borderRadius: borderRadius.full,
   },
   amenityText: {
     ...typography.caption,
-    fontSize: 10,
+    fontSize: 12,
     color: colors.textSecondary,
+    fontWeight: '600',
   },
   cardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: spacing.md,
+    paddingTop: spacing.md + 2,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopColor: '#F1F5F9',
     marginTop: spacing.xs,
   },
   seatsLeftText: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textPrimary,
   },
   perPassengerText: {
     ...typography.caption,
     color: colors.textMuted,
-    fontSize: 10,
+    fontSize: 11,
   },
   priceActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   fareCurrency: {
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: 11,
+    fontWeight: '800',
     color: colors.textSecondary,
   },
   fareAmount: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 24,
     color: colors.primaryDark,
-    lineHeight: 22,
+    lineHeight: 26,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -436,7 +468,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   emptySub: {
-    ...typography.bodyMedium,
+    ...typography.bodyLarge,
     color: colors.textSecondary,
     textAlign: 'center',
     marginTop: spacing.xs,

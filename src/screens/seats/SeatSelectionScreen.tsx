@@ -11,9 +11,8 @@ import {
 } from 'react-native';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
-import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/buttons/Button';
-import { SteeringWheelIcon, ShieldIcon, ClockIcon } from '../../components/icons/AppIcons';
+import { SteeringWheelIcon, ClockIcon } from '../../components/icons/AppIcons';
 import { BusSchedule, RouteStop } from '../../types';
 
 interface SeatSelectionScreenProps {
@@ -35,17 +34,15 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
   onBack,
   onProceed,
 }) => {
-  // Generate seats grid
   const totalRows = schedule.bus.layout?.rows || 10;
-  const isRoyal = schedule.busCategory === 'Royal'; // 1 + 2 seating layout
+  const isRoyal = schedule.busCategory === 'Royal';
 
-  // Initialize booked seats for realism
   const [bookedSeats] = useState<string[]>([
     '1A', '2B', '3A', '5B', '6C', '7A', '9D',
   ]);
   const [femaleSeats] = useState<string[]>(['1B', '2A']);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
-  const [timeLeft, setTimeLeft] = useState(600); // 10:00 reservation timer
+  const [timeLeft, setTimeLeft] = useState(600); // 10 mins
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -67,10 +64,9 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
       setSelectedSeats(selectedSeats.filter(s => s !== seatId));
     } else {
       if (selectedSeats.length >= passengerCount) {
-        // Replace or notify
         Alert.alert(
-          'Limit Reached',
-          `You selected ${passengerCount} passenger(s) earlier. Deselect a seat to choose another, or adjust passenger count.`
+          'Passenger Limit',
+          `You selected ${passengerCount} passenger(s). Deselect a seat to choose another.`
         );
         return;
       }
@@ -86,19 +82,19 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
     const isFemale = femaleSeats.includes(seatId);
 
     let seatBg = colors.surface;
-    let seatBorder = colors.border;
+    let seatBorder = '#CBD5E1';
     let textColor = colors.textPrimary;
 
     if (isBooked) {
-      seatBg = '#E5E7EB';
-      seatBorder = '#D1D5DB';
-      textColor = colors.textMuted;
+      seatBg = '#E2E8F0';
+      seatBorder = '#CBD5E1';
+      textColor = '#94A3B8';
     } else if (isSelected) {
       seatBg = colors.primary;
       seatBorder = colors.primaryDark;
       textColor = colors.textWhite;
     } else if (isFemale) {
-      seatBg = '#FCE7F3'; // light pink
+      seatBg = '#FCE7F3';
       seatBorder = '#F472B6';
       textColor = '#BE185D';
     }
@@ -107,7 +103,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
       <TouchableOpacity
         key={seatId}
         disabled={isBooked}
-        activeOpacity={0.75}
+        activeOpacity={0.8}
         onPress={() => handleToggleSeat(seatId)}
         style={[
           styles.seatBox,
@@ -131,11 +127,11 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
         onBack={onBack}
       />
 
-      {/* Timer Bar */}
+      {/* Reservation Hold Timer Banner */}
       <View style={styles.timerBar}>
         <View style={styles.timerLeft}>
-          <ClockIcon size={14} color={colors.warning} />
-          <Text style={styles.timerLabel}>Seats held for:</Text>
+          <ClockIcon size={16} color="#B45309" />
+          <Text style={styles.timerLabel}>Seats held temporarily for:</Text>
         </View>
         <Text style={styles.timerDigits}>{formatTimer(timeLeft)}</Text>
       </View>
@@ -144,7 +140,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
         {/* Legend */}
         <View style={styles.legendRow}>
           <View style={styles.legendItem}>
-            <View style={[styles.legendBox, { backgroundColor: colors.surface, borderColor: colors.border }]} />
+            <View style={[styles.legendBox, { backgroundColor: colors.surface, borderColor: '#CBD5E1' }]} />
             <Text style={styles.legendText}>Available</Text>
           </View>
           <View style={styles.legendItem}>
@@ -152,12 +148,12 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
             <Text style={styles.legendText}>Selected</Text>
           </View>
           <View style={styles.legendItem}>
-            <View style={[styles.legendBox, { backgroundColor: '#E5E7EB', borderColor: '#D1D5DB' }]} />
+            <View style={[styles.legendBox, { backgroundColor: '#E2E8F0', borderColor: '#CBD5E1' }]} />
             <Text style={styles.legendText}>Booked</Text>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendBox, { backgroundColor: '#FCE7F3', borderColor: '#F472B6' }]} />
-            <Text style={styles.legendText}>Ladies Only</Text>
+            <Text style={styles.legendText}>Ladies</Text>
           </View>
         </View>
 
@@ -169,8 +165,8 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
               <Text style={styles.frontGlassText}>FRONT WINDSHIELD</Text>
             </View>
             <View style={styles.driverSeatBox}>
-              <SteeringWheelIcon size={24} color={colors.textSecondary} />
-              <Text style={styles.driverText}>Driver</Text>
+              <SteeringWheelIcon size={26} color={colors.textSecondary} />
+              <Text style={styles.driverText}>Captain</Text>
             </View>
           </View>
 
@@ -203,7 +199,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
 
           {/* Rear Bus Base */}
           <View style={styles.busRear}>
-            <Text style={styles.busRearText}>REAR ENGINE</Text>
+            <Text style={styles.busRearText}>REAR ENGINE & LUGGAGE</Text>
           </View>
         </View>
       </ScrollView>
@@ -212,7 +208,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
       <View style={styles.bottomBar}>
         <View style={styles.fareSummaryCol}>
           <Text style={styles.summarySeats}>
-            Selected: <Text style={{ fontWeight: '800', color: colors.textPrimary }}>
+            Selected Seats: <Text style={{ fontWeight: '800', color: colors.textPrimary }}>
               {selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None'}
             </Text>
           </Text>
@@ -249,38 +245,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEF3C7',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.xs + 2,
-    borderBottomWidth: 1,
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1.5,
     borderBottomColor: '#FDE68A',
   },
   timerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   timerLabel: {
     ...typography.caption,
+    fontSize: 13,
     color: '#92400E',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   timerDigits: {
     ...typography.label,
+    fontSize: 15,
     color: '#B45309',
-    fontWeight: '800',
+    fontWeight: '900',
   },
   scrollContent: {
     padding: spacing.lg,
-    paddingBottom: 110,
+    paddingBottom: 120,
   },
   legendRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: colors.surface,
-    padding: spacing.md,
-    borderRadius: borderRadius.lg,
+    padding: spacing.md + 2,
+    borderRadius: borderRadius.xl,
     marginBottom: spacing.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
   },
   legendItem: {
     flexDirection: 'row',
@@ -288,60 +286,62 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   legendBox: {
-    width: 18,
-    height: 18,
-    borderRadius: 4,
-    borderWidth: 1,
+    width: 20,
+    height: 20,
+    borderRadius: 6,
+    borderWidth: 1.5,
   },
   legendText: {
     ...typography.caption,
-    fontSize: 11,
+    fontSize: 12,
+    fontWeight: '700',
     color: colors.textSecondary,
   },
   busCabin: {
     backgroundColor: colors.surface,
-    borderRadius: 36,
-    padding: spacing.lg,
+    borderRadius: 40,
+    padding: spacing.xl,
     borderWidth: 2,
-    borderColor: colors.border,
+    borderColor: '#CBD5E1',
     alignItems: 'center',
-    ...shadows.md,
+    ...shadows.lg,
   },
   driverCabinRow: {
     width: '100%',
-    paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    paddingBottom: spacing.lg,
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#E2E8F0',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   frontGlass: {
     paddingHorizontal: spacing.md,
-    paddingVertical: 4,
-    borderRadius: borderRadius.sm,
-    backgroundColor: colors.surfaceSubtle,
+    paddingVertical: 6,
+    borderRadius: borderRadius.md,
+    backgroundColor: '#F1F5F9',
   },
   frontGlassText: {
     ...typography.caption,
-    fontSize: 9,
+    fontSize: 10,
     color: colors.textMuted,
     fontWeight: '800',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
   },
   driverSeatBox: {
     alignItems: 'center',
   },
   driverText: {
     ...typography.caption,
-    fontSize: 9,
+    fontSize: 11,
     color: colors.textSecondary,
-    fontWeight: '700',
+    fontWeight: '800',
+    marginTop: 2,
   },
   gridContainer: {
     width: '100%',
-    paddingVertical: spacing.md,
-    gap: spacing.md,
+    paddingVertical: spacing.lg,
+    gap: spacing.lg,
   },
   seatRow: {
     flexDirection: 'row',
@@ -350,41 +350,41 @@ const styles = StyleSheet.create({
   },
   seatPair: {
     flexDirection: 'row',
-    gap: spacing.sm,
+    gap: spacing.md,
   },
   seatBox: {
-    width: 44,
-    height: 44,
-    borderRadius: borderRadius.md,
-    borderWidth: 1.5,
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.lg,
+    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   seatText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '800',
   },
   aisle: {
-    width: 28,
+    width: 32,
     alignItems: 'center',
     justifyContent: 'center',
   },
   aisleText: {
     ...typography.caption,
     color: colors.textMuted,
-    fontSize: 10,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '800',
   },
   busRear: {
     width: '100%',
-    paddingTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    paddingTop: spacing.lg,
+    borderTopWidth: 1.5,
+    borderTopColor: '#E2E8F0',
     alignItems: 'center',
   },
   busRearText: {
     ...typography.caption,
-    fontSize: 9,
+    fontSize: 10,
     color: colors.textMuted,
     letterSpacing: 1.5,
     fontWeight: '800',
@@ -395,16 +395,16 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: colors.surface,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.xl,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.xxl,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    borderTopWidth: 1.5,
+    borderTopColor: '#E2E8F0',
     ...shadows.lg,
   },
   fareSummaryCol: {
@@ -412,24 +412,28 @@ const styles = StyleSheet.create({
   },
   summarySeats: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textSecondary,
   },
   totalFareRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    gap: 4,
-    marginTop: 2,
+    gap: 6,
+    marginTop: 3,
   },
   totalFareLabel: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textMuted,
+    fontWeight: '700',
   },
   totalFareAmount: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 24,
     color: colors.primaryDark,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   proceedBtn: {
-    minWidth: 140,
+    minWidth: 150,
   },
 });

@@ -12,11 +12,9 @@ import {
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Button } from '../../components/buttons/Button';
 import { Badge } from '../../components/common/Badge';
-import { Card } from '../../components/cards/Card';
 import {
   BusIcon,
   CheckIcon,
-  LocationPinIcon,
   QrCodeIcon,
 } from '../../components/icons/AppIcons';
 import { Booking } from '../../types';
@@ -35,10 +33,10 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `SaffarPK E-Ticket Ref: ${booking.bookingRef}\nBus: ${booking.busName}\nRoute: ${booking.originStop.name} to ${booking.destinationStop.name}\nSeats: ${booking.seats.join(', ')}\nDeparture: ${booking.departureDate} at ${booking.departureTime}\nPassenger: ${booking.passenger.fullName}`,
+        message: `SaffarPK Digital E-Ticket\nBooking Ref: ${booking.bookingRef}\nBus: ${booking.busName} (${booking.busCategory})\nRoute: ${booking.originStop.name} to ${booking.destinationStop.name}\nSeats: ${booking.seats.join(', ')}\nDeparture: ${booking.departureDate} at ${booking.departureTime}\nPassenger: ${booking.passenger.fullName}`,
       });
     } catch (e) {
-      // share canceled or failed
+      // share cancelled
     }
   };
 
@@ -46,19 +44,19 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
 
-      {/* Top Success Header */}
+      {/* Top Confirmed Header */}
       <View style={styles.topHeader}>
         <View style={styles.successIconBox}>
-          <CheckIcon size={24} color={colors.textWhite} />
+          <CheckIcon size={28} color={colors.textWhite} />
         </View>
         <Text style={styles.confirmedTitle}>Booking Confirmed!</Text>
         <Text style={styles.confirmedSub}>
-          Your seat is guaranteed. Show this digital ticket upon boarding.
+          Seat guaranteed. Present this digital ticket to the conductor upon boarding.
         </Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Ticket Card Container */}
+        {/* Boarding Pass Ticket Card */}
         <View style={styles.ticketCard}>
           {/* Ticket Header */}
           <View style={styles.ticketTop}>
@@ -68,10 +66,10 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
               </Text>
               <Text style={styles.ticketRef}>REF: {booking.bookingRef}</Text>
             </View>
-            <Badge label="PAID & CONFIRMED" variant="success" />
+            <Badge label="VERIFIED E-TICKET" variant="success" />
           </View>
 
-          {/* Route Overview */}
+          {/* Route Overview Section */}
           <View style={styles.routeSection}>
             <View style={styles.routeNode}>
               <Text style={styles.timeLabel}>{booking.departureTime}</Text>
@@ -82,7 +80,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
             </View>
 
             <View style={styles.routeDividerCol}>
-              <BusIcon size={20} color={colors.primary} />
+              <BusIcon size={24} color={colors.primary} />
               <View style={styles.dashLine} />
             </View>
 
@@ -95,14 +93,14 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
             </View>
           </View>
 
-          {/* Ticket Tear Notches */}
+          {/* Perforated Ticket Tear Cutouts */}
           <View style={styles.notchRow}>
             <View style={styles.notchLeft} />
             <View style={styles.notchDashedLine} />
             <View style={styles.notchRight} />
           </View>
 
-          {/* Ticket Meta Details */}
+          {/* Ticket Meta Details Grid */}
           <View style={styles.ticketBody}>
             <View style={styles.metaGrid}>
               <View style={styles.metaCell}>
@@ -110,27 +108,27 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
                 <Text style={styles.cellValue}>{booking.passenger.fullName}</Text>
               </View>
               <View style={styles.metaCell}>
-                <Text style={styles.cellLabel}>PHONE</Text>
+                <Text style={styles.cellLabel}>PHONE NUMBER</Text>
                 <Text style={styles.cellValue}>{booking.passenger.phoneNumber}</Text>
               </View>
               <View style={styles.metaCell}>
-                <Text style={styles.cellLabel}>BUS CLASS</Text>
+                <Text style={styles.cellLabel}>FLEET CLASS</Text>
                 <Text style={styles.cellValue}>{booking.busCategory}</Text>
               </View>
               <View style={styles.metaCell}>
-                <Text style={styles.cellLabel}>SEATS</Text>
-                <Text style={[styles.cellValue, { color: colors.primary, fontWeight: '900' }]}>
+                <Text style={styles.cellLabel}>SEAT NUMBERS</Text>
+                <Text style={[styles.cellValue, { color: colors.primary, fontWeight: '900', fontSize: 18 }]}>
                   {booking.seats.join(', ')}
                 </Text>
               </View>
             </View>
 
-            {/* QR Code Section */}
+            {/* High-Resolution QR Code Block */}
             <View style={styles.qrSection}>
               <View style={styles.qrBox}>
-                <QrCodeIcon size={84} color={colors.dark} />
+                <QrCodeIcon size={100} color={colors.dark} />
               </View>
-              <Text style={styles.scanCodeText}>Scan by Conductor on Boarding</Text>
+              <Text style={styles.scanCodeText}>Scan by Bus Conductor / Terminal Gate</Text>
               <Text style={styles.hashText}>{booking.qrCodePayload}</Text>
             </View>
           </View>
@@ -139,7 +137,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
         {/* Action Buttons */}
         <View style={styles.actionRow}>
           <Button
-            title="Track Bus Live"
+            title="Track Coach Live"
             onPress={onTrackBus}
             variant="primary"
             style={{ flex: 1 }}
@@ -152,7 +150,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
           />
         </View>
 
-        <TouchableOpacity onPress={onHome} style={styles.homeBtn}>
+        <TouchableOpacity activeOpacity={0.7} onPress={onHome} style={styles.homeBtn}>
           <Text style={styles.homeBtnText}>Return to Home Dashboard</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -163,7 +161,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#0F172A',
   },
   topHeader: {
     alignItems: 'center',
@@ -172,9 +170,9 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
   },
   successIconBox: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: colors.success,
     alignItems: 'center',
     justifyContent: 'center',
@@ -182,164 +180,173 @@ const styles = StyleSheet.create({
     ...shadows.md,
   },
   confirmedTitle: {
-    ...typography.h2,
+    ...typography.h1,
+    fontSize: 28,
     color: colors.textWhite,
   },
   confirmedSub: {
     ...typography.caption,
-    color: colors.textMuted,
+    fontSize: 13,
+    color: '#94A3B8',
     textAlign: 'center',
     marginTop: 4,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
+    lineHeight: 18,
   },
   scrollContent: {
     padding: spacing.lg,
     paddingBottom: spacing.xxxl,
     backgroundColor: colors.background,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: 36,
+    borderTopRightRadius: 36,
   },
   ticketCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xxl,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: colors.border,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
     ...shadows.lg,
   },
   ticketTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: spacing.lg,
-    backgroundColor: colors.surfaceSubtle,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    padding: spacing.xl,
+    backgroundColor: '#F8FAFC',
+    borderBottomWidth: 1.5,
+    borderBottomColor: '#E2E8F0',
   },
   brandTitle: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 22,
     color: colors.textPrimary,
   },
   ticketRef: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.textSecondary,
-    fontWeight: '700',
+    fontWeight: '800',
     marginTop: 2,
   },
   routeSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: spacing.lg,
+    padding: spacing.xl,
   },
   routeNode: {
     flex: 1,
   },
   timeLabel: {
     ...typography.caption,
+    fontSize: 13,
     color: colors.primaryDark,
     fontWeight: '800',
   },
   stationName: {
-    ...typography.h3,
+    ...typography.h2,
+    fontSize: 22,
     color: colors.textPrimary,
     marginTop: 2,
   },
   landmarkText: {
     ...typography.caption,
+    fontSize: 12,
     color: colors.textSecondary,
-    fontSize: 10,
-    marginTop: 2,
+    marginTop: 3,
   },
   routeDividerCol: {
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   dashLine: {
-    width: 40,
-    height: 1.5,
+    width: 44,
+    height: 2,
     backgroundColor: colors.borderOrange,
-    marginTop: 4,
+    marginTop: 6,
   },
   notchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 24,
+    height: 28,
     overflow: 'hidden',
     position: 'relative',
   },
   notchLeft: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: colors.background,
-    marginLeft: -10,
+    marginLeft: -12,
   },
   notchDashedLine: {
     flex: 1,
-    height: 1,
-    borderWidth: 1,
-    borderColor: colors.border,
+    height: 1.5,
+    borderWidth: 1.5,
+    borderColor: '#CBD5E1',
     borderStyle: 'dashed',
   },
   notchRight: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: colors.background,
-    marginRight: -10,
+    marginRight: -12,
   },
   ticketBody: {
-    padding: spacing.lg,
+    padding: spacing.xl,
   },
   metaGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.md,
+    gap: spacing.lg,
   },
   metaCell: {
     width: '46%',
   },
   cellLabel: {
     ...typography.caption,
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '800',
     color: colors.textMuted,
-    letterSpacing: 0.5,
+    letterSpacing: 0.8,
   },
   cellValue: {
     ...typography.label,
+    fontSize: 15,
     color: colors.textPrimary,
-    marginTop: 2,
+    marginTop: 3,
   },
   qrSection: {
     alignItems: 'center',
     marginTop: spacing.xl,
-    paddingTop: spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
+    paddingTop: spacing.xl,
+    borderTopWidth: 1.5,
+    borderTopColor: '#F1F5F9',
   },
   qrBox: {
-    padding: spacing.md,
-    backgroundColor: colors.surfaceSubtle,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.border,
+    padding: spacing.lg,
+    backgroundColor: '#F8FAFC',
+    borderRadius: borderRadius.xxl,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
     alignItems: 'center',
     justifyContent: 'center',
   },
   scanCodeText: {
     ...typography.caption,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '800',
     color: colors.textPrimary,
-    marginTop: spacing.sm,
+    marginTop: spacing.md,
   },
   hashText: {
     ...typography.caption,
-    fontSize: 9,
+    fontSize: 11,
     color: colors.textMuted,
     fontFamily: 'monospace',
-    marginTop: 2,
+    marginTop: 3,
   },
   actionRow: {
     flexDirection: 'row',
@@ -349,10 +356,11 @@ const styles = StyleSheet.create({
   homeBtn: {
     alignSelf: 'center',
     marginTop: spacing.lg,
-    padding: spacing.sm,
+    padding: spacing.md,
   },
   homeBtnText: {
     ...typography.label,
+    fontSize: 15,
     color: colors.textSecondary,
   },
 });
