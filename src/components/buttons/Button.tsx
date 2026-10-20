@@ -7,8 +7,9 @@ import {
   TextStyle,
   Animated,
   Pressable,
+  Platform,
 } from 'react-native';
-import { colors, borderRadius, spacing, shadows } from '../../theme';
+import { colors, spacing, shadows } from '../../theme';
 
 interface ButtonProps {
   title: string;
@@ -37,7 +38,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
-      toValue: 0.96,
+      toValue: 0.97,
       useNativeDriver: true,
       speed: 40,
       bounciness: 4,
@@ -58,12 +59,14 @@ export const Button: React.FC<ButtonProps> = ({
       case 'secondary':
         return {
           backgroundColor: colors.dark,
+          ...shadows.glowDark,
         };
       case 'outline':
         return {
-          backgroundColor: 'transparent',
-          borderWidth: 2,
-          borderColor: colors.primary,
+          backgroundColor: colors.surface,
+          borderWidth: 1.5,
+          borderColor: colors.border,
+          ...shadows.sm,
         };
       case 'ghost':
         return {
@@ -72,6 +75,7 @@ export const Button: React.FC<ButtonProps> = ({
       case 'success':
         return {
           backgroundColor: colors.success,
+          ...shadows.md,
         };
       case 'primary':
       default:
@@ -85,6 +89,10 @@ export const Button: React.FC<ButtonProps> = ({
   const getTextStyle = (): TextStyle => {
     switch (variant) {
       case 'outline':
+        return {
+          color: colors.textPrimary,
+          fontWeight: '800',
+        };
       case 'ghost':
         return {
           color: colors.primary,
@@ -105,18 +113,18 @@ export const Button: React.FC<ButtonProps> = ({
     switch (size) {
       case 'small':
         return {
-          container: { minHeight: 40, paddingHorizontal: spacing.md, borderRadius: borderRadius.md },
+          container: { minHeight: 40, paddingHorizontal: spacing.lg, borderRadius: 12 },
           text: { fontSize: 13 },
         };
       case 'medium':
         return {
-          container: { minHeight: 48, paddingHorizontal: spacing.lg, borderRadius: borderRadius.lg },
+          container: { minHeight: 48, paddingHorizontal: spacing.xl, borderRadius: 14 },
           text: { fontSize: 15 },
         };
       case 'large':
       default:
         return {
-          container: { minHeight: 56, paddingHorizontal: spacing.xl, borderRadius: borderRadius.xl },
+          container: { minHeight: 56, paddingHorizontal: spacing.xxl, borderRadius: 16 },
           text: { fontSize: 16 },
         };
     }
@@ -161,10 +169,15 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   baseText: {
+    fontFamily: Platform.select({
+      ios: 'System',
+      android: 'sans-serif-medium',
+      default: 'sans-serif',
+    }),
     letterSpacing: 0.3,
   },
   disabledButton: {
-    opacity: 0.45,
+    opacity: 0.5,
     backgroundColor: '#94A3B8',
     shadowOpacity: 0,
     elevation: 0,

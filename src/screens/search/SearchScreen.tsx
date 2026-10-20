@@ -220,9 +220,12 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
             {/* Card Footer: Seats & Price */}
             <View style={styles.cardFooter}>
               <View>
-                <Text style={styles.seatsLeftText}>
-                  🟢 <Text style={{ fontWeight: '800' }}>{item.availableSeatsCount}</Text> seats left
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <View style={styles.greenPulseDot} />
+                  <Text style={styles.seatsLeftText}>
+                    <Text style={{ fontWeight: '800' }}>{item.availableSeatsCount}</Text> seats left
+                  </Text>
+                </View>
                 <Text style={styles.perPassengerText}>per passenger</Text>
               </View>
 
@@ -297,16 +300,24 @@ const styles = StyleSheet.create({
     letterSpacing: 0.6,
   },
   sortToggle: {
-    paddingVertical: 4,
-    paddingHorizontal: spacing.sm,
+    paddingVertical: 5,
+    paddingHorizontal: spacing.md,
     borderRadius: borderRadius.md,
-    backgroundColor: '#FFF7ED',
+    backgroundColor: colors.primaryLight,
+    borderWidth: 1,
+    borderColor: colors.borderOrange,
   },
   sortToggleText: {
     ...typography.caption,
     fontSize: 13,
     fontWeight: '800',
     color: colors.primaryDark,
+  },
+  greenPulseDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.success,
   },
   listContent: {
     padding: spacing.lg,

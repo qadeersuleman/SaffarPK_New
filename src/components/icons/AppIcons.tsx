@@ -230,23 +230,23 @@ export const BusIllustration: React.FC<{ width?: number; height?: number }> = ({
   <Svg width={width} height={height} viewBox="0 0 320 150" fill="none">
     <Defs>
       <LinearGradient id="busBodyGrad" x1="0" y1="0" x2="320" y2="150" gradientUnits="userSpaceOnUse">
-        <Stop offset="0" stopColor="#1E1E24" />
-        <Stop offset="0.6" stopColor="#171717" />
-        <Stop offset="1" stopColor="#0B0B0E" />
+        <Stop offset="0" stopColor="#1A2234" />
+        <Stop offset="0.6" stopColor="#121826" />
+        <Stop offset="1" stopColor="#090D16" />
       </LinearGradient>
       <LinearGradient id="orangeStripe" x1="0" y1="0" x2="320" y2="0" gradientUnits="userSpaceOnUse">
-        <Stop offset="0" stopColor="#F97316" />
-        <Stop offset="0.7" stopColor="#FB923C" />
-        <Stop offset="1" stopColor="#EA580C" />
+        <Stop offset="0" stopColor="#FF5500" />
+        <Stop offset="0.7" stopColor="#FF7A33" />
+        <Stop offset="1" stopColor="#D94500" />
       </LinearGradient>
       <LinearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="40" gradientUnits="userSpaceOnUse">
-        <Stop offset="0" stopColor="#38BDF8" stopOpacity={0.65} />
-        <Stop offset="1" stopColor="#0284C7" stopOpacity={0.25} />
+        <Stop offset="0" stopColor="#38BDF8" stopOpacity={0.7} />
+        <Stop offset="1" stopColor="#0284C7" stopOpacity={0.3} />
       </LinearGradient>
       <LinearGradient id="roadGrad" x1="0" y1="0" x2="320" y2="0" gradientUnits="userSpaceOnUse">
         <Stop offset="0" stopColor="transparent" />
-        <Stop offset="0.2" stopColor="#F97316" stopOpacity={0.4} />
-        <Stop offset="0.8" stopColor="#F97316" stopOpacity={0.4} />
+        <Stop offset="0.2" stopColor="#FF5500" stopOpacity={0.4} />
+        <Stop offset="0.8" stopColor="#FF5500" stopOpacity={0.4} />
         <Stop offset="1" stopColor="transparent" />
       </LinearGradient>
     </Defs>
@@ -260,7 +260,7 @@ export const BusIllustration: React.FC<{ width?: number; height?: number }> = ({
     <Path
       d="M32 112H288C296.837 112 304 104.837 304 96V56C304 42.7452 293.255 32 280 32H60C44.536 32 32 44.536 32 60V112Z"
       fill="url(#busBodyGrad)"
-      stroke="#2D3139"
+      stroke="#26334D"
       strokeWidth="2.5"
     />
 
@@ -286,7 +286,7 @@ export const BusIllustration: React.FC<{ width?: number; height?: number }> = ({
     />
 
     {/* Brand Name on Livery */}
-    <Rect x="55" y="88" width="80" height="12" rx="3" fill="#171717" opacity={0.8} />
+    <Rect x="55" y="88" width="80" height="12" rx="3" fill="#090D16" opacity={0.85} />
 
     {/* Ultra LED Headlights (White/Cyan Glow) */}
     <Path d="M298 90H304V96H298C296.895 96 296 95.1046 296 94V92C296 90.8954 296.895 90 298 90Z" fill="#F8FAFC" />
@@ -296,22 +296,22 @@ export const BusIllustration: React.FC<{ width?: number; height?: number }> = ({
     <Rect x="30" y="88" width="4" height="12" rx="2" fill="#EF4444" />
 
     {/* Wheel Well Cutouts */}
-    <Circle cx="72" cy="116" r="24" fill="#0A0A0C" />
-    <Circle cx="248" cy="116" r="24" fill="#0A0A0C" />
+    <Circle cx="72" cy="116" r="24" fill="#090D16" />
+    <Circle cx="248" cy="116" r="24" fill="#090D16" />
 
     {/* Front Wheel */}
-    <Circle cx="248" cy="116" r="18" fill="#1E293B" stroke="#475569" strokeWidth="2" />
-    <Circle cx="248" cy="116" r="10" fill="#334155" stroke="#F97316" strokeWidth="1.5" />
+    <Circle cx="248" cy="116" r="18" fill="#1A2234" stroke="#475569" strokeWidth="2" />
+    <Circle cx="248" cy="116" r="10" fill="#26334D" stroke="#FF5500" strokeWidth="1.5" />
     <Circle cx="248" cy="116" r="4" fill="#E2E8F0" />
 
     {/* Rear Wheel */}
-    <Circle cx="72" cy="116" r="18" fill="#1E293B" stroke="#475569" strokeWidth="2" />
-    <Circle cx="72" cy="116" r="10" fill="#334155" stroke="#F97316" strokeWidth="1.5" />
+    <Circle cx="72" cy="116" r="18" fill="#1A2234" stroke="#475569" strokeWidth="2" />
+    <Circle cx="72" cy="116" r="10" fill="#26334D" stroke="#FF5500" strokeWidth="1.5" />
     <Circle cx="72" cy="116" r="4" fill="#E2E8F0" />
 
     {/* Highway Speed Lines */}
-    <Line x1="10" y1="50" x2="24" y2="50" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" opacity={0.6} />
-    <Line x1="2" y1="65" x2="20" y2="65" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" opacity={0.4} />
+    <Line x1="10" y1="50" x2="24" y2="50" stroke="#FF5500" strokeWidth="2.5" strokeLinecap="round" opacity={0.7} />
+    <Line x1="2" y1="65" x2="20" y2="65" stroke="#FF5500" strokeWidth="2.5" strokeLinecap="round" opacity={0.5} />
   </Svg>
 );
 

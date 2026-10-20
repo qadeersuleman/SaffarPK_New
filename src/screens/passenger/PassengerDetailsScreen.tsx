@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   },
   genderOptionActive: {
     borderColor: colors.primary,
-    backgroundColor: '#FFF7ED',
+    backgroundColor: colors.primaryLight,
   },
   genderOptionText: {
     ...typography.label,

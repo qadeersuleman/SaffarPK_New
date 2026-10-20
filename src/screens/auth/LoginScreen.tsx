@@ -169,7 +169,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: colors.dark,
   },
   scrollContent: {
     padding: spacing.lg,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     width: 68,
     height: 68,
     borderRadius: 34,
-    backgroundColor: '#1E293B',
+    backgroundColor: colors.darkElevated,
     borderWidth: 2,
     borderColor: colors.primary,
     alignItems: 'center',

@@ -18,18 +18,18 @@ export const Badge: React.FC<BadgeProps> = ({
   const getBadgeStyle = (): { bg: string; text: string; border?: string } => {
     switch (variant) {
       case 'success':
-        return { bg: '#DCFCE7', text: '#15803D', border: '#BBF7D0' };
+        return { bg: '#ECFDF5', text: '#059669', border: '#A7F3D0' };
       case 'warning':
-        return { bg: '#FEF3C7', text: '#B45309', border: '#FDE68A' };
+        return { bg: '#FFFBEB', text: '#D97706', border: '#FDE68A' };
       case 'dark':
-        return { bg: '#1E293B', text: colors.textWhite };
+        return { bg: colors.dark, text: colors.textWhite };
       case 'category':
-        return { bg: '#FFF7ED', text: colors.primary, border: colors.borderOrange };
+        return { bg: colors.primaryLight, text: colors.primary, border: colors.borderOrange };
       case 'muted':
         return { bg: '#F1F5F9', text: '#475569', border: '#E2E8F0' };
       case 'primary':
       default:
-        return { bg: '#FFEDD5', text: '#C2410C', border: '#FED7AA' };
+        return { bg: colors.primaryLight, text: colors.primaryDark, border: colors.borderOrange };
     }
   };
 

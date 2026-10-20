@@ -9,7 +9,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Button } from '../../components/buttons/Button';
@@ -35,6 +35,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
   onBack,
   onProceed,
 }) => {
+  const insets = useSafeAreaInsets();
   const totalRows = schedule.bus.layout?.rows || 10;
   const isRoyal = schedule.busCategory === 'Royal';
 
@@ -226,7 +227,14 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
       </ScrollView>
 
       {/* Floating Bottom Booking Action Bar */}
-      <View style={styles.bottomBar}>
+      <View
+        style={[
+          styles.bottomBar,
+          {
+            paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : spacing.xl,
+          },
+        ]}
+      >
         <View style={styles.fareSummaryCol}>
           <Text style={styles.summarySeats}>
             Selected Seats: <Text style={{ fontWeight: '800', color: colors.textPrimary }}>
@@ -321,7 +329,7 @@ const styles = StyleSheet.create({
   coachHeroSub: {
     ...typography.caption,
     fontSize: 12,
-    color: '#FED7AA',
+    color: '#FFD4C2',
     marginTop: 2,
     fontWeight: '700',
   },

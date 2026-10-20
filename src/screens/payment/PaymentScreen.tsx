@@ -274,14 +274,14 @@ const styles = StyleSheet.create({
   },
   methodCardActive: {
     borderColor: colors.primary,
-    backgroundColor: '#FFF7ED',
+    backgroundColor: colors.primaryLight,
     ...shadows.sm,
   },
   demoIconCircle: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#FFEDD5',
+    backgroundColor: colors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
   },

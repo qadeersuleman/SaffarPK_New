@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
     borderColor: '#E2E8F0',
   },
   darkBackButton: {
-    backgroundColor: '#26262B',
-    borderColor: '#383842',
+    backgroundColor: colors.darkElevated,
+    borderColor: colors.darkBorder,
   },
   titleContainer: {
     flex: 1,

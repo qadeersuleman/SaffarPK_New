@@ -6,6 +6,7 @@ import {
   Animated,
   StatusBar,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 import { BusIllustration } from '../../components/icons/AppIcons';
 
@@ -14,6 +15,7 @@ interface SplashScreenProps {
 }
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+  const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
   const busTranslateX = useRef(new Animated.Value(-120)).current;
@@ -93,7 +95,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
       </Animated.View>
 
       {/* Bottom Loading Progress Bar */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { bottom: insets.bottom > 0 ? insets.bottom + 24 : 44 }]}>
         <View style={styles.progressBarBg}>
           <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
         </View>
@@ -106,7 +108,7 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A', // Deep modern obsidian
+    backgroundColor: colors.dark,
     justifyContent: 'center',
     alignItems: 'center',
     padding: spacing.xl,
@@ -117,8 +119,8 @@ const styles = StyleSheet.create({
     width: 320,
     height: 320,
     borderRadius: 160,
-    backgroundColor: '#F97316',
-    opacity: 0.15,
+    backgroundColor: colors.primary,
+    opacity: 0.18,
   },
   glowCircle2: {
     position: 'absolute',
@@ -165,9 +167,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm + 2,
     borderRadius: borderRadius.full,
-    backgroundColor: 'rgba(249, 115, 22, 0.14)',
+    backgroundColor: 'rgba(255, 85, 0, 0.14)',
     borderWidth: 1.5,
-    borderColor: 'rgba(249, 115, 22, 0.4)',
+    borderColor: 'rgba(255, 85, 0, 0.4)',
   },
   routePulseDot: {
     width: 8,
@@ -176,21 +178,20 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   routeText: {
-    color: '#FED7AA',
+    color: colors.primaryLight,
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0.5,
   },
   footer: {
     position: 'absolute',
-    bottom: 50,
     width: '80%',
     alignItems: 'center',
   },
   progressBarBg: {
     width: '100%',
     height: 4,
-    backgroundColor: '#1E293B',
+    backgroundColor: colors.darkBorder,
     borderRadius: 2,
     overflow: 'hidden',
     marginBottom: spacing.md,

@@ -21,18 +21,18 @@ export const Card: React.FC<CardProps> = ({
         return {
           backgroundColor: colors.surface,
           borderWidth: 1.5,
-          borderColor: '#E2E8F0',
+          borderColor: colors.border,
         };
       case 'dark':
         return {
-          backgroundColor: '#1E1E24',
+          backgroundColor: colors.darkCard,
           borderWidth: 1,
-          borderColor: '#2D3139',
-          ...shadows.md,
+          borderColor: colors.darkBorder,
+          ...shadows.glowDark,
         };
       case 'orangeSubtle':
         return {
-          backgroundColor: '#FFF7ED',
+          backgroundColor: colors.primaryLight,
           borderWidth: 1.5,
           borderColor: colors.borderOrange,
         };
@@ -41,7 +41,7 @@ export const Card: React.FC<CardProps> = ({
         return {
           backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: '#F1F5F9',
+          borderColor: colors.border,
           ...shadows.md,
         };
     }

@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   inputFocused: {
     borderColor: colors.primary,
-    backgroundColor: '#FFFDF9',
+    backgroundColor: colors.surface,
   },
   inputError: {
     borderColor: colors.error,

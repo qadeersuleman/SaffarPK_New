@@ -162,7 +162,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0B0F19',
+    backgroundColor: colors.dark,
   },
   topHeader: {
     alignItems: 'center',

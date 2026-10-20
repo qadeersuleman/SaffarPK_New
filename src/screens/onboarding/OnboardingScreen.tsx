@@ -142,7 +142,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: colors.dark,
     justifyContent: 'space-between',
   },
   topBar: {
@@ -166,8 +166,10 @@ const styles = StyleSheet.create({
   skipBtn: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    backgroundColor: '#1E293B',
+    backgroundColor: colors.darkElevated,
     borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: colors.darkBorder,
   },
   skipText: {
     ...typography.label,
@@ -193,9 +195,9 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+    backgroundColor: 'rgba(255, 85, 0, 0.12)',
     borderWidth: 2,
-    borderColor: 'rgba(249, 115, 22, 0.4)',
+    borderColor: 'rgba(255, 85, 0, 0.45)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
@@ -204,9 +206,9 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+    backgroundColor: 'rgba(56, 189, 248, 0.12)',
     borderWidth: 2,
-    borderColor: 'rgba(56, 189, 248, 0.4)',
+    borderColor: 'rgba(56, 189, 248, 0.45)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.md,
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   detailsSection: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 36,
     borderTopRightRadius: 36,
     paddingHorizontal: spacing.xl,
