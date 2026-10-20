@@ -4,7 +4,8 @@
     "title": "Sukkur - Obuaro Corridor (N-5 Highway)",
     "province": "Sindh, Pakistan",
     "totalDistanceKm": 118,
-    "approxDurationMinutes": 135
+    "approxDurationMinutes": 135,
+    "heroImage": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1200&auto=format&fit=crop&q=80"
   },
   "stops": [
     {
@@ -14,7 +15,8 @@
       "sequence": 1,
       "landmark": "Military Road / Saffar Main Terminal",
       "latitude": 27.7052,
-      "longitude": 68.8574
+      "longitude": 68.8574,
+      "imageUrl": "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?w=600&auto=format&fit=crop&q=80"
     },
     {
       "id": "pano-aqil",
@@ -23,7 +25,8 @@
       "sequence": 2,
       "landmark": "N-5 Cantt Mor Stop",
       "latitude": 27.8576,
-      "longitude": 69.1121
+      "longitude": 69.1121,
+      "imageUrl": "https://images.unsplash.com/photo-1470246973918-29a93221c455?w=600&auto=format&fit=crop&q=80"
     },
     {
       "id": "ghotki",
@@ -32,7 +35,8 @@
       "sequence": 3,
       "landmark": "Ghotki Bypass Main Terminal",
       "latitude": 28.0064,
-      "longitude": 69.3161
+      "longitude": 69.3161,
+      "imageUrl": "https://images.unsplash.com/photo-1517649763962-0c623266ddc0?w=600&auto=format&fit=crop&q=80"
     },
     {
       "id": "mirpur-mathelo",
@@ -41,7 +45,8 @@
       "sequence": 4,
       "landmark": "FFC Chowk / N-5 Highway",
       "latitude": 28.0227,
-      "longitude": 69.5489
+      "longitude": 69.5489,
+      "imageUrl": "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?w=600&auto=format&fit=crop&q=80"
     },
     {
       "id": "daharki",
@@ -50,7 +55,8 @@
       "sequence": 5,
       "landmark": "Engro Mor / Railway Crossing",
       "latitude": 28.0436,
-      "longitude": 69.6781
+      "longitude": 69.6781,
+      "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&auto=format&fit=crop&q=80"
     },
     {
       "id": "obuaro",
@@ -59,8 +65,8 @@
       "sequence": 6,
       "landmark": "Obuaro City Terminal / Sindh-Punjab Border Mor",
       "latitude": 28.1633,
-      "longitude": 69.7314
+      "longitude": 69.7314,
+      "imageUrl": "https://images.unsplash.com/photo-1477959858617-67f30bc75b82?w=600&auto=format&fit=crop&q=80"
     }
   ]
 }
-

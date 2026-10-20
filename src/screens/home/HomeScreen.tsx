@@ -8,22 +8,25 @@ import {
   StatusBar,
   Modal,
   Animated,
+  Image,
+  ImageBackground,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Button } from '../../components/buttons/Button';
 import { Card } from '../../components/cards/Card';
 import { Badge } from '../../components/common/Badge';
 import {
-  BusIcon,
   LocationPinIcon,
   SwapIcon,
   ClockIcon,
-  BusIllustration,
-  ShieldIcon,
   StarIcon,
+  ShieldIcon,
+  ArrowForwardIcon,
 } from '../../components/icons/AppIcons';
 import { ALL_STOPS, getFare, getEstimatedDurationMinutes } from '../../utils/routeUtils';
 import { RouteStop } from '../../types';
+import busesData from '../../data/buses.json';
 
 interface HomeScreenProps {
   onSearch: (params: {
@@ -39,8 +42,9 @@ interface HomeScreenProps {
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onSearch,
   onNavigateToTracking,
-  userName = 'Passenger',
+  userName = 'Traveler',
 }) => {
+  const insets = useSafeAreaInsets();
   const [origin, setOrigin] = useState<RouteStop>(ALL_STOPS[0]); // Sukkur
   const [destination, setDestination] = useState<RouteStop>(ALL_STOPS[ALL_STOPS.length - 1]); // Obuaro
   const [selectedDate, setSelectedDate] = useState<'Today' | 'Tomorrow'>('Today');
@@ -94,14 +98,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Dark Obsidian Hero Section with Bus Illustration */}
-        <View style={styles.heroSection}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 80 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Cinematic Hero Section with High-Res Image Background */}
+        <ImageBackground
+          source={{
+            uri: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1200&auto=format&fit=crop&q=80',
+          }}
+          style={[styles.heroBackground, { paddingTop: insets.top + spacing.md }]}
+        >
+          {/* Dark Glass Overlay */}
+          <View style={styles.heroOverlay} />
+
+          {/* Top Bar Header */}
           <View style={styles.topHeader}>
             <View>
-              <Text style={styles.greetingText}>Khush Amdeed, {userName}</Text>
+              <Text style={styles.greetingText}>Khush Amdeed, {userName} 👋</Text>
               <Text style={styles.heroLogo}>
                 Saffar<Text style={{ color: colors.primary }}>PK</Text>
               </Text>
@@ -112,25 +131,31 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </View>
           </View>
 
-          {/* Luxury Bus Illustration Header */}
-          <View style={styles.heroIllustrationBox}>
-            <BusIllustration width={300} height={130} />
-            <Text style={styles.heroSlogan}>Sindh's Premier Intercity Coach Service</Text>
+          {/* Hero Tagline Banner */}
+          <View style={styles.heroBanner}>
+            <Text style={styles.heroBannerTitle}>
+              Luxury Intercity Coach Service
+            </Text>
+            <Text style={styles.heroBannerSub}>
+              Guaranteed seats & punctual departures every hour on N-5
+            </Text>
           </View>
-        </View>
+        </ImageBackground>
 
-        {/* Floating Route Selector Card */}
+        {/* Floating Route Booking Card */}
         <View style={styles.selectorWrapper}>
           <Card variant="elevated" style={styles.bookingCard}>
             <View style={styles.cardHeaderRow}>
               <View>
-                <Text style={styles.selectorTitle}>Book Your Seat</Text>
-                <Text style={styles.selectorSub}>Select journey stops along N-5 Highway</Text>
+                <Text style={styles.selectorTitle}>Where are you going?</Text>
+                <Text style={styles.selectorSub}>
+                  Select your stations on the Sukkur ⇄ Obuaro route
+                </Text>
               </View>
-              <Badge label="Direct Route" variant="category" />
+              <Badge label="N-5 Corridor" variant="category" />
             </View>
 
-            {/* Origin & Destination Interactive Box */}
+            {/* Interactive Origin & Destination Selector Box */}
             <View style={styles.routeBox}>
               {/* Origin Picker */}
               <TouchableOpacity
@@ -142,13 +167,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <LocationPinIcon size={18} color="#16A34A" />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.stopLabel}>FROM (DEPARTURE STOP)</Text>
+                  <Text style={styles.stopLabel}>DEPARTURE TERMINAL</Text>
                   <Text style={styles.stopName}>{origin.name}</Text>
                   <Text style={styles.stopLandmark} numberOfLines={1}>
                     {origin.landmark}
                   </Text>
                 </View>
-                <Text style={styles.urduName}>{origin.urduName}</Text>
+                <View style={styles.urduBadge}>
+                  <Text style={styles.urduName}>{origin.urduName}</Text>
+                </View>
               </TouchableOpacity>
 
               {/* Swap Button Divider */}
@@ -176,13 +203,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <LocationPinIcon size={18} color={colors.primary} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.stopLabel}>TO (ARRIVAL STOP)</Text>
+                  <Text style={styles.stopLabel}>ARRIVAL TERMINAL</Text>
                   <Text style={styles.stopName}>{destination.name}</Text>
                   <Text style={styles.stopLandmark} numberOfLines={1}>
                     {destination.landmark}
                   </Text>
                 </View>
-                <Text style={styles.urduName}>{destination.urduName}</Text>
+                <View style={styles.urduBadge}>
+                  <Text style={styles.urduName}>{destination.urduName}</Text>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -190,7 +219,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <View style={styles.metaRow}>
               {/* Date Selector */}
               <View style={styles.metaBlock}>
-                <Text style={styles.metaLabel}>JOURNEY DATE</Text>
+                <Text style={styles.metaLabel}>TRAVEL DATE</Text>
                 <View style={styles.dateSelector}>
                   {(['Today', 'Tomorrow'] as const).map(d => (
                     <TouchableOpacity
@@ -243,7 +272,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </View>
               <View style={styles.peekDivider} />
               <View style={styles.peekItem}>
-                <Text style={styles.peekText}>Fare starting at</Text>
+                <Text style={styles.peekText}>Fares starting</Text>
                 <Text style={styles.peekFare}>PKR {minFare}</Text>
               </View>
             </View>
@@ -277,74 +306,144 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <View style={styles.beaconDot} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.trackingBannerTitle}>Live Bus Tracking</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={styles.trackingBannerTitle}>Live Highway Tracking</Text>
+                  <View style={styles.liveTag}>
+                    <Text style={styles.liveTagText}>LIVE GPS</Text>
+                  </View>
+                </View>
                 <Text style={styles.trackingBannerSub}>
-                  Track your coach in real-time along the N-5 Highway
+                  Track moving coaches in real-time along the N-5 Highway
                 </Text>
               </View>
             </View>
-            <Text style={styles.trackingArrow}>➔</Text>
+            <ArrowForwardIcon size={20} color={colors.primary} />
           </TouchableOpacity>
         )}
 
-        {/* Supported Corridor Route Timeline */}
-        <View style={styles.corridorSection}>
-          <Text style={styles.sectionTitle}>Supported Corridor Stops</Text>
+        {/* Featured Corridor Stops with High-Res Photography */}
+        <View style={styles.stationsSection}>
+          <View style={styles.sectionHeaderRow}>
+            <div>
+              <Text style={styles.sectionTitle}>Corridor Stations</Text>
+              <Text style={styles.sectionSubtitle}>
+                Tap any stop along the N-5 route to select it
+              </Text>
+            </div>
+          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.stationsScroll}
+          >
+            {ALL_STOPS.map(stop => {
+              const isCurrentDest = stop.id === destination.id;
+              return (
+                <TouchableOpacity
+                  key={stop.id}
+                  activeOpacity={0.88}
+                  onPress={() => setDestination(stop)}
+                  style={[
+                    styles.stationPhotoCard,
+                    isCurrentDest ? styles.stationPhotoCardActive : null,
+                  ]}
+                >
+                  <Image
+                    source={{
+                      uri:
+                        stop.imageUrl ||
+                        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&auto=format&fit=crop&q=80',
+                    }}
+                    style={styles.stationImage}
+                  />
+                  <View style={styles.stationImageOverlay} />
+                  <View style={styles.stationCardContent}>
+                    <View style={styles.stationBadgeRow}>
+                      <Badge
+                        label={`STOP #${stop.sequence}`}
+                        variant={isCurrentDest ? 'primary' : 'dark'}
+                      />
+                      <Text style={styles.stationUrduText}>{stop.urduName}</Text>
+                    </View>
+                    <Text style={styles.stationNameText}>{stop.name}</Text>
+                    <Text style={styles.stationLandmarkText} numberOfLines={1}>
+                      {stop.landmark}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
+        {/* Fleet Showcase with Real Coach Photos */}
+        <View style={styles.fleetSection}>
+          <Text style={styles.sectionTitle}>SaffarPK Coach Fleet</Text>
           <Text style={styles.sectionSubtitle}>
-            Our dedicated shuttle serves these 6 stops (118 km total):
+            Engineered for comfort, punctuality, and passenger safety
           </Text>
 
-          <View style={styles.stopsTimeline}>
-            {ALL_STOPS.map((stop, index) => (
-              <View key={stop.id} style={styles.timelineRow}>
-                <View style={styles.timelineNodeCol}>
-                  <View
-                    style={[
-                      styles.timelineDot,
-                      index === 0 || index === ALL_STOPS.length - 1
-                        ? styles.timelineDotTerminal
-                        : null,
-                    ]}
-                  />
-                  {index < ALL_STOPS.length - 1 && <View style={styles.timelineLine} />}
-                </View>
-                <View style={styles.timelineContent}>
-                  <View style={styles.timelineTitleRow}>
-                    <Text style={styles.timelineStopName}>{stop.name}</Text>
-                    <Text style={styles.timelineUrdu}>{stop.urduName}</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.fleetScroll}
+          >
+            {busesData.map(bus => (
+              <View key={bus.id} style={styles.fleetPhotoCard}>
+                <Image
+                  source={{
+                    uri:
+                      bus.imageUrl ||
+                      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&auto=format&fit=crop&q=80',
+                  }}
+                  style={styles.fleetImage}
+                />
+                <View style={styles.fleetInfo}>
+                  <View style={styles.fleetTitleRow}>
+                    <Text style={styles.fleetName}>{bus.name}</Text>
+                    <Badge
+                      label={bus.category}
+                      variant={
+                        bus.category === 'Royal'
+                          ? 'warning'
+                          : bus.category === 'Executive'
+                          ? 'primary'
+                          : 'muted'
+                      }
+                    />
                   </View>
-                  <Text style={styles.timelineLandmark}>{stop.landmark}</Text>
+                  <View style={styles.fleetRatingRow}>
+                    <StarIcon size={15} color="#F59E0B" />
+                    <Text style={styles.fleetRating}>{bus.rating}</Text>
+                    <Text style={styles.fleetSeats}>
+                      • {bus.totalSeats} Reclining Seats
+                    </Text>
+                  </View>
+                  <Text style={styles.fleetAmenities} numberOfLines={1}>
+                    {bus.amenities.slice(0, 3).join(' • ')}
+                  </Text>
                 </View>
               </View>
             ))}
-          </View>
+          </ScrollView>
         </View>
 
-        {/* Fleet Highlights */}
-        <View style={styles.fleetSection}>
-          <Text style={styles.sectionTitle}>SaffarPK Fleet Standards</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.fleetScroll}>
-            <View style={styles.fleetCard}>
-              <Badge label="Executive Class" variant="primary" />
-              <Text style={styles.fleetCardTitle}>Saffar Prime</Text>
-              <Text style={styles.fleetCardSpecs}>40 Seats • 2+2 Layout • Fast AC</Text>
-              <Text style={styles.fleetCardDesc}>USB Type-C Chargers, Mineral Water, CCTV</Text>
+        {/* Service Guarantees Card */}
+        <View style={styles.guaranteeContainer}>
+          <Card variant="elevated" style={styles.guaranteeCard}>
+            <View style={styles.guaranteeRow}>
+              <View style={styles.guaranteeIconCircle}>
+                <ShieldIcon size={24} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.guaranteeTitle}>Saffar SafeTravel Guarantee</Text>
+                <Text style={styles.guaranteeSub}>
+                  Live GPS tracked buses • 100% Guaranteed reserved seats • Verified drivers with highway experience
+                </Text>
+              </View>
             </View>
-
-            <View style={styles.fleetCard}>
-              <Badge label="VIP Sleeper" variant="warning" />
-              <Text style={styles.fleetCardTitle}>Royal Business</Text>
-              <Text style={styles.fleetCardSpecs}>28 Seats • 2+1 Layout • Recliners</Text>
-              <Text style={styles.fleetCardDesc}>Ultra-wide seats, Snacks & Chai</Text>
-            </View>
-
-            <View style={styles.fleetCard}>
-              <Badge label="Economical" variant="success" />
-              <Text style={styles.fleetCardTitle}>Standard Express</Text>
-              <Text style={styles.fleetCardSpecs}>44 Seats • 2+2 Layout • AC</Text>
-              <Text style={styles.fleetCardDesc}>Punctual point-to-point commuter transit</Text>
-            </View>
-          </ScrollView>
+          </Card>
         </View>
       </ScrollView>
 
@@ -354,9 +453,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>
-                Select {pickingFor === 'origin' ? 'Boarding Stop' : 'Destination Stop'}
+                Select {pickingFor === 'origin' ? 'Departure' : 'Arrival'} Stop
               </Text>
-              <TouchableOpacity onPress={() => setPickingFor(null)} style={styles.modalCloseBtn}>
+              <TouchableOpacity
+                onPress={() => setPickingFor(null)}
+                style={styles.modalCloseBtn}
+              >
                 <Text style={styles.modalCloseText}>✕</Text>
               </TouchableOpacity>
             </View>
@@ -376,9 +478,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       isSelected ? styles.modalStopItemSelected : null,
                     ]}
                   >
-                    <View style={styles.pinCircleOrange}>
-                      <LocationPinIcon size={18} color={colors.primary} />
-                    </View>
+                    <Image
+                      source={{
+                        uri:
+                          stop.imageUrl ||
+                          'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
+                      }}
+                      style={styles.modalStopImage}
+                    />
                     <View style={{ flex: 1, marginLeft: spacing.md }}>
                       <Text style={styles.modalStopName}>{stop.name}</Text>
                       <Text style={styles.modalStopLandmark}>{stop.landmark}</Text>
@@ -401,26 +508,30 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   scrollContent: {
-    paddingBottom: spacing.xxxl + 30,
+    flexGrow: 1,
   },
-  heroSection: {
-    backgroundColor: '#0F172A',
+  heroBackground: {
+    width: '100%',
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
-    paddingBottom: spacing.xxxl + 20,
+    paddingBottom: spacing.xxxl + 32,
     borderBottomLeftRadius: 36,
     borderBottomRightRadius: 36,
+    overflow: 'hidden',
+  },
+  heroOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(11, 15, 25, 0.88)',
   },
   topHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.md,
+    marginBottom: spacing.lg,
   },
   greetingText: {
     ...typography.caption,
     fontSize: 13,
-    color: '#94A3B8',
+    color: '#CBD5E1',
     letterSpacing: 0.5,
   },
   heroLogo: {
@@ -432,9 +543,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'rgba(249, 115, 22, 0.15)',
+    backgroundColor: 'rgba(249, 115, 22, 0.18)',
     borderWidth: 1.5,
-    borderColor: 'rgba(249, 115, 22, 0.4)',
+    borderColor: 'rgba(249, 115, 22, 0.5)',
     paddingHorizontal: spacing.md,
     paddingVertical: 6,
     borderRadius: borderRadius.full,
@@ -451,20 +562,25 @@ const styles = StyleSheet.create({
     color: '#FED7AA',
     fontWeight: '800',
   },
-  heroIllustrationBox: {
-    alignItems: 'center',
+  heroBanner: {
     marginTop: spacing.xs,
+    paddingVertical: spacing.sm,
   },
-  heroSlogan: {
+  heroBannerTitle: {
+    ...typography.h2,
+    fontSize: 24,
+    color: colors.textWhite,
+    lineHeight: 30,
+  },
+  heroBannerSub: {
     ...typography.caption,
-    fontSize: 12,
+    fontSize: 13,
     color: '#94A3B8',
-    textTransform: 'uppercase',
-    letterSpacing: 1.2,
-    marginTop: spacing.xs,
+    marginTop: 4,
+    lineHeight: 18,
   },
   selectorWrapper: {
-    marginTop: -spacing.xxl - 8,
+    marginTop: -spacing.xxl - 12,
     paddingHorizontal: spacing.lg,
   },
   bookingCard: {
@@ -472,7 +588,7 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     borderRadius: borderRadius.xxl,
     borderWidth: 1.5,
-    borderColor: '#F1F5F9',
+    borderColor: '#E2E8F0',
     ...shadows.lg,
   },
   cardHeaderRow: {
@@ -541,8 +657,14 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginTop: 2,
   },
+  urduBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    backgroundColor: '#F1F5F9',
+    borderRadius: borderRadius.sm,
+  },
   urduName: {
-    fontSize: 18,
+    fontSize: 17,
     color: colors.textSecondary,
     fontWeight: '800',
   },
@@ -557,9 +679,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#E2E8F0',
   },
   swapButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: colors.surface,
     borderWidth: 1.5,
     borderColor: colors.borderOrange,
@@ -681,7 +803,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#0F172A',
+    backgroundColor: '#0B0F19',
     marginHorizontal: spacing.lg,
     marginTop: spacing.xl,
     padding: spacing.lg,
@@ -715,21 +837,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.textWhite,
   },
+  liveTag: {
+    backgroundColor: 'rgba(34, 197, 94, 0.2)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  liveTagText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#22C55E',
+  },
   trackingBannerSub: {
     ...typography.caption,
     fontSize: 12,
     color: '#94A3B8',
     marginTop: 2,
   },
-  trackingArrow: {
-    fontSize: 20,
-    color: colors.primary,
-    fontWeight: '900',
-    marginLeft: spacing.sm,
-  },
-  corridorSection: {
-    paddingHorizontal: spacing.lg,
+  stationsSection: {
     marginTop: spacing.xxl,
+  },
+  sectionHeaderRow: {
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
   },
   sectionTitle: {
     ...typography.h2,
@@ -740,106 +870,158 @@ const styles = StyleSheet.create({
     ...typography.bodyMedium,
     color: colors.textSecondary,
     marginTop: 2,
-    marginBottom: spacing.lg,
   },
-  stopsTimeline: {
-    backgroundColor: colors.surface,
-    padding: spacing.xl,
+  stationsScroll: {
+    paddingLeft: spacing.lg,
+    paddingRight: spacing.sm,
+    gap: spacing.md,
+    paddingVertical: spacing.xs,
+  },
+  stationPhotoCard: {
+    width: 200,
+    height: 170,
     borderRadius: borderRadius.xxl,
-    borderWidth: 1.5,
-    borderColor: '#E2E8F0',
-  },
-  timelineRow: {
-    flexDirection: 'row',
-    minHeight: 52,
-  },
-  timelineNodeCol: {
-    alignItems: 'center',
-    width: 28,
-    marginRight: spacing.md,
-  },
-  timelineDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: colors.primary,
-  },
-  timelineDotTerminal: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    borderWidth: 3.5,
-    borderColor: colors.primaryDark,
+    overflow: 'hidden',
     backgroundColor: colors.surface,
+    borderWidth: 2,
+    borderColor: '#E2E8F0',
+    ...shadows.md,
   },
-  timelineLine: {
-    width: 2.5,
+  stationPhotoCardActive: {
+    borderColor: colors.primary,
+    ...shadows.glowOrange,
+  },
+  stationImage: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+  },
+  stationImageOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(11, 15, 25, 0.65)',
+  },
+  stationCardContent: {
     flex: 1,
-    backgroundColor: colors.borderOrange,
-    marginVertical: 2,
+    justifyContent: 'flex-end',
+    padding: spacing.md,
   },
-  timelineContent: {
-    flex: 1,
-    paddingBottom: spacing.md,
-  },
-  timelineTitleRow: {
+  stationBadgeRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 6,
   },
-  timelineStopName: {
-    ...typography.h4,
+  stationUrduText: {
     fontSize: 16,
-    color: colors.textPrimary,
+    color: '#FED7AA',
+    fontWeight: '800',
   },
-  timelineUrdu: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    fontWeight: '700',
+  stationNameText: {
+    ...typography.h3,
+    fontSize: 19,
+    color: colors.textWhite,
   },
-  timelineLandmark: {
+  stationLandmarkText: {
     ...typography.caption,
     fontSize: 12,
-    color: colors.textSecondary,
+    color: '#CBD5E1',
     marginTop: 2,
   },
   fleetSection: {
     marginTop: spacing.xxl,
-    paddingLeft: spacing.lg,
   },
   fleetScroll: {
+    paddingLeft: spacing.lg,
+    paddingRight: spacing.sm,
     gap: spacing.lg,
-    paddingRight: spacing.lg,
     paddingVertical: spacing.md,
   },
-  fleetCard: {
-    width: 230,
+  fleetPhotoCard: {
+    width: 270,
     backgroundColor: colors.surface,
-    padding: spacing.lg,
-    borderRadius: borderRadius.xl,
+    borderRadius: borderRadius.xxl,
+    overflow: 'hidden',
     borderWidth: 1.5,
     borderColor: '#E2E8F0',
-    ...shadows.sm,
+    ...shadows.md,
   },
-  fleetCardTitle: {
-    ...typography.h3,
-    fontSize: 18,
+  fleetImage: {
+    width: '100%',
+    height: 140,
+    backgroundColor: '#1E293B',
+  },
+  fleetInfo: {
+    padding: spacing.lg,
+  },
+  fleetTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  fleetName: {
+    ...typography.h4,
+    fontSize: 17,
     color: colors.textPrimary,
-    marginTop: spacing.sm,
   },
-  fleetCardSpecs: {
+  fleetRatingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginVertical: 4,
+  },
+  fleetRating: {
     ...typography.caption,
     fontSize: 13,
     fontWeight: '800',
-    color: colors.textSecondary,
-    marginTop: 3,
+    color: colors.textPrimary,
   },
-  fleetCardDesc: {
+  fleetSeats: {
+    ...typography.caption,
+    fontSize: 12,
+    color: colors.textSecondary,
+  },
+  fleetAmenities: {
     ...typography.caption,
     fontSize: 12,
     color: colors.textMuted,
     marginTop: 4,
-    lineHeight: 16,
+  },
+  guaranteeContainer: {
+    paddingHorizontal: spacing.lg,
+    marginTop: spacing.xl,
+  },
+  guaranteeCard: {
+    padding: spacing.lg,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    borderRadius: borderRadius.xxl,
+  },
+  guaranteeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.lg,
+  },
+  guaranteeIconCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#FFEDD5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  guaranteeTitle: {
+    ...typography.h4,
+    fontSize: 16,
+    color: colors.textPrimary,
+  },
+  guaranteeSub: {
+    ...typography.caption,
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
+    lineHeight: 17,
   },
   modalBackdrop: {
     flex: 1,
@@ -879,7 +1061,7 @@ const styles = StyleSheet.create({
   modalStopItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.md + 2,
+    paddingVertical: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: '#F1F5F9',
   },
@@ -888,6 +1070,12 @@ const styles = StyleSheet.create({
     marginHorizontal: -spacing.md,
     paddingHorizontal: spacing.md,
     borderRadius: borderRadius.lg,
+  },
+  modalStopImage: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.md,
+    backgroundColor: '#E2E8F0',
   },
   modalStopName: {
     ...typography.h4,

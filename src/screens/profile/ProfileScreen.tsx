@@ -5,11 +5,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   StatusBar,
   Switch,
   Alert,
+  Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Card } from '../../components/cards/Card';
@@ -17,7 +18,6 @@ import { Button } from '../../components/buttons/Button';
 import {
   ShieldIcon,
   UserIcon,
-  BusIcon,
   PhoneIcon,
 } from '../../components/icons/AppIcons';
 
@@ -38,22 +38,24 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       <Header title="Passenger Profile" subtitle="Account & Terminal Support" showBack={false} />
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* User Card */}
+        {/* User Card with Cover Photo */}
         <Card variant="elevated" style={styles.userCard}>
-          <View style={styles.avatarCircle}>
-            <UserIcon size={36} color={colors.primary} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.userName}>{user?.name || 'Guest Traveler'}</Text>
-            <Text style={styles.userPhone}>{user?.phone || 'Browsing as Guest'}</Text>
-            <View style={styles.memberTag}>
-              <Text style={styles.memberTagText}>Verified Corridor Passenger</Text>
+          <View style={styles.userRow}>
+            <View style={styles.avatarCircle}>
+              <UserIcon size={36} color={colors.primary} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.userName}>{user?.name || 'Guest Traveler'}</Text>
+              <Text style={styles.userPhone}>{user?.phone || 'Browsing as Guest'}</Text>
+              <View style={styles.memberTag}>
+                <Text style={styles.memberTagText}>Verified Corridor Passenger</Text>
+              </View>
             </View>
           </View>
         </Card>
@@ -158,11 +160,16 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   userCard: {
+    padding: spacing.xl,
+    borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+  },
+  userRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.lg,
-    padding: spacing.xl,
-    borderRadius: borderRadius.xxl,
   },
   avatarCircle: {
     width: 68,
@@ -202,6 +209,9 @@ const styles = StyleSheet.create({
   sectionCard: {
     padding: spacing.xl,
     borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
   },
   cardHeading: {
     ...typography.h3,

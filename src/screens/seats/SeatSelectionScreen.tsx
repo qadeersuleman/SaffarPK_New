@@ -5,10 +5,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   StatusBar,
   Alert,
+  Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Button } from '../../components/buttons/Button';
@@ -117,8 +118,8 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       <Header
         title="Select Your Seats"
@@ -137,6 +138,26 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Luxury Coach Interior Photo Showcase */}
+        <View style={styles.coachHeroCard}>
+          <Image
+            source={{
+              uri:
+                schedule.bus.interiorImageUrl ||
+                schedule.bus.imageUrl ||
+                'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80',
+            }}
+            style={styles.coachHeroImage}
+          />
+          <View style={styles.coachHeroOverlay} />
+          <View style={styles.coachHeroContent}>
+            <Text style={styles.coachHeroTitle}>{schedule.bus.name}</Text>
+            <Text style={styles.coachHeroSub}>
+              {schedule.busCategory} Class • Fully Air-Conditioned • USB Charging
+            </Text>
+          </View>
+        </View>
+
         {/* Legend */}
         <View style={styles.legendRow}>
           <View style={styles.legendItem}>
@@ -153,7 +174,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendBox, { backgroundColor: '#FCE7F3', borderColor: '#F472B6' }]} />
-            <Text style={styles.legendText}>Ladies</Text>
+            <Text style={styles.legendText}>Ladies Only</Text>
           </View>
         </View>
 
@@ -269,6 +290,40 @@ const styles = StyleSheet.create({
   scrollContent: {
     padding: spacing.lg,
     paddingBottom: 120,
+  },
+  coachHeroCard: {
+    height: 120,
+    borderRadius: borderRadius.xxl,
+    overflow: 'hidden',
+    marginBottom: spacing.lg,
+    position: 'relative',
+    ...shadows.md,
+  },
+  coachHeroImage: {
+    width: '100%',
+    height: '100%',
+  },
+  coachHeroOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(11, 15, 25, 0.65)',
+  },
+  coachHeroContent: {
+    position: 'absolute',
+    bottom: spacing.md,
+    left: spacing.lg,
+    right: spacing.lg,
+  },
+  coachHeroTitle: {
+    ...typography.h3,
+    fontSize: 19,
+    color: colors.textWhite,
+  },
+  coachHeroSub: {
+    ...typography.caption,
+    fontSize: 12,
+    color: '#FED7AA',
+    marginTop: 2,
+    fontWeight: '700',
   },
   legendRow: {
     flexDirection: 'row',

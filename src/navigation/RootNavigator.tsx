@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, SafeAreaView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../theme';
 import { BusIcon, LocationPinIcon, CalendarIcon, UserIcon } from '../components/icons/AppIcons';
 import { SplashScreen } from '../screens/splash/SplashScreen';
@@ -31,6 +32,7 @@ type ActiveFlow =
 type MainTab = 'home' | 'trips' | 'track' | 'profile';
 
 export const RootNavigator: React.FC = () => {
+  const insets = useSafeAreaInsets();
   const [currentFlow, setCurrentFlow] = useState<ActiveFlow>('splash');
   const [activeTab, setActiveTab] = useState<MainTab>('home');
 
@@ -238,7 +240,7 @@ export const RootNavigator: React.FC = () => {
 
   // Main Bottom-Tab Layout
   return (
-    <SafeAreaView style={styles.mainContainer}>
+    <View style={styles.mainContainer}>
       <View style={styles.tabContent}>
         {activeTab === 'home' && (
           <HomeScreen
@@ -273,7 +275,14 @@ export const RootNavigator: React.FC = () => {
       </View>
 
       {/* Modern High-End Bottom Navigation Bar */}
-      <View style={styles.bottomNav}>
+      <View
+        style={[
+          styles.bottomNav,
+          {
+            paddingBottom: insets.bottom > 0 ? insets.bottom + 4 : spacing.md,
+          },
+        ]}
+      >
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => setActiveTab('home')}
@@ -338,7 +347,7 @@ export const RootNavigator: React.FC = () => {
           </Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -354,11 +363,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    paddingVertical: spacing.md,
+    backgroundColor: '#FFFFFF',
+    paddingTop: spacing.md,
     borderTopWidth: 1.5,
     borderTopColor: '#E2E8F0',
-    minHeight: 68,
     ...shadows.lg,
   },
   navItem: {

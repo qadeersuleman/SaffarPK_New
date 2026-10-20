@@ -4,10 +4,10 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   StatusBar,
   Animated,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Badge } from '../../components/common/Badge';
@@ -62,8 +62,8 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
   const nextStop = ALL_STOPS[Math.min(ALL_STOPS.length - 1, currentStopIndex + 1)];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="light-content" backgroundColor="#0B0F19" />
 
       <Header
         title="Live Highway Tracking"
@@ -207,16 +207,16 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#0B0F19',
   },
   statusBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
+    backgroundColor: '#111827',
     borderTopWidth: 1.5,
     borderBottomWidth: 1.5,
-    borderColor: '#334155',
+    borderColor: '#1F2937',
     paddingVertical: spacing.md + 2,
     paddingHorizontal: spacing.lg,
   },
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
   vDivider: {
     width: 1.5,
     height: 28,
-    backgroundColor: '#334155',
+    backgroundColor: '#1F2937',
   },
   statusValue: {
     ...typography.label,
@@ -278,6 +278,10 @@ const styles = StyleSheet.create({
     padding: spacing.xl,
     marginBottom: spacing.lg,
     borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    ...shadows.md,
   },
   etaHeader: {
     flexDirection: 'row',
@@ -444,6 +448,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xl,
     padding: spacing.lg,
     borderRadius: borderRadius.xxl,
+    backgroundColor: '#111827',
   },
   driverRow: {
     flexDirection: 'row',
@@ -454,7 +459,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: '#2A2A36',
+    backgroundColor: '#1F2937',
     alignItems: 'center',
     justifyContent: 'center',
   },

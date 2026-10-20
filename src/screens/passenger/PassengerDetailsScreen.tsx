@@ -5,17 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   StatusBar,
+  Image,
 } from 'react-native';
-import { colors, typography, spacing, borderRadius } from '../../theme';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Card } from '../../components/cards/Card';
 import { Input } from '../../components/inputs/Input';
 import { Button } from '../../components/buttons/Button';
 import {
   ShieldIcon,
-  BusIcon,
   UserIcon,
   PhoneIcon,
 } from '../../components/icons/AppIcons';
@@ -71,8 +71,8 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       <Header
         title="Passenger Details"
@@ -82,12 +82,17 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
       />
 
       <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-        {/* Journey Summary Card */}
-        <Card variant="orangeSubtle" style={styles.summaryCard}>
+        {/* Journey Summary Card with Coach Photo */}
+        <Card variant="elevated" style={styles.summaryCard}>
           <View style={styles.summaryHeader}>
-            <View style={styles.busBadge}>
-              <BusIcon size={24} color={colors.primary} />
-            </View>
+            <Image
+              source={{
+                uri:
+                  schedule.bus.imageUrl ||
+                  'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
+              }}
+              style={styles.busThumbnail}
+            />
             <View style={{ flex: 1 }}>
               <Text style={styles.summaryBusName}>{schedule.busName}</Text>
               <Text style={styles.summaryRoute}>
@@ -210,7 +215,7 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
         <View style={styles.policyRow}>
           <ShieldIcon size={18} color={colors.success} />
           <Text style={styles.policyText}>
-            Guaranteed departure • Free refund up to 2 hours before trip • 15 kg luggage allowance
+            Guaranteed departure • Free cancellation up to 2 hours before trip • 15 kg luggage allowance
           </Text>
         </View>
 
@@ -238,19 +243,21 @@ const styles = StyleSheet.create({
   summaryCard: {
     padding: spacing.lg,
     borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    ...shadows.md,
   },
   summaryHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.md,
   },
-  busBadge: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#FFE8D6',
-    alignItems: 'center',
-    justifyContent: 'center',
+  busThumbnail: {
+    width: 52,
+    height: 52,
+    borderRadius: borderRadius.md,
+    backgroundColor: '#1E293B',
   },
   summaryBusName: {
     ...typography.h3,
@@ -266,7 +273,7 @@ const styles = StyleSheet.create({
   },
   summaryDivider: {
     height: 1.5,
-    backgroundColor: colors.borderOrange,
+    backgroundColor: '#F1F5F9',
     marginVertical: spacing.md,
   },
   summaryRow: {
@@ -296,6 +303,10 @@ const styles = StyleSheet.create({
   formCard: {
     padding: spacing.xl,
     borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    ...shadows.md,
   },
   sectionHeading: {
     ...typography.h3,
@@ -354,6 +365,10 @@ const styles = StyleSheet.create({
   fareCard: {
     padding: spacing.xl,
     borderRadius: borderRadius.xxl,
+    backgroundColor: colors.surface,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    ...shadows.md,
   },
   fareRow: {
     flexDirection: 'row',

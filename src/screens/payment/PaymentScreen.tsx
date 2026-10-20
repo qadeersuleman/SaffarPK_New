@@ -4,11 +4,11 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   StatusBar,
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Card } from '../../components/cards/Card';
@@ -42,7 +42,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
   const handlePay = () => {
     setIsProcessing(true);
-    setProcessingStep('Connecting to payment gateway...');
+    setProcessingStep('Connecting to secure gateway...');
 
     setTimeout(() => {
       setProcessingStep('Reserving seat hold & verifying MPIN...');
@@ -60,8 +60,8 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       <Header
         title="Payment Gateway"
@@ -233,6 +233,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xxl,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
   },
   amountLabel: {
     ...typography.caption,
@@ -305,6 +307,7 @@ const styles = StyleSheet.create({
   walletInputCard: {
     padding: spacing.lg,
     borderRadius: borderRadius.xl,
+    backgroundColor: colors.surface,
   },
   walletHelpText: {
     ...typography.caption,

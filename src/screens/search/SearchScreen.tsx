@@ -5,9 +5,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  SafeAreaView,
   StatusBar,
+  Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Badge } from '../../components/common/Badge';
@@ -49,8 +50,10 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
   // Map schedules with vehicle data and stop timings
   const enrichedSchedules: BusSchedule[] = (schedulesData as any[]).map(item => {
     const bus = busesData.find(b => b.id === item.busId) || (busesData[0] as any);
-    const originTiming = item.stopTimings?.find((st: any) => st.stopId === origin.id)?.scheduledTime || item.departureTime;
-    const destTiming = item.stopTimings?.find((st: any) => st.stopId === destination.id)?.scheduledTime || item.arrivalTime;
+    const originTiming =
+      item.stopTimings?.find((st: any) => st.stopId === origin.id)?.scheduledTime || item.departureTime;
+    const destTiming =
+      item.stopTimings?.find((st: any) => st.stopId === destination.id)?.scheduledTime || item.arrivalTime;
     const fare = getFare(origin.id, destination.id, item.busCategory);
 
     return {
@@ -70,8 +73,8 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
     });
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       {/* Header */}
       <Header
@@ -81,7 +84,7 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
         onBack={onBack}
       />
 
-      {/* Filter and Sort Chips */}
+      {/* Filter and Sort Bar */}
       <View style={styles.filterSection}>
         <View style={styles.filterRow}>
           {(['all', 'Executive', 'Royal', 'Standard'] as const).map(cat => (
@@ -139,30 +142,41 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
             onPress={() => onSelectSchedule(item, item.baseFare)}
             style={styles.busCard}
           >
-            {/* Top row: Bus name & category */}
+            {/* Top row: Bus photo thumbnail + name & category */}
             <View style={styles.cardTopRow}>
+              <Image
+                source={{
+                  uri:
+                    item.bus.imageUrl ||
+                    'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
+                }}
+                style={styles.busThumbnail}
+              />
               <View style={styles.busInfo}>
-                <Text style={styles.busName}>{item.busName}</Text>
+                <View style={styles.busTitleBadgeRow}>
+                  <Text style={styles.busName} numberOfLines={1}>
+                    {item.busName}
+                  </Text>
+                  <Badge
+                    label={item.busCategory}
+                    variant={
+                      item.busCategory === 'Royal'
+                        ? 'warning'
+                        : item.busCategory === 'Executive'
+                        ? 'primary'
+                        : 'muted'
+                    }
+                  />
+                </View>
                 <View style={styles.ratingRow}>
-                  <StarIcon size={16} color="#F59E0B" />
+                  <StarIcon size={15} color="#F59E0B" />
                   <Text style={styles.ratingText}>{item.bus.rating}</Text>
                   <Text style={styles.busPlate}>• {item.bus.registrationNumber}</Text>
                 </View>
               </View>
-
-              <Badge
-                label={item.busCategory}
-                variant={
-                  item.busCategory === 'Royal'
-                    ? 'warning'
-                    : item.busCategory === 'Executive'
-                    ? 'primary'
-                    : 'muted'
-                }
-              />
             </View>
 
-            {/* Time & Route Bar */}
+            {/* Timing & Route Bar */}
             <View style={styles.timingSection}>
               <View style={styles.timeNode}>
                 <Text style={styles.timeText}>{item.departureTime}</Text>
@@ -193,12 +207,12 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
               </View>
               <View style={styles.amenityChip}>
                 <PlugIcon size={14} color="#D97706" />
-                <Text style={styles.amenityText}>Charging Port</Text>
+                <Text style={styles.amenityText}>USB Port</Text>
               </View>
               {item.busCategory !== 'Standard' && (
                 <View style={styles.amenityChip}>
                   <WifiIcon size={14} color="#059669" />
-                  <Text style={styles.amenityText}>High-Speed WiFi</Text>
+                  <Text style={styles.amenityText}>Free WiFi</Text>
                 </View>
               )}
             </View>
@@ -239,7 +253,9 @@ const styles = StyleSheet.create({
   filterSection: {
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.sm,
-    backgroundColor: colors.background,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
   },
   filterRow: {
     flexDirection: 'row',
@@ -250,7 +266,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.full,
-    backgroundColor: colors.surface,
+    backgroundColor: '#F8FAFC',
     borderWidth: 1.5,
     borderColor: '#E2E8F0',
   },
@@ -299,30 +315,43 @@ const styles = StyleSheet.create({
   busCard: {
     backgroundColor: colors.surface,
     borderRadius: borderRadius.xxl,
-    padding: spacing.xl,
+    padding: spacing.lg,
     borderWidth: 1.5,
     borderColor: '#E2E8F0',
     ...shadows.md,
   },
   cardTopRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    gap: spacing.md,
     marginBottom: spacing.md,
+  },
+  busThumbnail: {
+    width: 60,
+    height: 60,
+    borderRadius: borderRadius.lg,
+    backgroundColor: '#1E293B',
   },
   busInfo: {
     flex: 1,
   },
+  busTitleBadgeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   busName: {
     ...typography.h3,
-    fontSize: 19,
+    fontSize: 18,
     color: colors.textPrimary,
+    flex: 1,
+    marginRight: spacing.xs,
   },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 3,
+    marginTop: 4,
   },
   ratingText: {
     ...typography.caption,
@@ -427,7 +456,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: spacing.md + 2,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
     marginTop: spacing.xs,

@@ -5,10 +5,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  SafeAreaView,
   StatusBar,
   Share,
+  Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Button } from '../../components/buttons/Button';
 import { Badge } from '../../components/common/Badge';
@@ -41,8 +42,8 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="light-content" backgroundColor="#0B0F19" />
 
       {/* Top Confirmed Header */}
       <View style={styles.topHeader}>
@@ -51,7 +52,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
         </View>
         <Text style={styles.confirmedTitle}>Booking Confirmed!</Text>
         <Text style={styles.confirmedSub}>
-          Seat guaranteed. Present this digital ticket to the conductor upon boarding.
+          Seat guaranteed. Present this digital pass to the conductor upon boarding.
         </Text>
       </View>
 
@@ -66,7 +67,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
               </Text>
               <Text style={styles.ticketRef}>REF: {booking.bookingRef}</Text>
             </View>
-            <Badge label="VERIFIED E-TICKET" variant="success" />
+            <Badge label="VERIFIED PASS" variant="success" />
           </View>
 
           {/* Route Overview Section */}
@@ -161,13 +162,13 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#0B0F19',
   },
   topHeader: {
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xl,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
   },
   successIconBox: {
     width: 60,

@@ -6,6 +6,7 @@ export interface RouteStop {
   landmark: string;
   latitude: number;
   longitude: number;
+  imageUrl?: string;
 }
 
 export interface BusRoute {
@@ -36,6 +37,8 @@ export interface BusVehicle {
   totalSeats: number;
   rating: number;
   amenities: string[];
+  imageUrl?: string;
+  interiorImageUrl?: string;
   layout: {
     rows: number;
     leftSeatsPerRow: number;

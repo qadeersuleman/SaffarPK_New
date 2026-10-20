@@ -5,9 +5,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  SafeAreaView,
   StatusBar,
+  Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Badge } from '../../components/common/Badge';
@@ -35,8 +36,8 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       <Header title="My Bookings" subtitle="SaffarPK Trip Records" showBack={false} />
 
@@ -87,9 +88,19 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
             style={styles.tripCard}
           >
             <View style={styles.tripCardHeader}>
-              <View>
-                <Text style={styles.busName}>{item.busName}</Text>
-                <Text style={styles.refText}>REF: {item.bookingRef}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, flex: 1 }}>
+                <Image
+                  source={{
+                    uri:
+                      item.destinationStop.imageUrl ||
+                      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
+                  }}
+                  style={styles.tripCityThumbnail}
+                />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.busName}>{item.busName}</Text>
+                  <Text style={styles.refText}>REF: {item.bookingRef}</Text>
+                </View>
               </View>
               <Badge label={item.busCategory} variant="category" />
             </View>
@@ -140,7 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.xs,
-    backgroundColor: colors.background,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1.5,
     borderBottomColor: '#E2E8F0',
   },
@@ -180,6 +191,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: spacing.md,
+  },
+  tripCityThumbnail: {
+    width: 48,
+    height: 48,
+    borderRadius: borderRadius.lg,
+    backgroundColor: '#1E293B',
   },
   busName: {
     ...typography.h3,
