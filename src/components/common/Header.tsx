@@ -62,11 +62,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md + 2,
-    backgroundColor: colors.background,
+    paddingVertical: spacing.md,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E2E8F0',
   },
   darkContainer: {
     backgroundColor: colors.dark,
+    borderBottomColor: '#1E293B',
   },
   leftRow: {
     flexDirection: 'row',

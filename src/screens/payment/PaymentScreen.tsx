@@ -61,7 +61,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="dark-content" />
 
       <Header
         title="Payment Gateway"

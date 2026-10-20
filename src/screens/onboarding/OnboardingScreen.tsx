@@ -82,7 +82,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-      <StatusBar barStyle="light-content" backgroundColor="#0F172A" />
+      <StatusBar barStyle="light-content" />
 
       {/* Top Bar with Skip */}
       <View style={styles.topBar}>

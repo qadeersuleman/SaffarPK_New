@@ -98,7 +98,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
+      <StatusBar barStyle="light-content" />
 
       <ScrollView
         contentContainerStyle={[
@@ -324,12 +324,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* Featured Corridor Stops with High-Res Photography */}
         <View style={styles.stationsSection}>
           <View style={styles.sectionHeaderRow}>
-            <div>
+            <View>
               <Text style={styles.sectionTitle}>Corridor Stations</Text>
               <Text style={styles.sectionSubtitle}>
                 Tap any stop along the N-5 route to select it
               </Text>
-            </div>
+            </View>
           </View>
 
           <ScrollView
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   heroOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(11, 15, 25, 0.88)',
   },
   topHeader: {
@@ -897,7 +897,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   stationImageOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(11, 15, 25, 0.65)',
   },
   stationCardContent: {

@@ -119,7 +119,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="dark-content" />
 
       <Header
         title="Select Your Seats"
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   coachHeroOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(11, 15, 25, 0.65)',
   },
   coachHeroContent: {

@@ -39,7 +39,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="dark-content" />
 
       <Header title="Passenger Profile" subtitle="Account & Terminal Support" showBack={false} />
 

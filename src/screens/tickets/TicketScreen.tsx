@@ -43,7 +43,7 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar barStyle="light-content" backgroundColor="#0B0F19" />
+      <StatusBar barStyle="light-content" />
 
       {/* Top Confirmed Header */}
       <View style={styles.topHeader}>

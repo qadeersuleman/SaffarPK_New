@@ -63,7 +63,7 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar barStyle="light-content" backgroundColor="#0B0F19" />
+      <StatusBar barStyle="light-content" />
 
       <Header
         title="Live Highway Tracking"

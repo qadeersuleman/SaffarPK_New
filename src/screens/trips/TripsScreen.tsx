@@ -37,7 +37,7 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBar barStyle="dark-content" />
 
       <Header title="My Bookings" subtitle="SaffarPK Trip Records" showBack={false} />
 
