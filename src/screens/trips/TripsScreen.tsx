@@ -8,13 +8,14 @@ import {
   StatusBar,
   Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Badge } from '../../components/common/Badge';
 import { Button } from '../../components/buttons/Button';
 import { BusIcon } from '../../components/icons/AppIcons';
 import { Booking } from '../../types';
+import { FadeInUp, ScalePressable } from '../../components/animations';
 
 interface TripsScreenProps {
   bookings: Booking[];
@@ -29,6 +30,7 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
   onTrackBus,
   onNewBooking,
 }) => {
+  const insets = useSafeAreaInsets();
   const [tab, setTab] = useState<'upcoming' | 'completed'>('upcoming');
 
   const filtered = bookings.filter(b =>
@@ -43,29 +45,34 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
 
       {/* Tabs */}
       <View style={styles.tabBar}>
-        <TouchableOpacity
+        <ScalePressable
+          activeScale={0.95}
           onPress={() => setTab('upcoming')}
           style={[styles.tabItem, tab === 'upcoming' ? styles.tabItemActive : null]}
         >
           <Text style={[styles.tabText, tab === 'upcoming' ? styles.tabTextActive : null]}>
             Upcoming Trips ({bookings.filter(b => b.ticketStatus === 'confirmed').length})
           </Text>
-        </TouchableOpacity>
+        </ScalePressable>
 
-        <TouchableOpacity
+        <ScalePressable
+          activeScale={0.95}
           onPress={() => setTab('completed')}
           style={[styles.tabItem, tab === 'completed' ? styles.tabItemActive : null]}
         >
           <Text style={[styles.tabText, tab === 'completed' ? styles.tabTextActive : null]}>
             Past Trips
           </Text>
-        </TouchableOpacity>
+        </ScalePressable>
       </View>
 
       <FlatList
         data={filtered}
         keyExtractor={item => item.bookingId}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: insets.bottom + 80 },
+        ]}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyBox}>
@@ -81,61 +88,63 @@ export const TripsScreen: React.FC<TripsScreenProps> = ({
             />
           </View>
         }
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            activeOpacity={0.92}
-            onPress={() => onSelectBooking(item)}
-            style={styles.tripCard}
-          >
-            <View style={styles.tripCardHeader}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, flex: 1 }}>
-                <Image
-                  source={{
-                    uri:
-                      item.destinationStop.imageUrl ||
-                      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
-                  }}
-                  style={styles.tripCityThumbnail}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.busName}>{item.busName}</Text>
-                  <Text style={styles.refText}>REF: {item.bookingRef}</Text>
+        renderItem={({ item, index }) => (
+          <FadeInUp delay={Math.min(index * 80, 350)} distance={20}>
+            <ScalePressable
+              activeScale={0.98}
+              onPress={() => onSelectBooking(item)}
+              style={styles.tripCard}
+            >
+              <View style={styles.tripCardHeader}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, flex: 1 }}>
+                  <Image
+                    source={{
+                      uri:
+                        item.destinationStop.imageUrl ||
+                        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
+                    }}
+                    style={styles.tripCityThumbnail}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.busName}>{item.busName}</Text>
+                    <Text style={styles.refText}>REF: {item.bookingRef}</Text>
+                  </View>
+                </View>
+                <Badge label={item.busCategory} variant="category" />
+              </View>
+
+              <View style={styles.routeRow}>
+                <View>
+                  <Text style={styles.timeText}>{item.departureTime}</Text>
+                  <Text style={styles.stationName}>{item.originStop.name}</Text>
+                </View>
+                <Text style={styles.arrowText}>➔</Text>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={styles.timeText}>Arrival</Text>
+                  <Text style={styles.stationName}>{item.destinationStop.name}</Text>
                 </View>
               </View>
-              <Badge label={item.busCategory} variant="category" />
-            </View>
 
-            <View style={styles.routeRow}>
-              <View>
-                <Text style={styles.timeText}>{item.departureTime}</Text>
-                <Text style={styles.stationName}>{item.originStop.name}</Text>
+              <View style={styles.tripCardFooter}>
+                <Text style={styles.seatsInfo}>
+                  Seats: <Text style={{ fontWeight: '800', color: colors.textPrimary }}>{item.seats.join(', ')}</Text>
+                </Text>
+                <View style={styles.cardActions}>
+                  <Button
+                    title="Track Coach"
+                    size="small"
+                    variant="outline"
+                    onPress={() => onTrackBus(item)}
+                  />
+                  <Button
+                    title="View Ticket"
+                    size="small"
+                    onPress={() => onSelectBooking(item)}
+                  />
+                </View>
               </View>
-              <Text style={styles.arrowText}>➔</Text>
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text style={styles.timeText}>Arrival</Text>
-                <Text style={styles.stationName}>{item.destinationStop.name}</Text>
-              </View>
-            </View>
-
-            <View style={styles.tripCardFooter}>
-              <Text style={styles.seatsInfo}>
-                Seats: <Text style={{ fontWeight: '800', color: colors.textPrimary }}>{item.seats.join(', ')}</Text>
-              </Text>
-              <View style={styles.cardActions}>
-                <Button
-                  title="Track Coach"
-                  size="small"
-                  variant="outline"
-                  onPress={() => onTrackBus(item)}
-                />
-                <Button
-                  title="View Ticket"
-                  size="small"
-                  onPress={() => onSelectBooking(item)}
-                />
-              </View>
-            </View>
-          </TouchableOpacity>
+            </ScalePressable>
+          </FadeInUp>
         )}
       />
     </SafeAreaView>
@@ -241,6 +250,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
     marginTop: spacing.lg,
     paddingTop: spacing.md,
     borderTopWidth: 1.5,

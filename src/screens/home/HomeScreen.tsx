@@ -27,6 +27,12 @@ import {
 import { ALL_STOPS, getFare, getEstimatedDurationMinutes } from '../../utils/routeUtils';
 import { RouteStop } from '../../types';
 import busesData from '../../data/buses.json';
+import {
+  FadeInUp,
+  ScalePressable,
+  PulseBeacon,
+  FloatingElement,
+} from '../../components/animations';
 
 interface HomeScreenProps {
   onSearch: (params: {
@@ -51,26 +57,52 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [passengers, setPassengers] = useState<number>(1);
   const [pickingFor, setPickingFor] = useState<'origin' | 'destination' | null>(null);
 
-  // Swap Animation
+  // Fluid Swap & Counter Animations
   const rotateAnim = useRef(new Animated.Value(0)).current;
+  const swapOriginY = useRef(new Animated.Value(0)).current;
+  const swapDestY = useRef(new Animated.Value(0)).current;
+  const swapOpacity = useRef(new Animated.Value(1)).current;
+  const countScale = useRef(new Animated.Value(1)).current;
 
   const handleSwap = () => {
-    Animated.sequence([
-      Animated.timing(rotateAnim, {
-        toValue: 1,
-        duration: 250,
-        useNativeDriver: true,
-      }),
-      Animated.timing(rotateAnim, {
-        toValue: 0,
-        duration: 0,
-        useNativeDriver: true,
-      }),
+    Animated.parallel([
+      Animated.sequence([
+        Animated.timing(rotateAnim, {
+          toValue: 1,
+          duration: 350,
+          useNativeDriver: true,
+        }),
+        Animated.timing(rotateAnim, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(swapOpacity, { toValue: 0.15, duration: 120, useNativeDriver: true }),
+        Animated.timing(swapOpacity, { toValue: 1, duration: 220, useNativeDriver: true }),
+      ]),
+      Animated.sequence([
+        Animated.timing(swapOriginY, { toValue: 14, duration: 120, useNativeDriver: true }),
+        Animated.spring(swapOriginY, { toValue: 0, friction: 6, tension: 50, useNativeDriver: true }),
+      ]),
+      Animated.sequence([
+        Animated.timing(swapDestY, { toValue: -14, duration: 120, useNativeDriver: true }),
+        Animated.spring(swapDestY, { toValue: 0, friction: 6, tension: 50, useNativeDriver: true }),
+      ]),
     ]).start();
 
     const temp = origin;
     setOrigin(destination);
     setDestination(temp);
+  };
+
+  const handlePassengerChange = (newCount: number) => {
+    setPassengers(newCount);
+    Animated.sequence([
+      Animated.timing(countScale, { toValue: 1.35, duration: 90, useNativeDriver: true }),
+      Animated.spring(countScale, { toValue: 1, friction: 4, tension: 60, useNativeDriver: true }),
+    ]).start();
   };
 
   const handleSelectStop = (stop: RouteStop) => {
@@ -90,7 +122,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   const spin = rotateAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
+    outputRange: ['0deg', '360deg'],
   });
 
   const estDuration = getEstimatedDurationMinutes(origin.id, destination.id);
@@ -103,9 +135,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + 80 },
+          { paddingBottom: insets.bottom + 120 },
         ]}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        nestedScrollEnabled={true}
       >
         {/* Cinematic Hero Section with High-Res Image Background */}
         <ImageBackground
@@ -125,25 +159,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 Saffar<Text style={{ color: colors.primary }}>PK</Text>
               </Text>
             </View>
-            <View style={styles.corridorBadge}>
-              <View style={styles.livePulseDot} />
-              <Text style={styles.corridorBadgeText}>Sukkur ⇄ Obuaro</Text>
-            </View>
+            <FloatingElement distance={4} duration={2600}>
+              <View style={styles.corridorBadge}>
+                <PulseBeacon size={7} pulseSize={18} color={colors.primary} />
+                <Text style={styles.corridorBadgeText}>Sukkur ⇄ Obuaro</Text>
+              </View>
+            </FloatingElement>
           </View>
 
           {/* Hero Tagline Banner */}
-          <View style={styles.heroBanner}>
+          <FadeInUp delay={60} distance={18} style={styles.heroBanner}>
             <Text style={styles.heroBannerTitle}>
               Luxury Intercity Coach Service
             </Text>
             <Text style={styles.heroBannerSub}>
               Guaranteed seats & punctual departures every hour on N-5
             </Text>
-          </View>
+          </FadeInUp>
         </ImageBackground>
 
-        {/* Floating Route Booking Card */}
-        <View style={styles.selectorWrapper}>
+        {/* Floating Route Booking Card with Entrance Animation */}
+        <FadeInUp delay={120} distance={28} style={styles.selectorWrapper}>
           <Card variant="elevated" style={styles.bookingCard}>
             <View style={styles.cardHeaderRow}>
               <View>
@@ -157,62 +193,76 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
             {/* Interactive Origin & Destination Selector Box */}
             <View style={styles.routeBox}>
-              {/* Origin Picker */}
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => setPickingFor('origin')}
-                style={styles.stopButton}
+              {/* Origin Picker with Fluid Swap Animation */}
+              <Animated.View
+                style={{
+                  opacity: swapOpacity,
+                  transform: [{ translateY: swapOriginY }],
+                }}
               >
-                <View style={styles.pinCircleGreen}>
-                  <LocationPinIcon size={18} color="#16A34A" />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.stopLabel}>DEPARTURE TERMINAL</Text>
-                  <Text style={styles.stopName}>{origin.name}</Text>
-                  <Text style={styles.stopLandmark} numberOfLines={1}>
-                    {origin.landmark}
-                  </Text>
-                </View>
-                <View style={styles.urduBadge}>
-                  <Text style={styles.urduName}>{origin.urduName}</Text>
-                </View>
-              </TouchableOpacity>
+                <ScalePressable
+                  activeScale={0.98}
+                  onPress={() => setPickingFor('origin')}
+                  style={styles.stopButton}
+                >
+                  <View style={styles.pinCircleGreen}>
+                    <LocationPinIcon size={18} color="#16A34A" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.stopLabel}>DEPARTURE TERMINAL</Text>
+                    <Text style={styles.stopName}>{origin.name}</Text>
+                    <Text style={styles.stopLandmark} numberOfLines={1}>
+                      {origin.landmark}
+                    </Text>
+                  </View>
+                  <View style={styles.urduBadge}>
+                    <Text style={styles.urduName}>{origin.urduName}</Text>
+                  </View>
+                </ScalePressable>
+              </Animated.View>
 
-              {/* Swap Button Divider */}
+              {/* Swap Button Divider with Spring Physics */}
               <View style={styles.swapDividerRow}>
                 <View style={styles.dividerLine} />
-                <TouchableOpacity
-                  activeOpacity={0.8}
+                <ScalePressable
+                  activeScale={0.86}
                   onPress={handleSwap}
                   style={styles.swapButton}
                 >
                   <Animated.View style={{ transform: [{ rotate: spin }] }}>
                     <SwapIcon size={20} color={colors.primary} />
                   </Animated.View>
-                </TouchableOpacity>
+                </ScalePressable>
                 <View style={styles.dividerLine} />
               </View>
 
-              {/* Destination Picker */}
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => setPickingFor('destination')}
-                style={styles.stopButton}
+              {/* Destination Picker with Fluid Swap Animation */}
+              <Animated.View
+                style={{
+                  opacity: swapOpacity,
+                  transform: [{ translateY: swapDestY }],
+                }}
               >
-                <View style={styles.pinCircleOrange}>
-                  <LocationPinIcon size={18} color={colors.primary} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.stopLabel}>ARRIVAL TERMINAL</Text>
-                  <Text style={styles.stopName}>{destination.name}</Text>
-                  <Text style={styles.stopLandmark} numberOfLines={1}>
-                    {destination.landmark}
-                  </Text>
-                </View>
-                <View style={styles.urduBadge}>
-                  <Text style={styles.urduName}>{destination.urduName}</Text>
-                </View>
-              </TouchableOpacity>
+                <ScalePressable
+                  activeScale={0.98}
+                  onPress={() => setPickingFor('destination')}
+                  style={styles.stopButton}
+                >
+                  <View style={styles.pinCircleOrange}>
+                    <LocationPinIcon size={18} color={colors.primary} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.stopLabel}>ARRIVAL TERMINAL</Text>
+                    <Text style={styles.stopName}>{destination.name}</Text>
+                    <Text style={styles.stopLandmark} numberOfLines={1}>
+                      {destination.landmark}
+                    </Text>
+                  </View>
+                  <View style={styles.urduBadge}>
+                    <Text style={styles.urduName}>{destination.urduName}</Text>
+                  </View>
+                </ScalePressable>
+              </Animated.View>
             </View>
 
             {/* Travel Date & Passenger Count Selection */}
@@ -222,8 +272,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <Text style={styles.metaLabel}>TRAVEL DATE</Text>
                 <View style={styles.dateSelector}>
                   {(['Today', 'Tomorrow'] as const).map(d => (
-                    <TouchableOpacity
+                    <ScalePressable
                       key={d}
+                      activeScale={0.94}
                       onPress={() => setSelectedDate(d)}
                       style={[
                         styles.dateChip,
@@ -238,28 +289,37 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       >
                         {d}
                       </Text>
-                    </TouchableOpacity>
+                    </ScalePressable>
                   ))}
                 </View>
               </View>
 
-              {/* Passengers Count */}
+              {/* Passengers Count with Scale Animation */}
               <View style={styles.metaBlock}>
                 <Text style={styles.metaLabel}>PASSENGERS</Text>
                 <View style={styles.passengerCounter}>
-                  <TouchableOpacity
-                    onPress={() => setPassengers(Math.max(1, passengers - 1))}
+                  <ScalePressable
+                    activeScale={0.82}
+                    onPress={() => handlePassengerChange(Math.max(1, passengers - 1))}
                     style={styles.counterBtn}
                   >
                     <Text style={styles.counterBtnText}>-</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.passengerCountText}>{passengers}</Text>
-                  <TouchableOpacity
-                    onPress={() => setPassengers(Math.min(4, passengers + 1))}
+                  </ScalePressable>
+                  <Animated.Text
+                    style={[
+                      styles.passengerCountText,
+                      { transform: [{ scale: countScale }] },
+                    ]}
+                  >
+                    {passengers}
+                  </Animated.Text>
+                  <ScalePressable
+                    activeScale={0.82}
+                    onPress={() => handlePassengerChange(Math.min(4, passengers + 1))}
                     style={styles.counterBtn}
                   >
                     <Text style={styles.counterBtnText}>+</Text>
-                  </TouchableOpacity>
+                  </ScalePressable>
                 </View>
               </View>
             </View>
@@ -292,37 +352,39 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               style={styles.searchButton}
             />
           </Card>
-        </View>
+        </FadeInUp>
 
-        {/* Live Bus Tracking Banner */}
+        {/* Live Bus Tracking Banner with Radar Animation */}
         {onNavigateToTracking && (
-          <TouchableOpacity
-            activeOpacity={0.88}
-            onPress={onNavigateToTracking}
-            style={styles.trackingBanner}
-          >
-            <View style={styles.trackingBannerLeft}>
-              <View style={styles.beaconCircle}>
-                <View style={styles.beaconDot} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Text style={styles.trackingBannerTitle}>Live Highway Tracking</Text>
-                  <View style={styles.liveTag}>
-                    <Text style={styles.liveTagText}>LIVE GPS</Text>
-                  </View>
+          <FadeInUp delay={200} distance={20}>
+            <ScalePressable
+              activeScale={0.97}
+              onPress={onNavigateToTracking}
+              style={styles.trackingBanner}
+            >
+              <View style={styles.trackingBannerLeft}>
+                <View style={styles.beaconCircle}>
+                  <PulseBeacon size={14} pulseSize={36} color="#22C55E" />
                 </View>
-                <Text style={styles.trackingBannerSub}>
-                  Track moving coaches in real-time along the N-5 Highway
-                </Text>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Text style={styles.trackingBannerTitle}>Live Highway Tracking</Text>
+                    <View style={styles.liveTag}>
+                      <Text style={styles.liveTagText}>LIVE GPS</Text>
+                    </View>
+                  </View>
+                  <Text style={styles.trackingBannerSub}>
+                    Track moving coaches in real-time along the N-5 Highway
+                  </Text>
+                </View>
               </View>
-            </View>
-            <ArrowForwardIcon size={20} color={colors.primary} />
-          </TouchableOpacity>
+              <ArrowForwardIcon size={20} color={colors.primary} />
+            </ScalePressable>
+          </FadeInUp>
         )}
 
         {/* Featured Corridor Stops with High-Res Photography */}
-        <View style={styles.stationsSection}>
+        <FadeInUp delay={280} distance={24} style={styles.stationsSection}>
           <View style={styles.sectionHeaderRow}>
             <View>
               <Text style={styles.sectionTitle}>Corridor Stations</Text>
@@ -334,15 +396,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           <ScrollView
             horizontal
+            nestedScrollEnabled={true}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.stationsScroll}
           >
             {ALL_STOPS.map(stop => {
               const isCurrentDest = stop.id === destination.id;
               return (
-                <TouchableOpacity
+                <ScalePressable
                   key={stop.id}
-                  activeOpacity={0.88}
+                  activeScale={0.94}
                   onPress={() => setDestination(stop)}
                   style={[
                     styles.stationPhotoCard,
@@ -371,14 +434,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       {stop.landmark}
                     </Text>
                   </View>
-                </TouchableOpacity>
+                </ScalePressable>
               );
             })}
           </ScrollView>
-        </View>
+        </FadeInUp>
 
         {/* Fleet Showcase with Real Coach Photos */}
-        <View style={styles.fleetSection}>
+        <FadeInUp delay={360} distance={24} style={styles.fleetSection}>
           <Text style={styles.sectionTitle}>SaffarPK Coach Fleet</Text>
           <Text style={styles.sectionSubtitle}>
             Engineered for comfort, punctuality, and passenger safety
@@ -386,11 +449,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           <ScrollView
             horizontal
+            nestedScrollEnabled={true}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.fleetScroll}
           >
             {busesData.map(bus => (
-              <View key={bus.id} style={styles.fleetPhotoCard}>
+              <ScalePressable key={bus.id} activeScale={0.96} style={styles.fleetPhotoCard}>
                 <Image
                   source={{
                     uri:
@@ -424,13 +488,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     {bus.amenities.slice(0, 3).join(' • ')}
                   </Text>
                 </View>
-              </View>
+              </ScalePressable>
             ))}
           </ScrollView>
-        </View>
+        </FadeInUp>
 
         {/* Service Guarantees Card */}
-        <View style={styles.guaranteeContainer}>
+        <FadeInUp delay={440} distance={24} style={styles.guaranteeContainer}>
           <Card variant="elevated" style={styles.guaranteeCard}>
             <View style={styles.guaranteeRow}>
               <View style={styles.guaranteeIconCircle}>
@@ -444,7 +508,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </View>
             </View>
           </Card>
-        </View>
+        </FadeInUp>
       </ScrollView>
 
       {/* Stop Picker Modal */}
@@ -470,8 +534,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   (pickingFor === 'destination' && stop.id === destination.id);
 
                 return (
-                  <TouchableOpacity
+                  <ScalePressable
                     key={stop.id}
+                    activeScale={0.97}
                     onPress={() => handleSelectStop(stop)}
                     style={[
                       styles.modalStopItem,
@@ -491,7 +556,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <Text style={styles.modalStopLandmark}>{stop.landmark}</Text>
                     </View>
                     <Text style={styles.modalStopUrdu}>{stop.urduName}</Text>
-                  </TouchableOpacity>
+                  </ScalePressable>
                 );
               })}
             </ScrollView>
@@ -582,6 +647,8 @@ const styles = StyleSheet.create({
   selectorWrapper: {
     marginTop: -spacing.xxl - 12,
     paddingHorizontal: spacing.lg,
+    zIndex: 10,
+    elevation: 6,
   },
   bookingCard: {
     backgroundColor: colors.surface,

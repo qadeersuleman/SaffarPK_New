@@ -15,6 +15,7 @@ import { Header } from '../../components/common/Header';
 import { Button } from '../../components/buttons/Button';
 import { SteeringWheelIcon, ClockIcon } from '../../components/icons/AppIcons';
 import { BusSchedule, RouteStop } from '../../types';
+import { FadeInUp, ScalePressable } from '../../components/animations';
 
 interface SeatSelectionScreenProps {
   schedule: BusSchedule;
@@ -102,10 +103,10 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
     }
 
     return (
-      <TouchableOpacity
+      <ScalePressable
         key={seatId}
         disabled={isBooked}
-        activeOpacity={0.8}
+        activeScale={0.84}
         onPress={() => handleToggleSeat(seatId)}
         style={[
           styles.seatBox,
@@ -114,7 +115,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
         ]}
       >
         <Text style={[styles.seatText, { color: textColor }]}>{seatId}</Text>
-      </TouchableOpacity>
+      </ScalePressable>
     );
   };
 
@@ -138,49 +139,58 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
         <Text style={styles.timerDigits}>{formatTimer(timeLeft)}</Text>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 160 },
+        ]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Luxury Coach Interior Photo Showcase */}
-        <View style={styles.coachHeroCard}>
-          <Image
-            source={{
-              uri:
-                schedule.bus.interiorImageUrl ||
-                schedule.bus.imageUrl ||
-                'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80',
-            }}
-            style={styles.coachHeroImage}
-          />
-          <View style={styles.coachHeroOverlay} />
-          <View style={styles.coachHeroContent}>
-            <Text style={styles.coachHeroTitle}>{schedule.bus.name}</Text>
-            <Text style={styles.coachHeroSub}>
-              {schedule.busCategory} Class • Fully Air-Conditioned • USB Charging
-            </Text>
+        <FadeInUp delay={60} distance={18}>
+          <View style={styles.coachHeroCard}>
+            <Image
+              source={{
+                uri:
+                  schedule.bus.interiorImageUrl ||
+                  schedule.bus.imageUrl ||
+                  'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&auto=format&fit=crop&q=80',
+              }}
+              style={styles.coachHeroImage}
+            />
+            <View style={styles.coachHeroOverlay} />
+            <View style={styles.coachHeroContent}>
+              <Text style={styles.coachHeroTitle}>{schedule.bus.name}</Text>
+              <Text style={styles.coachHeroSub}>
+                {schedule.busCategory} Class • Fully Air-Conditioned • USB Charging
+              </Text>
+            </View>
           </View>
-        </View>
+        </FadeInUp>
 
-        {/* Legend */}
-        <View style={styles.legendRow}>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendBox, { backgroundColor: colors.surface, borderColor: '#CBD5E1' }]} />
-            <Text style={styles.legendText}>Available</Text>
+        {/* Legend & Bus Cabin Visual Layout */}
+        <FadeInUp delay={140} distance={24}>
+          <View style={styles.legendRow}>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendBox, { backgroundColor: colors.surface, borderColor: '#CBD5E1' }]} />
+              <Text style={styles.legendText}>Available</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendBox, { backgroundColor: colors.primary, borderColor: colors.primaryDark }]} />
+              <Text style={styles.legendText}>Selected</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendBox, { backgroundColor: '#E2E8F0', borderColor: '#CBD5E1' }]} />
+              <Text style={styles.legendText}>Booked</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={[styles.legendBox, { backgroundColor: '#FCE7F3', borderColor: '#F472B6' }]} />
+              <Text style={styles.legendText}>Ladies Only</Text>
+            </View>
           </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendBox, { backgroundColor: colors.primary, borderColor: colors.primaryDark }]} />
-            <Text style={styles.legendText}>Selected</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendBox, { backgroundColor: '#E2E8F0', borderColor: '#CBD5E1' }]} />
-            <Text style={styles.legendText}>Booked</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendBox, { backgroundColor: '#FCE7F3', borderColor: '#F472B6' }]} />
-            <Text style={styles.legendText}>Ladies Only</Text>
-          </View>
-        </View>
 
-        {/* Bus Cabin Visual Layout */}
-        <View style={styles.busCabin}>
+          <View style={styles.busCabin}>
           {/* Driver Cabin Row */}
           <View style={styles.driverCabinRow}>
             <View style={styles.frontGlass}>
@@ -224,6 +234,7 @@ export const SeatSelectionScreen: React.FC<SeatSelectionScreenProps> = ({
             <Text style={styles.busRearText}>REAR ENGINE & LUGGAGE</Text>
           </View>
         </View>
+        </FadeInUp>
       </ScrollView>
 
       {/* Floating Bottom Booking Action Bar */}
@@ -472,6 +483,7 @@ const styles = StyleSheet.create({
   },
   fareSummaryCol: {
     flex: 1,
+    marginRight: spacing.md,
   },
   summarySeats: {
     ...typography.caption,
@@ -497,6 +509,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   proceedBtn: {
-    minWidth: 150,
+    minWidth: 130,
+    flexShrink: 0,
   },
 });

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,8 +8,9 @@ import {
   StatusBar,
   Share,
   Image,
+  Animated,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Button } from '../../components/buttons/Button';
 import { Badge } from '../../components/common/Badge';
@@ -19,6 +20,7 @@ import {
   QrCodeIcon,
 } from '../../components/icons/AppIcons';
 import { Booking } from '../../types';
+import { FadeInUp, ScalePressable } from '../../components/animations';
 
 interface TicketScreenProps {
   booking: Booking;
@@ -31,6 +33,18 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
   onTrackBus,
   onHome,
 }) => {
+  const insets = useSafeAreaInsets();
+  const popAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.spring(popAnim, {
+      toValue: 1,
+      tension: 45,
+      friction: 5,
+      useNativeDriver: true,
+    }).start();
+  }, [popAnim]);
+
   const handleShare = async () => {
     try {
       await Share.share({
@@ -45,98 +59,108 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="light-content" />
 
-      {/* Top Confirmed Header */}
+      {/* Top Confirmed Header with Pop Celebration */}
       <View style={styles.topHeader}>
-        <View style={styles.successIconBox}>
+        <Animated.View style={[styles.successIconBox, { transform: [{ scale: popAnim }] }]}>
           <CheckIcon size={28} color={colors.textWhite} />
-        </View>
-        <Text style={styles.confirmedTitle}>Booking Confirmed!</Text>
-        <Text style={styles.confirmedSub}>
-          Seat guaranteed. Present this digital pass to the conductor upon boarding.
-        </Text>
+        </Animated.View>
+        <FadeInUp delay={100} distance={15}>
+          <Text style={styles.confirmedTitle}>Booking Confirmed!</Text>
+          <Text style={styles.confirmedSub}>
+            Seat guaranteed. Present this digital pass to the conductor upon boarding.
+          </Text>
+        </FadeInUp>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {/* Boarding Pass Ticket Card */}
-        <View style={styles.ticketCard}>
-          {/* Ticket Header */}
-          <View style={styles.ticketTop}>
-            <View>
-              <Text style={styles.brandTitle}>
-                Saffar<Text style={{ color: colors.primary }}>PK</Text>
-              </Text>
-              <Text style={styles.ticketRef}>REF: {booking.bookingRef}</Text>
-            </View>
-            <Badge label="VERIFIED PASS" variant="success" />
-          </View>
-
-          {/* Route Overview Section */}
-          <View style={styles.routeSection}>
-            <View style={styles.routeNode}>
-              <Text style={styles.timeLabel}>{booking.departureTime}</Text>
-              <Text style={styles.stationName}>{booking.originStop.name}</Text>
-              <Text style={styles.landmarkText} numberOfLines={1}>
-                {booking.originStop.landmark}
-              </Text>
-            </View>
-
-            <View style={styles.routeDividerCol}>
-              <BusIcon size={24} color={colors.primary} />
-              <View style={styles.dashLine} />
-            </View>
-
-            <View style={[styles.routeNode, { alignItems: 'flex-end' }]}>
-              <Text style={styles.timeLabel}>Arrival</Text>
-              <Text style={styles.stationName}>{booking.destinationStop.name}</Text>
-              <Text style={styles.landmarkText} numberOfLines={1}>
-                {booking.destinationStop.landmark}
-              </Text>
-            </View>
-          </View>
-
-          {/* Perforated Ticket Tear Cutouts */}
-          <View style={styles.notchRow}>
-            <View style={styles.notchLeft} />
-            <View style={styles.notchDashedLine} />
-            <View style={styles.notchRight} />
-          </View>
-
-          {/* Ticket Meta Details Grid */}
-          <View style={styles.ticketBody}>
-            <View style={styles.metaGrid}>
-              <View style={styles.metaCell}>
-                <Text style={styles.cellLabel}>PASSENGER</Text>
-                <Text style={styles.cellValue}>{booking.passenger.fullName}</Text>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 80 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Boarding Pass Ticket Card with Spring Slide-In */}
+        <FadeInUp delay={200} distance={45}>
+          <View style={styles.ticketCard}>
+            {/* Ticket Header */}
+            <View style={styles.ticketTop}>
+              <View>
+                <Text style={styles.brandTitle}>
+                  Saffar<Text style={{ color: colors.primary }}>PK</Text>
+                </Text>
+                <Text style={styles.ticketRef}>REF: {booking.bookingRef}</Text>
               </View>
-              <View style={styles.metaCell}>
-                <Text style={styles.cellLabel}>PHONE NUMBER</Text>
-                <Text style={styles.cellValue}>{booking.passenger.phoneNumber}</Text>
+              <Badge label="VERIFIED PASS" variant="success" />
+            </View>
+
+            {/* Route Overview Section */}
+            <View style={styles.routeSection}>
+              <View style={styles.routeNode}>
+                <Text style={styles.timeLabel}>{booking.departureTime}</Text>
+                <Text style={styles.stationName}>{booking.originStop.name}</Text>
+                <Text style={styles.landmarkText} numberOfLines={1}>
+                  {booking.originStop.landmark}
+                </Text>
               </View>
-              <View style={styles.metaCell}>
-                <Text style={styles.cellLabel}>FLEET CLASS</Text>
-                <Text style={styles.cellValue}>{booking.busCategory}</Text>
+
+              <View style={styles.routeDividerCol}>
+                <BusIcon size={24} color={colors.primary} />
+                <View style={styles.dashLine} />
               </View>
-              <View style={styles.metaCell}>
-                <Text style={styles.cellLabel}>SEAT NUMBERS</Text>
-                <Text style={[styles.cellValue, { color: colors.primary, fontWeight: '900', fontSize: 18 }]}>
-                  {booking.seats.join(', ')}
+
+              <View style={[styles.routeNode, { alignItems: 'flex-end' }]}>
+                <Text style={styles.timeLabel}>Arrival</Text>
+                <Text style={styles.stationName}>{booking.destinationStop.name}</Text>
+                <Text style={styles.landmarkText} numberOfLines={1}>
+                  {booking.destinationStop.landmark}
                 </Text>
               </View>
             </View>
 
-            {/* High-Resolution QR Code Block */}
-            <View style={styles.qrSection}>
-              <View style={styles.qrBox}>
-                <QrCodeIcon size={100} color={colors.dark} />
+            {/* Perforated Ticket Tear Cutouts */}
+            <View style={styles.notchRow}>
+              <View style={styles.notchLeft} />
+              <View style={styles.notchDashedLine} />
+              <View style={styles.notchRight} />
+            </View>
+
+            {/* Ticket Meta Details Grid */}
+            <View style={styles.ticketBody}>
+              <View style={styles.metaGrid}>
+                <View style={styles.metaCell}>
+                  <Text style={styles.cellLabel}>PASSENGER</Text>
+                  <Text style={styles.cellValue}>{booking.passenger.fullName}</Text>
+                </View>
+                <View style={styles.metaCell}>
+                  <Text style={styles.cellLabel}>PHONE NUMBER</Text>
+                  <Text style={styles.cellValue}>{booking.passenger.phoneNumber}</Text>
+                </View>
+                <View style={styles.metaCell}>
+                  <Text style={styles.cellLabel}>FLEET CLASS</Text>
+                  <Text style={styles.cellValue}>{booking.busCategory}</Text>
+                </View>
+                <View style={styles.metaCell}>
+                  <Text style={styles.cellLabel}>SEAT NUMBERS</Text>
+                  <Text style={[styles.cellValue, { color: colors.primary, fontWeight: '900', fontSize: 18 }]}>
+                    {booking.seats.join(', ')}
+                  </Text>
+                </View>
               </View>
-              <Text style={styles.scanCodeText}>Scan by Bus Conductor / Terminal Gate</Text>
-              <Text style={styles.hashText}>{booking.qrCodePayload}</Text>
+
+              {/* High-Resolution QR Code Block */}
+              <View style={styles.qrSection}>
+                <View style={styles.qrBox}>
+                  <QrCodeIcon size={100} color={colors.dark} />
+                </View>
+                <Text style={styles.scanCodeText}>Scan by Bus Conductor / Terminal Gate</Text>
+                <Text style={styles.hashText}>{booking.qrCodePayload}</Text>
+              </View>
             </View>
           </View>
-        </View>
+        </FadeInUp>
 
         {/* Action Buttons */}
-        <View style={styles.actionRow}>
+        <FadeInUp delay={320} distance={20} style={styles.actionRow}>
           <Button
             title="Track Coach Live"
             onPress={onTrackBus}
@@ -149,11 +173,11 @@ export const TicketScreen: React.FC<TicketScreenProps> = ({
             variant="outline"
             style={{ flex: 1 }}
           />
-        </View>
+        </FadeInUp>
 
-        <TouchableOpacity activeOpacity={0.7} onPress={onHome} style={styles.homeBtn}>
+        <ScalePressable activeScale={0.92} onPress={onHome} style={styles.homeBtn}>
           <Text style={styles.homeBtnText}>Return to Home Dashboard</Text>
-        </TouchableOpacity>
+        </ScalePressable>
       </ScrollView>
     </SafeAreaView>
   );

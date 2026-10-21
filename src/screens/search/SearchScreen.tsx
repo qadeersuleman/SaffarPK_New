@@ -8,7 +8,7 @@ import {
   StatusBar,
   Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Badge } from '../../components/common/Badge';
@@ -24,6 +24,7 @@ import { RouteStop, BusSchedule } from '../../types';
 import schedulesData from '../../data/schedules.json';
 import busesData from '../../data/buses.json';
 import { getFare, getEstimatedDurationMinutes } from '../../utils/routeUtils';
+import { FadeInUp, ScalePressable } from '../../components/animations';
 
 interface SearchScreenProps {
   origin: RouteStop;
@@ -42,6 +43,7 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
   onBack,
   onSelectSchedule,
 }) => {
+  const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<'all' | 'Executive' | 'Standard' | 'Royal'>('all');
   const [sortBy, setSortBy] = useState<'departure' | 'fare'>('departure');
 
@@ -88,8 +90,9 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
       <View style={styles.filterSection}>
         <View style={styles.filterRow}>
           {(['all', 'Executive', 'Royal', 'Standard'] as const).map(cat => (
-            <TouchableOpacity
+            <ScalePressable
               key={cat}
+              activeScale={0.93}
               onPress={() => setFilter(cat)}
               style={[
                 styles.chip,
@@ -104,28 +107,32 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
               >
                 {cat === 'all' ? 'All Classes' : cat}
               </Text>
-            </TouchableOpacity>
+            </ScalePressable>
           ))}
         </View>
 
         <View style={styles.sortRow}>
           <Text style={styles.sortLabel}>SORT BY</Text>
-          <TouchableOpacity
+          <ScalePressable
+            activeScale={0.92}
             onPress={() => setSortBy(sortBy === 'departure' ? 'fare' : 'departure')}
             style={styles.sortToggle}
           >
             <Text style={styles.sortToggleText}>
               {sortBy === 'departure' ? '🕒 Departure Time' : '💰 Lowest Fare'}
             </Text>
-          </TouchableOpacity>
+          </ScalePressable>
         </View>
       </View>
 
-      {/* Schedule List */}
+      {/* Schedule List with Staggered Entrance Animations */}
       <FlatList
         data={filtered}
         keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[
+          styles.listContent,
+          { paddingBottom: insets.bottom + 80 },
+        ]}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -136,112 +143,114 @@ export const SearchScreen: React.FC<SearchScreenProps> = ({
             </Text>
           </View>
         }
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            activeOpacity={0.92}
-            onPress={() => onSelectSchedule(item, item.baseFare)}
-            style={styles.busCard}
-          >
-            {/* Top row: Bus photo thumbnail + name & category */}
-            <View style={styles.cardTopRow}>
-              <Image
-                source={{
-                  uri:
-                    item.bus.imageUrl ||
-                    'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
-                }}
-                style={styles.busThumbnail}
-              />
-              <View style={styles.busInfo}>
-                <View style={styles.busTitleBadgeRow}>
-                  <Text style={styles.busName} numberOfLines={1}>
-                    {item.busName}
-                  </Text>
-                  <Badge
-                    label={item.busCategory}
-                    variant={
-                      item.busCategory === 'Royal'
-                        ? 'warning'
-                        : item.busCategory === 'Executive'
-                        ? 'primary'
-                        : 'muted'
-                    }
+        renderItem={({ item, index }) => (
+          <FadeInUp delay={Math.min(index * 75, 350)} distance={22}>
+            <ScalePressable
+              activeScale={0.98}
+              onPress={() => onSelectSchedule(item, item.baseFare)}
+              style={styles.busCard}
+            >
+              {/* Top row: Bus photo thumbnail + name & category */}
+              <View style={styles.cardTopRow}>
+                <Image
+                  source={{
+                    uri:
+                      item.bus.imageUrl ||
+                      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
+                  }}
+                  style={styles.busThumbnail}
+                />
+                <View style={styles.busInfo}>
+                  <View style={styles.busTitleBadgeRow}>
+                    <Text style={styles.busName} numberOfLines={1}>
+                      {item.busName}
+                    </Text>
+                    <Badge
+                      label={item.busCategory}
+                      variant={
+                        item.busCategory === 'Royal'
+                          ? 'warning'
+                          : item.busCategory === 'Executive'
+                          ? 'primary'
+                          : 'muted'
+                      }
+                    />
+                  </View>
+                  <View style={styles.ratingRow}>
+                    <StarIcon size={15} color="#F59E0B" />
+                    <Text style={styles.ratingText}>{item.bus.rating}</Text>
+                    <Text style={styles.busPlate}>• {item.bus.registrationNumber}</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Timing & Route Bar */}
+              <View style={styles.timingSection}>
+                <View style={styles.timeNode}>
+                  <Text style={styles.timeText}>{item.departureTime}</Text>
+                  <Text style={styles.stopNameText}>{origin.name}</Text>
+                </View>
+
+                <View style={styles.durationLineBox}>
+                  <Text style={styles.durationText}>~{durationMin} mins</Text>
+                  <View style={styles.arrowLine}>
+                    <View style={styles.arrowDot} />
+                    <View style={styles.lineH} />
+                    <View style={styles.arrowHead} />
+                  </View>
+                  <Text style={styles.directText}>N-5 Express</Text>
+                </View>
+
+                <View style={[styles.timeNode, { alignItems: 'flex-end' }]}>
+                  <Text style={styles.timeText}>{item.arrivalTime}</Text>
+                  <Text style={styles.stopNameText}>{destination.name}</Text>
+                </View>
+              </View>
+
+              {/* Amenities tags with SVG icons */}
+              <View style={styles.amenitiesRow}>
+                <View style={styles.amenityChip}>
+                  <AcIcon size={14} color="#0284C7" />
+                  <Text style={styles.amenityText}>Full AC</Text>
+                </View>
+                <View style={styles.amenityChip}>
+                  <PlugIcon size={14} color="#D97706" />
+                  <Text style={styles.amenityText}>USB Port</Text>
+                </View>
+                {item.busCategory !== 'Standard' && (
+                  <View style={styles.amenityChip}>
+                    <WifiIcon size={14} color="#059669" />
+                    <Text style={styles.amenityText}>Free WiFi</Text>
+                  </View>
+                )}
+              </View>
+
+              {/* Card Footer: Seats & Price */}
+              <View style={styles.cardFooter}>
+                <View>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <View style={styles.greenPulseDot} />
+                    <Text style={styles.seatsLeftText}>
+                      <Text style={{ fontWeight: '800' }}>{item.availableSeatsCount}</Text> seats left
+                    </Text>
+                  </View>
+                  <Text style={styles.perPassengerText}>per passenger</Text>
+                </View>
+
+                <View style={styles.priceActionRow}>
+                  <View style={{ alignItems: 'flex-end', marginRight: spacing.md }}>
+                    <Text style={styles.fareCurrency}>PKR</Text>
+                    <Text style={styles.fareAmount}>{item.baseFare}</Text>
+                  </View>
+                  <Button
+                    title="Select Seats"
+                    size="small"
+                    onPress={() => onSelectSchedule(item, item.baseFare)}
                   />
                 </View>
-                <View style={styles.ratingRow}>
-                  <StarIcon size={15} color="#F59E0B" />
-                  <Text style={styles.ratingText}>{item.bus.rating}</Text>
-                  <Text style={styles.busPlate}>• {item.bus.registrationNumber}</Text>
-                </View>
               </View>
-            </View>
-
-            {/* Timing & Route Bar */}
-            <View style={styles.timingSection}>
-              <View style={styles.timeNode}>
-                <Text style={styles.timeText}>{item.departureTime}</Text>
-                <Text style={styles.stopNameText}>{origin.name}</Text>
-              </View>
-
-              <View style={styles.durationLineBox}>
-                <Text style={styles.durationText}>~{durationMin} mins</Text>
-                <View style={styles.arrowLine}>
-                  <View style={styles.arrowDot} />
-                  <View style={styles.lineH} />
-                  <View style={styles.arrowHead} />
-                </View>
-                <Text style={styles.directText}>N-5 Express</Text>
-              </View>
-
-              <View style={[styles.timeNode, { alignItems: 'flex-end' }]}>
-                <Text style={styles.timeText}>{item.arrivalTime}</Text>
-                <Text style={styles.stopNameText}>{destination.name}</Text>
-              </View>
-            </View>
-
-            {/* Amenities tags with SVG icons */}
-            <View style={styles.amenitiesRow}>
-              <View style={styles.amenityChip}>
-                <AcIcon size={14} color="#0284C7" />
-                <Text style={styles.amenityText}>Full AC</Text>
-              </View>
-              <View style={styles.amenityChip}>
-                <PlugIcon size={14} color="#D97706" />
-                <Text style={styles.amenityText}>USB Port</Text>
-              </View>
-              {item.busCategory !== 'Standard' && (
-                <View style={styles.amenityChip}>
-                  <WifiIcon size={14} color="#059669" />
-                  <Text style={styles.amenityText}>Free WiFi</Text>
-                </View>
-              )}
-            </View>
-
-            {/* Card Footer: Seats & Price */}
-            <View style={styles.cardFooter}>
-              <View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <View style={styles.greenPulseDot} />
-                  <Text style={styles.seatsLeftText}>
-                    <Text style={{ fontWeight: '800' }}>{item.availableSeatsCount}</Text> seats left
-                  </Text>
-                </View>
-                <Text style={styles.perPassengerText}>per passenger</Text>
-              </View>
-
-              <View style={styles.priceActionRow}>
-                <View style={{ alignItems: 'flex-end', marginRight: spacing.md }}>
-                  <Text style={styles.fareCurrency}>PKR</Text>
-                  <Text style={styles.fareAmount}>{item.baseFare}</Text>
-                </View>
-                <Button
-                  title="Select Seats"
-                  size="small"
-                  onPress={() => onSelectSchedule(item, item.baseFare)}
-                />
-              </View>
-            </View>
-          </TouchableOpacity>
+            </ScalePressable>
+          </FadeInUp>
         )}
       />
     </SafeAreaView>
@@ -467,6 +476,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    gap: spacing.sm,
     paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: '#F1F5F9',
@@ -485,6 +495,7 @@ const styles = StyleSheet.create({
   priceActionRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    flexShrink: 0,
   },
   fareCurrency: {
     fontSize: 11,

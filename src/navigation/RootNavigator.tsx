@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../theme';
 import { BusIcon, LocationPinIcon, CalendarIcon, UserIcon } from '../components/icons/AppIcons';
+import { ScalePressable } from '../components/animations';
 import { SplashScreen } from '../screens/splash/SplashScreen';
 import { OnboardingScreen } from '../screens/onboarding/OnboardingScreen';
 import { LoginScreen } from '../screens/auth/LoginScreen';
@@ -283,8 +284,8 @@ export const RootNavigator: React.FC = () => {
           },
         ]}
       >
-        <TouchableOpacity
-          activeOpacity={0.8}
+        <ScalePressable
+          activeScale={0.88}
           onPress={() => setActiveTab('home')}
           style={[styles.navItem, activeTab === 'home' ? styles.navItemActive : null]}
         >
@@ -297,10 +298,10 @@ export const RootNavigator: React.FC = () => {
           >
             Home
           </Text>
-        </TouchableOpacity>
+        </ScalePressable>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
+        <ScalePressable
+          activeScale={0.88}
           onPress={() => setActiveTab('trips')}
           style={[styles.navItem, activeTab === 'trips' ? styles.navItemActive : null]}
         >
@@ -313,10 +314,10 @@ export const RootNavigator: React.FC = () => {
           >
             My Trips
           </Text>
-        </TouchableOpacity>
+        </ScalePressable>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
+        <ScalePressable
+          activeScale={0.88}
           onPress={() => setActiveTab('track')}
           style={[styles.navItem, activeTab === 'track' ? styles.navItemActive : null]}
         >
@@ -329,10 +330,10 @@ export const RootNavigator: React.FC = () => {
           >
             Live Track
           </Text>
-        </TouchableOpacity>
+        </ScalePressable>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
+        <ScalePressable
+          activeScale={0.88}
           onPress={() => setActiveTab('profile')}
           style={[styles.navItem, activeTab === 'profile' ? styles.navItemActive : null]}
         >
@@ -345,7 +346,7 @@ export const RootNavigator: React.FC = () => {
           >
             Profile
           </Text>
-        </TouchableOpacity>
+        </ScalePressable>
       </View>
     </View>
   );
@@ -361,29 +362,26 @@ const styles = StyleSheet.create({
   },
   bottomNav: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingTop: spacing.md,
+    paddingTop: 8,
     borderTopWidth: 1.5,
     borderTopColor: '#E2E8F0',
     ...shadows.lg,
   },
   navItem: {
+    flex: 1,
     alignItems: 'center',
-    gap: 4,
-    minWidth: 70,
-    paddingVertical: 4,
-    borderRadius: borderRadius.md,
+    justifyContent: 'center',
+    paddingVertical: 6,
   },
-  navItemActive: {
-    transform: [{ scale: 1.05 }],
-  },
+  navItemActive: {},
   navLabel: {
     ...typography.caption,
     fontSize: 11,
     fontWeight: '700',
     color: '#94A3B8',
+    marginTop: 3,
   },
   navLabelActive: {
     color: colors.primary,

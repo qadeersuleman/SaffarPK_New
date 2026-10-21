@@ -10,7 +10,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Card } from '../../components/cards/Card';
@@ -20,6 +20,7 @@ import {
   UserIcon,
   PhoneIcon,
 } from '../../components/icons/AppIcons';
+import { FadeInUp, ScalePressable } from '../../components/animations';
 
 interface ProfileScreenProps {
   user?: { name: string; phone: string };
@@ -27,6 +28,7 @@ interface ProfileScreenProps {
 }
 
 export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) => {
+  const insets = useSafeAreaInsets();
   const [smsAlerts, setSmsAlerts] = useState(true);
   const [delayUpdates, setDelayUpdates] = useState(true);
 
@@ -43,97 +45,109 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
 
       <Header title="Passenger Profile" subtitle="Account & Terminal Support" showBack={false} />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 80 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
         {/* User Card with Cover Photo */}
-        <Card variant="elevated" style={styles.userCard}>
-          <View style={styles.userRow}>
-            <View style={styles.avatarCircle}>
-              <UserIcon size={36} color={colors.primary} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.userName}>{user?.name || 'Guest Traveler'}</Text>
-              <Text style={styles.userPhone}>{user?.phone || 'Browsing as Guest'}</Text>
-              <View style={styles.memberTag}>
-                <Text style={styles.memberTagText}>Verified Corridor Passenger</Text>
+        <FadeInUp delay={60} distance={16}>
+          <Card variant="elevated" style={styles.userCard}>
+            <View style={styles.userRow}>
+              <View style={styles.avatarCircle}>
+                <UserIcon size={36} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.userName}>{user?.name || 'Guest Traveler'}</Text>
+                <Text style={styles.userPhone}>{user?.phone || 'Browsing as Guest'}</Text>
+                <View style={styles.memberTag}>
+                  <Text style={styles.memberTagText}>Verified Corridor Passenger</Text>
+                </View>
               </View>
             </View>
-          </View>
-        </Card>
+          </Card>
+        </FadeInUp>
 
         {/* Notifications & Trip Alerts */}
-        <Card variant="elevated" style={styles.sectionCard}>
-          <Text style={styles.cardHeading}>Trip Notifications & Alerts</Text>
+        <FadeInUp delay={140} distance={20}>
+          <Card variant="elevated" style={styles.sectionCard}>
+            <Text style={styles.cardHeading}>Trip Notifications & Alerts</Text>
 
-          <View style={styles.settingRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>SMS Ticket & Digital Pass</Text>
-              <Text style={styles.settingSub}>Receive boarding links on your phone</Text>
+            <View style={styles.settingRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.settingLabel}>SMS Ticket & Digital Pass</Text>
+                <Text style={styles.settingSub}>Receive boarding links on your phone</Text>
+              </View>
+              <Switch
+                value={smsAlerts}
+                onValueChange={setSmsAlerts}
+                trackColor={{ false: '#CBD5E1', true: colors.primary }}
+                thumbColor={colors.surface}
+              />
             </View>
-            <Switch
-              value={smsAlerts}
-              onValueChange={setSmsAlerts}
-              trackColor={{ false: '#CBD5E1', true: colors.primary }}
-              thumbColor={colors.surface}
-            />
-          </View>
 
-          <View style={styles.divider} />
+            <View style={styles.divider} />
 
-          <View style={styles.settingRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>Highway Delay & Weather Alerts</Text>
-              <Text style={styles.settingSub}>Instant SMS notifications if N-5 traffic occurs</Text>
+            <View style={styles.settingRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.settingLabel}>Highway Delay & Weather Alerts</Text>
+                <Text style={styles.settingSub}>Instant SMS notifications if N-5 traffic occurs</Text>
+              </View>
+              <Switch
+                value={delayUpdates}
+                onValueChange={setDelayUpdates}
+                trackColor={{ false: '#CBD5E1', true: colors.primary }}
+                thumbColor={colors.surface}
+              />
             </View>
-            <Switch
-              value={delayUpdates}
-              onValueChange={setDelayUpdates}
-              trackColor={{ false: '#CBD5E1', true: colors.primary }}
-              thumbColor={colors.surface}
-            />
-          </View>
-        </Card>
+          </Card>
+        </FadeInUp>
 
         {/* Helpline and Terminal Info */}
-        <Card variant="elevated" style={styles.sectionCard}>
-          <Text style={styles.cardHeading}>Help & Terminal Support</Text>
+        <FadeInUp delay={220} distance={20}>
+          <Card variant="elevated" style={styles.sectionCard}>
+            <Text style={styles.cardHeading}>Help & Terminal Support</Text>
 
-          <TouchableOpacity
-            activeOpacity={0.75}
-            onPress={handleContactSupport}
-            style={styles.menuItem}
-          >
-            <View style={styles.menuIconCircle}>
-              <PhoneIcon size={20} color={colors.primary} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.menuTitle}>Terminal Helplines & WhatsApp</Text>
-              <Text style={styles.menuSub}>Direct line to Sukkur, Ghotki & Obuaro managers</Text>
-            </View>
-            <Text style={styles.menuChevron}>›</Text>
-          </TouchableOpacity>
+            <ScalePressable
+              activeScale={0.97}
+              onPress={handleContactSupport}
+              style={styles.menuItem}
+            >
+              <View style={styles.menuIconCircle}>
+                <PhoneIcon size={20} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.menuTitle}>Terminal Helplines & WhatsApp</Text>
+                <Text style={styles.menuSub}>Direct line to Sukkur, Ghotki & Obuaro managers</Text>
+              </View>
+              <Text style={styles.menuChevron}>›</Text>
+            </ScalePressable>
 
-          <View style={styles.divider} />
+            <View style={styles.divider} />
 
-          <TouchableOpacity
-            activeOpacity={0.75}
-            onPress={() =>
-              Alert.alert(
-                'Luggage Policy',
-                'Each passenger is entitled to 15 kg of check-in luggage plus 1 personal laptop bag. Fragile items must be carried onboard.'
-              )
-            }
-            style={styles.menuItem}
-          >
-            <View style={styles.menuIconCircle}>
-              <ShieldIcon size={20} color={colors.primary} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.menuTitle}>Luggage & Travel Policy</Text>
-              <Text style={styles.menuSub}>Allowances, refunds and passenger safety</Text>
-            </View>
-            <Text style={styles.menuChevron}>›</Text>
-          </TouchableOpacity>
-        </Card>
+            <ScalePressable
+              activeScale={0.97}
+              onPress={() =>
+                Alert.alert(
+                  'Luggage Policy',
+                  'Each passenger is entitled to 15 kg of check-in luggage plus 1 personal laptop bag. Fragile items must be carried onboard.'
+                )
+              }
+              style={styles.menuItem}
+            >
+              <View style={styles.menuIconCircle}>
+                <ShieldIcon size={20} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.menuTitle}>Luggage & Travel Policy</Text>
+                <Text style={styles.menuSub}>Allowances, refunds and passenger safety</Text>
+              </View>
+              <Text style={styles.menuChevron}>›</Text>
+            </ScalePressable>
+          </Card>
+        </FadeInUp>
 
         {/* Logout Button */}
         <Button

@@ -8,7 +8,7 @@ import {
   StatusBar,
   Image,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Card } from '../../components/cards/Card';
@@ -20,6 +20,7 @@ import {
   PhoneIcon,
 } from '../../components/icons/AppIcons';
 import { BusSchedule, RouteStop, PassengerInfo } from '../../types';
+import { FadeInUp, ScalePressable } from '../../components/animations';
 
 interface PassengerDetailsScreenProps {
   schedule: BusSchedule;
@@ -42,6 +43,7 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
   onBack,
   onProceedToPayment,
 }) => {
+  const insets = useSafeAreaInsets();
   const [fullName, setFullName] = useState(initialPassenger?.name || '');
   const [phone, setPhone] = useState(initialPassenger?.phone || '0300');
   const [gender, setGender] = useState<'male' | 'female'>('male');
@@ -81,44 +83,54 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
         onBack={onBack}
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 80 },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         {/* Journey Summary Card with Coach Photo */}
-        <Card variant="elevated" style={styles.summaryCard}>
-          <View style={styles.summaryHeader}>
-            <Image
-              source={{
-                uri:
-                  schedule.bus.imageUrl ||
-                  'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
-              }}
-              style={styles.busThumbnail}
-            />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.summaryBusName}>{schedule.busName}</Text>
-              <Text style={styles.summaryRoute}>
-                {origin.name} → {destination.name} ({schedule.departureTime})
-              </Text>
+        <FadeInUp delay={60} distance={16}>
+          <Card variant="elevated" style={styles.summaryCard}>
+            <View style={styles.summaryHeader}>
+              <Image
+                source={{
+                  uri:
+                    schedule.bus.imageUrl ||
+                    'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop&q=80',
+                }}
+                style={styles.busThumbnail}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.summaryBusName}>{schedule.busName}</Text>
+                <Text style={styles.summaryRoute}>
+                  {origin.name} → {destination.name} ({schedule.departureTime})
+                </Text>
+              </View>
             </View>
-          </View>
 
-          <View style={styles.summaryDivider} />
+            <View style={styles.summaryDivider} />
 
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>RESERVED SEATS:</Text>
-            <Text style={styles.summaryValueSeats}>{selectedSeats.join(', ')}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>BOARDING TERMINAL:</Text>
-            <Text style={styles.summaryValue}>{origin.landmark}</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>ARRIVAL TERMINAL:</Text>
-            <Text style={styles.summaryValue}>{destination.landmark}</Text>
-          </View>
-        </Card>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>RESERVED SEATS:</Text>
+              <Text style={styles.summaryValueSeats}>{selectedSeats.join(', ')}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>BOARDING TERMINAL:</Text>
+              <Text style={styles.summaryValue}>{origin.landmark}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>ARRIVAL TERMINAL:</Text>
+              <Text style={styles.summaryValue}>{destination.landmark}</Text>
+            </View>
+          </Card>
+        </FadeInUp>
 
         {/* Lead Passenger Form */}
-        <Card variant="elevated" style={styles.formCard}>
+        <FadeInUp delay={140} distance={20}>
+          <Card variant="elevated" style={styles.formCard}>
           <Text style={styles.sectionHeading}>Lead Passenger Information</Text>
           <Text style={styles.sectionSub}>
             Your digital e-ticket and boarding alerts will be sent here.
@@ -142,11 +154,11 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
             icon={<PhoneIcon size={20} color={colors.textSecondary} />}
           />
 
-          {/* Gender Selector */}
+          {/* Gender Selector with Tactile Spring */}
           <Text style={styles.fieldLabel}>GENDER (FOR SEAT ALLOCATION RESPECT)</Text>
           <View style={styles.genderRow}>
-            <TouchableOpacity
-              activeOpacity={0.8}
+            <ScalePressable
+              activeScale={0.93}
               onPress={() => setGender('male')}
               style={[
                 styles.genderOption,
@@ -161,10 +173,10 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
               >
                 👨 Male Passenger
               </Text>
-            </TouchableOpacity>
+            </ScalePressable>
 
-            <TouchableOpacity
-              activeOpacity={0.8}
+            <ScalePressable
+              activeScale={0.93}
               onPress={() => setGender('female')}
               style={[
                 styles.genderOption,
@@ -179,7 +191,7 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
               >
                 👩 Female Passenger
               </Text>
-            </TouchableOpacity>
+            </ScalePressable>
           </View>
 
           <Input
@@ -192,32 +204,37 @@ export const PassengerDetailsScreen: React.FC<PassengerDetailsScreenProps> = ({
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
         </Card>
+        </FadeInUp>
 
         {/* Fare Breakdown Card */}
-        <Card variant="elevated" style={styles.fareCard}>
-          <Text style={styles.sectionHeading}>Fare Breakdown</Text>
-          <View style={styles.fareRow}>
-            <Text style={styles.fareLabel}>Base Fare ({selectedSeats.length} seat(s))</Text>
-            <Text style={styles.fareValue}>PKR {totalFare}</Text>
-          </View>
-          <View style={styles.fareRow}>
-            <Text style={styles.fareLabel}>Terminal & Toll Fee</Text>
-            <Text style={styles.fareValue}>PKR {serviceFee}</Text>
-          </View>
-          <View style={styles.fareDivider} />
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total Payable (PKR):</Text>
-            <Text style={styles.totalValue}>PKR {grandTotal}</Text>
-          </View>
-        </Card>
+        <FadeInUp delay={220} distance={20}>
+          <Card variant="elevated" style={styles.fareCard}>
+            <Text style={styles.sectionHeading}>Fare Breakdown</Text>
+            <View style={styles.fareRow}>
+              <Text style={styles.fareLabel}>Base Fare ({selectedSeats.length} seat(s))</Text>
+              <Text style={styles.fareValue}>PKR {totalFare}</Text>
+            </View>
+            <View style={styles.fareRow}>
+              <Text style={styles.fareLabel}>Terminal & Toll Fee</Text>
+              <Text style={styles.fareValue}>PKR {serviceFee}</Text>
+            </View>
+            <View style={styles.fareDivider} />
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total Payable (PKR):</Text>
+              <Text style={styles.totalValue}>PKR {grandTotal}</Text>
+            </View>
+          </Card>
+        </FadeInUp>
 
         {/* Policies Note */}
-        <View style={styles.policyRow}>
-          <ShieldIcon size={18} color={colors.success} />
-          <Text style={styles.policyText}>
-            Guaranteed departure • Free cancellation up to 2 hours before trip • 15 kg luggage allowance
-          </Text>
-        </View>
+        <FadeInUp delay={280} distance={15}>
+          <View style={styles.policyRow}>
+            <ShieldIcon size={18} color={colors.success} />
+            <Text style={styles.policyText}>
+              Guaranteed departure • Free cancellation up to 2 hours before trip • 15 kg luggage allowance
+            </Text>
+          </View>
+        </FadeInUp>
 
         <Button
           title={`Proceed to Payment • PKR ${grandTotal}`}

@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Card } from '../../components/cards/Card';
@@ -21,6 +21,7 @@ import {
   JazzCashLogo,
 } from '../../components/icons/AppIcons';
 import { PaymentMethod } from '../../types';
+import { FadeInUp, ScalePressable } from '../../components/animations';
 
 interface PaymentScreenProps {
   amount: number;
@@ -35,6 +36,7 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
   onBack,
   onPaymentSuccess,
 }) => {
+  const insets = useSafeAreaInsets();
   const [method, setMethod] = useState<PaymentMethod>('easypaisa');
   const [walletNumber, setWalletNumber] = useState(passengerPhone);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -70,92 +72,105 @@ export const PaymentScreen: React.FC<PaymentScreenProps> = ({
         onBack={onBack}
       />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 80 },
+        ]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
         {/* Testing Mode Disclaimer */}
-        <View style={styles.demoBanner}>
-          <ShieldIcon size={20} color="#B45309" />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.demoTitle}>SECURE DEMO MODE ACTIVE</Text>
-            <Text style={styles.demoDesc}>
-              Simulated payment pipeline. No real balance will be deducted from your account.
-            </Text>
+        <FadeInUp delay={60} distance={15}>
+          <View style={styles.demoBanner}>
+            <ShieldIcon size={20} color="#B45309" />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.demoTitle}>SECURE DEMO MODE ACTIVE</Text>
+              <Text style={styles.demoDesc}>
+                Simulated payment pipeline. No real balance will be deducted from your account.
+              </Text>
+            </View>
           </View>
-        </View>
+        </FadeInUp>
 
         {/* Amount Display */}
-        <Card variant="elevated" style={styles.amountCard}>
-          <Text style={styles.amountLabel}>Total Payable Amount</Text>
-          <Text style={styles.amountValue}>PKR {amount}</Text>
-          <Text style={styles.amountCurrency}>Pakistan National Rupees</Text>
-        </Card>
+        <FadeInUp delay={120} distance={18}>
+          <Card variant="elevated" style={styles.amountCard}>
+            <Text style={styles.amountLabel}>Total Payable Amount</Text>
+            <Text style={styles.amountValue}>PKR {amount}</Text>
+            <Text style={styles.amountCurrency}>Pakistan National Rupees</Text>
+          </Card>
+        </FadeInUp>
 
         {/* Digital Wallets Section */}
-        <Text style={styles.sectionTitle}>Select Payment Method</Text>
+        <FadeInUp delay={180} distance={20}>
+          <Text style={styles.sectionTitle}>Select Payment Method</Text>
 
-        {/* Easypaisa */}
-        <TouchableOpacity
-          activeOpacity={0.88}
-          onPress={() => setMethod('easypaisa')}
-          style={[
-            styles.methodCard,
-            method === 'easypaisa' ? styles.methodCardActive : null,
-          ]}
-        >
-          <EasypaisaLogo size={44} />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.methodTitle}>Easypaisa</Text>
-            <Text style={styles.methodDesc}>Instant mobile wallet & OTC account</Text>
-          </View>
-          {method === 'easypaisa' && (
-            <View style={styles.checkCircle}>
-              <CheckIcon size={14} color={colors.textWhite} />
+          {/* Easypaisa */}
+          <ScalePressable
+            activeScale={0.96}
+            onPress={() => setMethod('easypaisa')}
+            style={[
+              styles.methodCard,
+              method === 'easypaisa' ? styles.methodCardActive : null,
+            ]}
+          >
+            <EasypaisaLogo size={44} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.methodTitle}>Easypaisa</Text>
+              <Text style={styles.methodDesc}>Instant mobile wallet & OTC account</Text>
             </View>
-          )}
-        </TouchableOpacity>
+            {method === 'easypaisa' && (
+              <View style={styles.checkCircle}>
+                <CheckIcon size={14} color={colors.textWhite} />
+              </View>
+            )}
+          </ScalePressable>
 
-        {/* JazzCash */}
-        <TouchableOpacity
-          activeOpacity={0.88}
-          onPress={() => setMethod('jazzcash')}
-          style={[
-            styles.methodCard,
-            method === 'jazzcash' ? styles.methodCardActive : null,
-          ]}
-        >
-          <JazzCashLogo size={44} />
-          <View style={{ flex: 1 }}>
-            <Text style={styles.methodTitle}>JazzCash</Text>
-            <Text style={styles.methodDesc}>Pay using JazzCash mobile number</Text>
-          </View>
-          {method === 'jazzcash' && (
-            <View style={styles.checkCircle}>
-              <CheckIcon size={14} color={colors.textWhite} />
+          {/* JazzCash */}
+          <ScalePressable
+            activeScale={0.96}
+            onPress={() => setMethod('jazzcash')}
+            style={[
+              styles.methodCard,
+              method === 'jazzcash' ? styles.methodCardActive : null,
+            ]}
+          >
+            <JazzCashLogo size={44} />
+            <View style={{ flex: 1 }}>
+              <Text style={styles.methodTitle}>JazzCash</Text>
+              <Text style={styles.methodDesc}>Pay using JazzCash mobile number</Text>
             </View>
-          )}
-        </TouchableOpacity>
+            {method === 'jazzcash' && (
+              <View style={styles.checkCircle}>
+                <CheckIcon size={14} color={colors.textWhite} />
+              </View>
+            )}
+          </ScalePressable>
 
-        {/* 1-Click Instant Demo Pay */}
-        <TouchableOpacity
-          activeOpacity={0.88}
-          onPress={() => setMethod('demo')}
-          style={[
-            styles.methodCard,
-            method === 'demo' ? styles.methodCardActive : null,
-          ]}
-        >
-          <View style={styles.demoIconCircle}>
-            <Text style={{ fontSize: 20 }}>⚡</Text>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.methodTitle}>Instant 1-Tap Demo Pay</Text>
-            <Text style={styles.methodDesc}>Fast simulate approved transaction</Text>
-          </View>
-          {method === 'demo' && (
-            <View style={styles.checkCircle}>
-              <CheckIcon size={14} color={colors.textWhite} />
+          {/* 1-Click Instant Demo Pay */}
+          <ScalePressable
+            activeScale={0.96}
+            onPress={() => setMethod('demo')}
+            style={[
+              styles.methodCard,
+              method === 'demo' ? styles.methodCardActive : null,
+            ]}
+          >
+            <View style={styles.demoIconCircle}>
+              <Text style={{ fontSize: 20 }}>⚡</Text>
             </View>
-          )}
-        </TouchableOpacity>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.methodTitle}>Instant 1-Tap Demo Pay</Text>
+              <Text style={styles.methodDesc}>Fast simulate approved transaction</Text>
+            </View>
+            {method === 'demo' && (
+              <View style={styles.checkCircle}>
+                <CheckIcon size={14} color={colors.textWhite} />
+              </View>
+            )}
+          </ScalePressable>
+        </FadeInUp>
 
         {/* Phone Input for Wallets */}
         {method !== 'demo' && (

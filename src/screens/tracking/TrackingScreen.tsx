@@ -7,7 +7,7 @@ import {
   StatusBar,
   Animated,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Header } from '../../components/common/Header';
 import { Badge } from '../../components/common/Badge';
@@ -17,6 +17,7 @@ import {
   LocationPinIcon,
 } from '../../components/icons/AppIcons';
 import { ALL_STOPS } from '../../utils/routeUtils';
+import { FadeInUp, ScalePressable, PulseBeacon } from '../../components/animations';
 
 interface TrackingScreenProps {
   busName?: string;
@@ -29,6 +30,7 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
   busPlate = 'SKR-9821',
   onBack,
 }) => {
+  const insets = useSafeAreaInsets();
   const [currentStopIndex] = useState(2); // At Ghotki
   const [speed, setSpeed] = useState(72); // 72 km/h
   const [etaMinutes, setEtaMinutes] = useState(14); // 14 mins
@@ -78,7 +80,7 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
         <View style={styles.statusCol}>
           <Text style={styles.statusLabel}>STATUS</Text>
           <View style={styles.liveBadgeRow}>
-            <View style={styles.livePulseDot} />
+            <PulseBeacon size={8} pulseSize={18} color="#22C55E" />
             <Text style={styles.liveText}>ON ROUTE (N-5)</Text>
           </View>
         </View>
@@ -98,24 +100,32 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: insets.bottom + 80 },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Next Stop Highlight Card */}
-        <Card variant="elevated" style={styles.etaCard}>
-          <View style={styles.etaHeader}>
-            <View style={styles.etaIconCircle}>
-              <LocationPinIcon size={24} color={colors.primary} />
+        <FadeInUp delay={80} distance={16}>
+          <Card variant="elevated" style={styles.etaCard}>
+            <View style={styles.etaHeader}>
+              <View style={styles.etaIconCircle}>
+                <LocationPinIcon size={24} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.etaSub}>APPROACHING NEXT TERMINAL</Text>
+                <Text style={styles.etaTitle}>{nextStop.name}</Text>
+                <Text style={styles.etaLandmark}>{nextStop.landmark}</Text>
+              </View>
+              <Badge label="On Time" variant="success" />
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.etaSub}>APPROACHING NEXT TERMINAL</Text>
-              <Text style={styles.etaTitle}>{nextStop.name}</Text>
-              <Text style={styles.etaLandmark}>{nextStop.landmark}</Text>
-            </View>
-            <Badge label="On Time" variant="success" />
-          </View>
-        </Card>
+          </Card>
+        </FadeInUp>
 
         {/* Visual Highway Progression Timeline */}
-        <View style={styles.corridorTrackCard}>
+        <FadeInUp delay={160} distance={22} style={styles.corridorTrackCard}>
           <Text style={styles.corridorHeading}>Corridor Live Progression</Text>
           <Text style={styles.corridorSub}>Sukkur to Obuaro Express Highway (118 km)</Text>
 
@@ -130,9 +140,10 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
                   {/* Node icon column */}
                   <View style={styles.nodeColumn}>
                     {isCurrent ? (
-                      <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
-                        <View style={styles.busMarker}>
-                          <BusIcon size={18} color={colors.textWhite} />
+                      <Animated.View style={{ transform: [{ scale: pulseAnim }], alignItems: 'center', justifyContent: 'center' }}>
+                        <PulseBeacon size={20} pulseSize={42} color={colors.primary} />
+                        <View style={[styles.busMarker, { position: 'absolute' }]}>
+                          <BusIcon size={16} color={colors.textWhite} />
                         </View>
                       </Animated.View>
                     ) : (
@@ -185,20 +196,24 @@ export const TrackingScreen: React.FC<TrackingScreenProps> = ({
               );
             })}
           </View>
-        </View>
+        </FadeInUp>
 
         {/* Driver Card */}
-        <Card variant="dark" style={styles.driverCard}>
-          <View style={styles.driverRow}>
-            <View style={styles.driverAvatar}>
-              <Text style={{ fontSize: 26 }}>👨‍✈️</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.driverName}>Captain Ghulam Rasool</Text>
-              <Text style={styles.driverSub}>Senior Highway Pilot • Sukkur Central Hub</Text>
-            </View>
-          </View>
-        </Card>
+        <FadeInUp delay={240} distance={20}>
+          <ScalePressable activeScale={0.97}>
+            <Card variant="dark" style={styles.driverCard}>
+              <View style={styles.driverRow}>
+                <View style={styles.driverAvatar}>
+                  <BusIcon size={24} color={colors.primary} />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.driverName}>Captain Ghulam Rasool</Text>
+                  <Text style={styles.driverSub}>Senior Highway Pilot • Sukkur Central Hub</Text>
+                </View>
+              </View>
+            </Card>
+          </ScalePressable>
+        </FadeInUp>
       </ScrollView>
     </SafeAreaView>
   );
