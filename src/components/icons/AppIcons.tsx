@@ -476,3 +476,75 @@ export const RoadIcon: React.FC<IconProps> = ({ size = 20, color = colors.primar
     <Path d="M4 22L8 2M20 22L16 2M12 4V7M12 11V14M12 18V21" stroke={color} strokeWidth={2} strokeLinecap="round" />
   </Svg>
 );
+
+export const GoogleIcon: React.FC<{ size?: number }> = ({ size = 20 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path
+      d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+      fill="#4285F4"
+    />
+    <Path
+      d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+      fill="#34A853"
+    />
+    <Path
+      d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"
+      fill="#FBBC05"
+    />
+    <Path
+      d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
+      fill="#EA4335"
+    />
+  </Svg>
+);
+
+export const FacebookIcon: React.FC<{ size?: number }> = ({ size = 20 }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Circle cx="12" cy="12" r="11" fill="#1877F2" />
+    <Path
+      d="M13.5 18V12.5H15.2L15.5 10.5H13.5V9.2C13.5 8.6 13.8 8.1 14.7 8.1H15.6V6.3C15.2 6.2 14.4 6.1 13.6 6.1C11.8 6.1 10.6 7.2 10.6 9.1V10.5H8.7V12.5H10.6V18H13.5Z"
+      fill="#FFFFFF"
+    />
+  </Svg>
+);
+
+export const EyeIcon: React.FC<IconProps> = ({ size = 20, color = '#94A3B8' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M1 12S5 5 12 5S23 12 23 12S19 19 12 19S1 12 1 12Z"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Circle cx={12} cy={12} r={3} stroke={color} strokeWidth={2} />
+  </Svg>
+);
+
+export const EyeOffIcon: React.FC<IconProps> = ({ size = 20, color = '#94A3B8' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M17.94 17.94A10.07 10.07 0 0 1 12 19C5 19 1 12 1 12A18.45 18.45 0 0 1 5.06 7.06M9.9 4.24A9.12 9.12 0 0 1 12 4C19 4 23 11 23 11A18.5 18.5 0 0 1 19.46 15.6M1 1L23 23M14.12 14.12A3 3 0 1 1 9.88 9.88"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const CheckCircleFilledIcon: React.FC<{ size?: number; color?: string }> = ({
+  size = 20,
+  color = colors.primary,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Circle cx={12} cy={12} r={11} fill={color} />
+    <Path
+      d="M8 12L10.8 14.8L16 9.6"
+      stroke="#FFFFFF"
+      strokeWidth={2.4}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
