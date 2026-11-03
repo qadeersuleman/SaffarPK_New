@@ -1,0 +1,200 @@
+[
+  {
+    "id": "hotel-1",
+    "name": "Hotel One Sukkur",
+    "city": "Sukkur",
+    "address": "Military Road, Near Airport Chowk, Sukkur",
+    "distanceFromTerminal": "1.8 km from Sukkur Main Terminal",
+    "starRating": 4,
+    "reviewScore": 8.9,
+    "reviewCount": 428,
+    "reviewDescriptor": "Exceptional",
+    "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=900&auto=format&fit=crop&q=80"
+    ],
+    "pricePerNight": 11500,
+    "originalPricePerNight": 14000,
+    "badge": "Breakfast Included",
+    "amenities": ["Free High-Speed WiFi", "Buffet Breakfast", "Full Climate Control", "Airport & Bus Shuttle", "24/7 Room Service"],
+    "roomTypes": [
+      {
+        "id": "rm-101",
+        "name": "Deluxe King Room",
+        "bedType": "1 Extra-Large Double Bed",
+        "maxGuests": 2,
+        "pricePerNight": 11500,
+        "originalPricePerNight": 14000,
+        "freeCancellation": true,
+        "breakfastIncluded": true
+      },
+      {
+        "id": "rm-102",
+        "name": "Executive Business Suite",
+        "bedType": "1 King Bed + Lounge Area",
+        "maxGuests": 3,
+        "pricePerNight": 16500,
+        "originalPricePerNight": 19500,
+        "freeCancellation": true,
+        "breakfastIncluded": true
+      }
+    ],
+    "description": "Located strategically on Military Road, Hotel One Sukkur offers business & leisure travelers modern executive accommodations with 24-hour concierge, on-site multi-cuisine dining, and seamless highway connectivity."
+  },
+  {
+    "id": "hotel-2",
+    "name": "Indus Luxury Riverfront Resort",
+    "city": "Sukkur",
+    "address": "Indus River Bypass, Near Lansdowne Bridge, Sukkur",
+    "distanceFromTerminal": "2.4 km from Sukkur Main Terminal",
+    "starRating": 5,
+    "reviewScore": 9.4,
+    "reviewCount": 612,
+    "reviewDescriptor": "Superb",
+    "imageUrl": "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=900&auto=format&fit=crop&q=80"
+    ],
+    "pricePerNight": 15800,
+    "originalPricePerNight": 19000,
+    "badge": "River View • Luxury Pick",
+    "amenities": ["Infinity Pool", "River View Balconies", "Organic Breakfast", "Valet Parking", "Spa & Wellness"],
+    "roomTypes": [
+      {
+        "id": "rm-201",
+        "name": "Riverfront Panorama Room",
+        "bedType": "1 King Size Bed",
+        "maxGuests": 2,
+        "pricePerNight": 15800,
+        "originalPricePerNight": 19000,
+        "freeCancellation": true,
+        "breakfastIncluded": true
+      },
+      {
+        "id": "rm-202",
+        "name": "Presidential River Suite",
+        "bedType": "2 King Beds + Jacuzzi",
+        "maxGuests": 4,
+        "pricePerNight": 26000,
+        "originalPricePerNight": 32000,
+        "freeCancellation": true,
+        "breakfastIncluded": true
+      }
+    ],
+    "description": "Experience serene Indus River views alongside five-star luxury. Indulge in rooftop dining facing Lansdowne Bridge, outdoor swimming pools, and dedicated executive services."
+  },
+  {
+    "id": "hotel-3",
+    "name": "Royal Palace Suites & Lounge",
+    "city": "Ghotki",
+    "address": "National Highway N-5, Bypass Chowk, Ghotki",
+    "distanceFromTerminal": "0.6 km from Ghotki Terminal",
+    "starRating": 4,
+    "reviewScore": 8.7,
+    "reviewCount": 215,
+    "reviewDescriptor": "Fabulous",
+    "imageUrl": "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=900&auto=format&fit=crop&q=80"
+    ],
+    "pricePerNight": 6800,
+    "originalPricePerNight": 8500,
+    "badge": "Right on N-5 Highway",
+    "amenities": ["Free High-Speed WiFi", "Generators 24/7", "Continental Breakfast", "Secured Parking", "Speed Check-in"],
+    "roomTypes": [
+      {
+        "id": "rm-301",
+        "name": "Executive AC Room",
+        "bedType": "1 Queen Bed",
+        "maxGuests": 2,
+        "pricePerNight": 6800,
+        "originalPricePerNight": 8500,
+        "freeCancellation": true,
+        "breakfastIncluded": true
+      },
+      {
+        "id": "rm-302",
+        "name": "Family Suite",
+        "bedType": "2 Queen Beds",
+        "maxGuests": 4,
+        "pricePerNight": 10500,
+        "originalPricePerNight": 12800,
+        "freeCancellation": true,
+        "breakfastIncluded": true
+      }
+    ],
+    "description": "Ghotki's premier highway stopover hotel. Located directly on the N-5 corridor, providing quiet soundproofed rooms, round-the-clock uninterrupted power, and hot fresh traditional meals."
+  },
+  {
+    "id": "hotel-4",
+    "name": "Rohri Junction Heritage Inn",
+    "city": "Rohri",
+    "address": "Station Road, Old Town Heritage Quarter, Rohri",
+    "distanceFromTerminal": "3.1 km from Sukkur Terminal",
+    "starRating": 3,
+    "reviewScore": 8.3,
+    "reviewCount": 184,
+    "reviewDescriptor": "Very Good",
+    "imageUrl": "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1595576508898-0ad5c879a061?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=900&auto=format&fit=crop&q=80"
+    ],
+    "pricePerNight": 4900,
+    "originalPricePerNight": 6200,
+    "badge": "Best Value Budget",
+    "amenities": ["Free WiFi", "Traditional Chai & Paratha Breakfast", "Air Conditioned", "Luggage Storage", "CCTV Security"],
+    "roomTypes": [
+      {
+        "id": "rm-401",
+        "name": "Standard Twin Bed",
+        "bedType": "2 Single Beds",
+        "maxGuests": 2,
+        "pricePerNight": 4900,
+        "originalPricePerNight": 6200,
+        "freeCancellation": true,
+        "breakfastIncluded": true
+      }
+    ],
+    "description": "Cozy, ultra-clean budget boutique hotel with traditional Sindhi architecture near the historical Rohri Junction and Seven Sisters Shrine."
+  },
+  {
+    "id": "hotel-5",
+    "name": "Engro Executive Residency Daharki",
+    "city": "Daharki",
+    "address": "Engro Enclave Bypass, GT Road, Daharki",
+    "distanceFromTerminal": "1.1 km from Daharki Terminal",
+    "starRating": 4,
+    "reviewScore": 8.8,
+    "reviewCount": 156,
+    "reviewDescriptor": "Fabulous",
+    "imageUrl": "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=900&auto=format&fit=crop&q=80"
+    ],
+    "pricePerNight": 8200,
+    "originalPricePerNight": 10200,
+    "badge": "Top Rated for Business",
+    "amenities": ["Free High-Speed WiFi", "Fitness Center", "Meeting Rooms", "Buffet Breakfast", "Airport Shuttle"],
+    "roomTypes": [
+      {
+        "id": "rm-501",
+        "name": "Executive Corporate Room",
+        "bedType": "1 King Bed with Workdesk",
+        "maxGuests": 2,
+        "pricePerNight": 8200,
+        "originalPricePerNight": 10200,
+        "freeCancellation": true,
+        "breakfastIncluded": true
+      }
+    ],
+    "description": "Tailored for industrial executives and corporate travelers visiting Daharki and Mirpur Mathelo fertilizers and manufacturing plants."
+  }
+]
+

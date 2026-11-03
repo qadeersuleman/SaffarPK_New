@@ -342,3 +342,106 @@ export const JazzCashLogo: React.FC<{ size?: number }> = ({ size = 38 }) => (
     <Circle cx="64" cy="62" r="8" fill="#FFFFFF" />
   </Svg>
 );
+
+export const HotelIcon: React.FC<IconProps> = ({ size = 22, color = colors.primary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M3 21V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V21M3 21H21M3 21H1M21 21H23M7 7H9M15 7H17M7 11H9M15 11H17M10 21V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V21"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const LandmarkIcon: React.FC<IconProps> = ({ size = 22, color = colors.primary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M3 21H21M4 18H20M5 18V10M9 18V10M15 18V10M19 18V10M12 2L2 8H22L12 2Z"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const HeartIcon: React.FC<IconProps & { filled?: boolean }> = ({
+  size = 20,
+  color = '#EF4444',
+  filled = false,
+}) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill={filled ? color : 'none'}>
+    <Path
+      d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const CoffeeIcon: React.FC<IconProps> = ({ size = 18, color = colors.textSecondary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M18 8H19C20.1046 8 21 8.89543 21 10C21 11.1046 20.1046 12 19 12H18M2 8H18V15C18 17.2091 16.2091 19 14 19H6C3.79086 19 2 17.2091 2 15V8ZM6 2V4M10 2V4M14 2V4"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const PoolIcon: React.FC<IconProps> = ({ size = 18, color = colors.textSecondary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M2 18C4 18 5 19 7 19C9 19 10 18 12 18C14 18 15 19 17 19C19 19 20 18 22 18M2 21C4 21 5 22 7 22C9 22 10 21 12 21C14 21 15 22 17 22C19 22 20 21 22 21M17 14V6C17 4.89543 16.1046 4 15 4C13.8954 4 13 4.89543 13 6V14M13 8H17M13 11H17"
+      stroke={color}
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const SparklesIcon: React.FC<IconProps> = ({ size = 20, color = colors.primary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M12 3L13.8 8.2L19 10L13.8 11.8L12 17L10.2 11.8L5 10L10.2 8.2L12 3ZM19 17L19.9 19.1L22 20L19.9 20.9L19 23L18.1 20.9L16 20L18.1 19.1L19 17ZM5 3L5.6 4.4L7 5L5.6 5.6L5 7L4.4 5.6L3 5L4.4 4.4L5 3Z"
+      stroke={color}
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill={color}
+      fillOpacity={0.15}
+    />
+  </Svg>
+);
+
+export const CompassIcon: React.FC<IconProps> = ({ size = 22, color = colors.primary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Circle cx={12} cy={12} r={9} stroke={color} strokeWidth={2} />
+    <Path
+      d="M14.5 9.5L10 10.75L9.5 14.5L14 13.25L14.5 9.5Z"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+export const FilterIcon: React.FC<IconProps> = ({ size = 18, color = colors.textSecondary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M4 6H20M7 12H17M10 18H14"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);

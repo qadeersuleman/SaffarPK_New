@@ -131,3 +131,53 @@ export interface LiveBusLocation {
   lastUpdated: string;
 }
 
+export interface HotelRoom {
+  id: string;
+  name: string;
+  bedType: string;
+  maxGuests: number;
+  pricePerNight: number;
+  originalPricePerNight?: number;
+  freeCancellation: boolean;
+  breakfastIncluded: boolean;
+}
+
+export interface Hotel {
+  id: string;
+  name: string;
+  city: string;
+  address: string;
+  distanceFromTerminal: string;
+  starRating: number;
+  reviewScore: number;
+  reviewCount: number;
+  reviewDescriptor: string;
+  imageUrl: string;
+  galleryUrls?: string[];
+  pricePerNight: number;
+  originalPricePerNight?: number;
+  badge?: string;
+  amenities: string[];
+  roomTypes: HotelRoom[];
+  latitude?: number;
+  longitude?: number;
+  description: string;
+}
+
+export interface FamousPlace {
+  id: string;
+  title: string;
+  urduTitle: string;
+  location: string;
+  category: string;
+  rating: number;
+  reviewCount: number;
+  imageUrl: string;
+  galleryUrls?: string[];
+  distanceFromCorridor: string;
+  description: string;
+  highlights: string[];
+  bestTimeToVisit: string;
+}
+
+

@@ -23,10 +23,19 @@ import {
   StarIcon,
   ShieldIcon,
   ArrowForwardIcon,
+  HotelIcon,
+  LandmarkIcon,
+  SparklesIcon,
 } from '../../components/icons/AppIcons';
 import { ALL_STOPS, getFare, getEstimatedDurationMinutes } from '../../utils/routeUtils';
-import { RouteStop } from '../../types';
+import { RouteStop, Hotel, FamousPlace } from '../../types';
 import busesData from '../../data/buses.json';
+import hotelsData from '../../data/hotels.json';
+import placesData from '../../data/places.json';
+import { HotelCard } from '../../components/cards/HotelCard';
+import { PlaceCard } from '../../components/cards/PlaceCard';
+import { HotelDetailModal } from '../../components/modals/HotelDetailModal';
+import { PlaceDetailModal } from '../../components/modals/PlaceDetailModal';
 import {
   FadeInUp,
   ScalePressable,
@@ -45,6 +54,17 @@ interface HomeScreenProps {
   userName?: string;
 }
 
+const CATEGORY_FILTERS = [
+  { id: 'all', label: 'All Stays & Sights', icon: '✨' },
+  { id: 'hotels', label: 'Hotels & Rooms', icon: '🏨' },
+  { id: 'landmarks', label: 'Famous Places', icon: '🏛️' },
+  { id: 'top_rated', label: 'Top Rated 9+', icon: '⭐' },
+  { id: 'breakfast', label: 'Free Breakfast', icon: '☕' },
+  { id: 'luxury', label: 'Luxury Stays', icon: '💎' },
+] as const;
+
+type CategoryFilterId = (typeof CATEGORY_FILTERS)[number]['id'];
+
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   onSearch,
   onNavigateToTracking,
@@ -56,6 +76,38 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [selectedDate, setSelectedDate] = useState<'Today' | 'Tomorrow'>('Today');
   const [passengers, setPassengers] = useState<number>(1);
   const [pickingFor, setPickingFor] = useState<'origin' | 'destination' | null>(null);
+
+  // Booking & Explore State
+  const [activeCategory, setActiveCategory] = useState<CategoryFilterId>('all');
+  const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<FamousPlace | null>(null);
+
+  const filteredHotels = (hotelsData as Hotel[]).filter(h => {
+    if (activeCategory === 'all') return true;
+    if (activeCategory === 'hotels') return true;
+    if (activeCategory === 'landmarks') return false;
+    if (activeCategory === 'top_rated') return h.reviewScore >= 8.8;
+    if (activeCategory === 'breakfast') {
+      return (
+        h.amenities.some(a => a.toLowerCase().includes('breakfast')) ||
+        Boolean(h.badge && h.badge.toLowerCase().includes('breakfast'))
+      );
+    }
+    if (activeCategory === 'luxury') {
+      return h.starRating >= 5 || Boolean(h.badge && h.badge.toLowerCase().includes('luxury'));
+    }
+    return true;
+  });
+
+  const filteredPlaces = (placesData as FamousPlace[]).filter(p => {
+    if (activeCategory === 'all') return true;
+    if (activeCategory === 'landmarks') return true;
+    if (activeCategory === 'hotels') return false;
+    if (activeCategory === 'top_rated') return p.rating >= 4.8;
+    if (activeCategory === 'breakfast') return false;
+    if (activeCategory === 'luxury') return false;
+    return true;
+  });
 
   // Fluid Swap & Counter Animations
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -383,8 +435,119 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </FadeInUp>
         )}
 
+        {/* Interactive Category Filter Bar */}
+        <FadeInUp delay={220} distance={20} style={styles.categoriesSection}>
+          <View style={styles.categoryHeaderRow}>
+            <View style={styles.filterTitleRow}>
+              <SparklesIcon size={18} color={colors.primary} />
+              <Text style={styles.categoryHeaderTitle}>Explore Accommodations & Attractions</Text>
+            </View>
+            <Text style={styles.categoryHeaderSub}>
+              Filter premium hotels, room suites & famous sights on your journey
+            </Text>
+          </View>
+
+          <ScrollView
+            horizontal
+            nestedScrollEnabled={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryScroll}
+          >
+            {CATEGORY_FILTERS.map(cat => {
+              const isActive = activeCategory === cat.id;
+              return (
+                <ScalePressable
+                  key={cat.id}
+                  activeScale={0.92}
+                  onPress={() => setActiveCategory(cat.id)}
+                  style={[
+                    styles.categoryPill,
+                    isActive ? styles.categoryPillActive : null,
+                  ]}
+                >
+                  <Text style={styles.categoryIcon}>{cat.icon}</Text>
+                  <Text
+                    style={[
+                      styles.categoryPillText,
+                      isActive ? styles.categoryPillTextActive : null,
+                    ]}
+                  >
+                    {cat.label}
+                  </Text>
+                </ScalePressable>
+              );
+            })}
+          </ScrollView>
+        </FadeInUp>
+
+        {/* Booking.com Style Hotels & Stays Section */}
+        {filteredHotels.length > 0 && (
+          <FadeInUp delay={250} distance={24} style={styles.hotelsSection}>
+            <View style={styles.sectionHeaderRow}>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <HotelIcon size={20} color={colors.primary} />
+                  <Text style={styles.sectionTitle}>Hotels & Stays Near Terminals</Text>
+                </View>
+                <Text style={styles.sectionSubtitle}>
+                  Executive rooms & suites with instant confirmation & free cancellation
+                </Text>
+              </View>
+              <Badge label={`${filteredHotels.length} Stays`} variant="category" />
+            </View>
+
+            <ScrollView
+              horizontal
+              nestedScrollEnabled={true}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.hotelsScroll}
+            >
+              {filteredHotels.map(hotel => (
+                <HotelCard
+                  key={hotel.id}
+                  hotel={hotel}
+                  onPress={h => setSelectedHotel(h)}
+                />
+              ))}
+            </ScrollView>
+          </FadeInUp>
+        )}
+
+        {/* Famous Destinations & Heritage Landmarks Section */}
+        {filteredPlaces.length > 0 && (
+          <FadeInUp delay={280} distance={24} style={styles.placesSection}>
+            <View style={styles.sectionHeaderRow}>
+              <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <LandmarkIcon size={20} color={colors.primary} />
+                  <Text style={styles.sectionTitle}>Famous Places Across Pakistan</Text>
+                </View>
+                <Text style={styles.sectionSubtitle}>
+                  Explore iconic historical forts, sacred river islands, and UNESCO sites
+                </Text>
+              </View>
+              <Badge label={`${filteredPlaces.length} Sights`} variant="category" />
+            </View>
+
+            <ScrollView
+              horizontal
+              nestedScrollEnabled={true}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.placesScroll}
+            >
+              {filteredPlaces.map(place => (
+                <PlaceCard
+                  key={place.id}
+                  place={place}
+                  onPress={p => setSelectedPlace(p)}
+                />
+              ))}
+            </ScrollView>
+          </FadeInUp>
+        )}
+
         {/* Featured Corridor Stops with High-Res Photography */}
-        <FadeInUp delay={280} distance={24} style={styles.stationsSection}>
+        <FadeInUp delay={310} distance={24} style={styles.stationsSection}>
           <View style={styles.sectionHeaderRow}>
             <View>
               <Text style={styles.sectionTitle}>Corridor Stations</Text>
@@ -563,6 +726,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </View>
         </View>
       </Modal>
+
+      {/* Booking.com Style Hotel Detail & Room Reservation Modal */}
+      <HotelDetailModal
+        visible={selectedHotel !== null}
+        hotel={selectedHotel}
+        onClose={() => setSelectedHotel(null)}
+      />
+
+      {/* Famous Places Landmark Sightseeing Modal */}
+      <PlaceDetailModal
+        visible={selectedPlace !== null}
+        place={selectedPlace}
+        onClose={() => setSelectedPlace(null)}
+      />
     </View>
   );
 };
@@ -1159,5 +1336,78 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: colors.textSecondary,
     fontWeight: '800',
+  },
+  categoriesSection: {
+    marginTop: spacing.xl + 6,
+  },
+  categoryHeaderRow: {
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.sm,
+  },
+  filterTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  categoryHeaderTitle: {
+    ...typography.h3,
+    fontSize: 19,
+    color: colors.textPrimary,
+  },
+  categoryHeaderSub: {
+    ...typography.caption,
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  categoryScroll: {
+    paddingLeft: spacing.lg,
+    paddingRight: spacing.sm,
+    gap: 8,
+    paddingVertical: spacing.xs,
+  },
+  categoryPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: borderRadius.full,
+    ...shadows.sm,
+  },
+  categoryPillActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  categoryIcon: {
+    fontSize: 14,
+  },
+  categoryPillText: {
+    ...typography.caption,
+    fontSize: 12,
+    fontWeight: '800',
+    color: colors.textSecondary,
+  },
+  categoryPillTextActive: {
+    color: '#FFFFFF',
+  },
+  hotelsSection: {
+    marginTop: spacing.xxl,
+  },
+  hotelsScroll: {
+    paddingLeft: spacing.lg,
+    paddingRight: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  placesSection: {
+    marginTop: spacing.xxl,
+  },
+  placesScroll: {
+    paddingLeft: spacing.lg,
+    paddingRight: spacing.sm,
+    paddingVertical: spacing.xs,
   },
 });

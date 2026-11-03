@@ -1,0 +1,132 @@
+[
+  {
+    "id": "place-1",
+    "title": "Lansdowne Bridge & Sukkur Barrage",
+    "urduTitle": "لینز ڈاؤن برج اور سکھر بیراج",
+    "location": "Sukkur, Indus River",
+    "category": "Historic Landmark",
+    "rating": 4.9,
+    "reviewCount": 1820,
+    "imageUrl": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1477959858617-67f30bc75b82?w=900&auto=format&fit=crop&q=80"
+    ],
+    "distanceFromCorridor": "1.5 km from Sukkur Terminal",
+    "description": "Constructed in 1889, Lansdowne Bridge is a masterpiece of Victorian cantilever iron engineering crossing the Indus River. Coupled with the 66-span Sukkur Barrage, it forms one of Pakistan's most awe-inspiring riverfront vistas.",
+    "highlights": [
+      "Sunset boat rides across the Indus River",
+      "Fresh fried Palla fish food stalls at riverfront",
+      "Spectacular illuminated night views from Lab-e-Mehran park"
+    ],
+    "bestTimeToVisit": "October to March (Evenings 4:30 PM - 7:30 PM)"
+  },
+  {
+    "id": "place-2",
+    "title": "Sadhu Bela Island Temple",
+    "urduTitle": "سادھو بیلا مندر، دریائے سندھ",
+    "location": "Menghraj Island, Sukkur",
+    "category": "Sacred Island",
+    "rating": 4.8,
+    "reviewCount": 940,
+    "imageUrl": "https://images.unsplash.com/photo-1548013146-72479768bada?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1548013146-72479768bada?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?w=900&auto=format&fit=crop&q=80"
+    ],
+    "distanceFromCorridor": "2.8 km from Sukkur Terminal (Boat Access)",
+    "description": "Founded in 1823 by Baba Bankhandi Maharaj, Sadhu Bela is an ornate marble temple complex situated on an island in the middle of the flowing Indus River, accessible only by wooden motorboats.",
+    "highlights": [
+      "Exquisite carved white marble architecture and frescos",
+      "Serene island atmosphere isolated from city traffic",
+      "Ancient banyan trees and historic monastic courtyards"
+    ],
+    "bestTimeToVisit": "Year-round (Morning 8:00 AM - 1:00 PM)"
+  },
+  {
+    "id": "place-3",
+    "title": "Kot Diji Fort",
+    "urduTitle": "کوٹ ڈیجی قلعہ",
+    "location": "Kot Diji, Khairpur / Sukkur",
+    "category": "Ancient Fortress",
+    "rating": 4.7,
+    "reviewCount": 1150,
+    "imageUrl": "https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=900&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=900&auto=format&fit=crop&q=80"
+    ],
+    "distanceFromCorridor": "28 km South of Sukkur (35 min drive)",
+    "description": "Perched dramatically on a 110-foot-high limestone hill, Kot Diji (Fort Ahmadabad) was built in 1795 by Mir Sohrab Khan Talpur. Its massive 30-foot bastions overlook vast date palm orchards.",
+    "highlights": [
+      "Colossal high-altitude fortifications and gun batteries",
+      "Adjacent pre-Harappan Kot Diji archaeological mound (3300 BCE)",
+      "Panoramic 360-degree views of Khairpur date palm groves"
+    ],
+    "bestTimeToVisit": "November to February (Sunrise to Sunset)"
+  },
+  {
+    "id": "place-4",
+    "title": "Satiyan Jo Astan (Seven Sisters)",
+    "urduTitle": "ستین جو آستان، روہڑی",
+    "location": "Yellow Hill, Indus Bank, Rohri",
+    "category": "Heritage Shrine",
+    "rating": 4.6,
+    "reviewCount": 680,
+    "imageUrl": "https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1587974928442-77dc3e0dba72?w=900&auto=format&fit=crop&q=80"
+    ],
+    "distanceFromCorridor": "3.5 km from Sukkur Main Terminal",
+    "description": "Perched on a rocky yellow limestone bluff overlooking the Indus, this 17th-century complex is famous for its intricate glazed tiles, Sufi mausoleums, and legend of seven pious sisters.",
+    "highlights": [
+      "Vibrant traditional Kashigari glazed tilework",
+      "Spectacular vantage point of riverboats and sunset reflections",
+      "Rich folklore and tranquil spiritual ambience"
+    ],
+    "bestTimeToVisit": "October to April (Late afternoon)"
+  },
+  {
+    "id": "place-5",
+    "title": "Mohenjo-Daro UNESCO World Heritage",
+    "urduTitle": "موئن جو دڑو، وادی سندھ کی تہذیب",
+    "location": "Larkana District, Upper Sindh",
+    "category": "UNESCO World Heritage",
+    "rating": 4.9,
+    "reviewCount": 3410,
+    "imageUrl": "https://images.unsplash.com/photo-1608481337062-4093bf3ed404?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1608481337062-4093bf3ed404?w=900&auto=format&fit=crop&q=80"
+    ],
+    "distanceFromCorridor": "75 km from Sukkur (1h 20m drive)",
+    "description": "Built around 2500 BCE, Mohenjo-Daro ('Mound of the Dead') was one of the world's earliest major urban settlements. It features advanced drainage systems, grid-planned brick streets, and the famous Great Bath.",
+    "highlights": [
+      "The Great Bath and Buddhist Stupa pinnacle",
+      "On-site Archaeological Museum with Priest-King replica & seals",
+      "Unmatched historical significance dating back 4,500+ years"
+    ],
+    "bestTimeToVisit": "Winter season (November - February)"
+  },
+  {
+    "id": "place-6",
+    "title": "Gorakh Hill Station",
+    "urduTitle": "گورکھ ہل اسٹیشن",
+    "location": "Kirthar Mountain Range, Dadu",
+    "category": "Mountain Highlands",
+    "rating": 4.8,
+    "reviewCount": 2100,
+    "imageUrl": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=900&auto=format&fit=crop&q=80",
+    "galleryUrls": [
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=900&auto=format&fit=crop&q=80"
+    ],
+    "distanceFromCorridor": "Scenic Highland Excursion",
+    "description": "Known as the 'Murree of Sindh', Gorakh Hill sits at 5,688 feet (1,734 m) in the Kirthar Mountains. It offers sub-zero winter temperatures, pristine stargazing skies, and sweeping sunset views.",
+    "highlights": [
+      "Breathtaking 4x4 off-road jeep ascent through rugged gorges",
+      "Campfires under the crystal-clear Milky Way galaxy",
+      "Chilly mountain breeze and panoramic sunrise points"
+    ],
+    "bestTimeToVisit": "September to April (Overnight camping recommended)"
+  }
+]
+
