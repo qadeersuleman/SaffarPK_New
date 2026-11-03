@@ -445,3 +445,34 @@ export const FilterIcon: React.FC<IconProps> = ({ size = 18, color = colors.text
     />
   </Svg>
 );
+
+export const TicketIcon: React.FC<IconProps> = ({ size = 20, color = colors.primary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path
+      d="M3 8V6C3 4.89543 3.89543 4 5 4H19C20.1046 4 21 4.89543 21 6V8C19.8954 8 19 8.89543 19 10C19 11.1046 19.8954 12 21 12V14C19.8954 14 19 14.8954 19 16C19 17.1046 19.8954 18 21 18V20C21 21.1046 20.1046 22 19 22H5C3.89543 22 3 21.1046 3 20V18C4.10457 18 5 17.1046 5 16C5 14.8954 4.10457 14 3 14V12C4.10457 12 5 11.1046 5 10C5 8.89543 4.10457 8 3 8Z"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path d="M9 12H15M9 8H15M9 16H15" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeDasharray="2 2" />
+  </Svg>
+);
+
+export const CopyIcon: React.FC<IconProps> = ({ size = 18, color = colors.primary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Rect x={9} y={9} width={13} height={13} rx={3} stroke={color} strokeWidth={2} />
+    <Path
+      d="M5 15H4C2.89543 15 2 14.1046 2 13V4C2 2.89543 2.89543 2 4 2H13C14.1046 2 15 2.89543 15 4V5"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+    />
+  </Svg>
+);
+
+export const RoadIcon: React.FC<IconProps> = ({ size = 20, color = colors.primary }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Path d="M4 22L8 2M20 22L16 2M12 4V7M12 11V14M12 18V21" stroke={color} strokeWidth={2} strokeLinecap="round" />
+  </Svg>
+);

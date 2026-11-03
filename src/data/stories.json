@@ -1,0 +1,79 @@
+[
+  {
+    "id": "story-1",
+    "title": "Lansdowne Bridge",
+    "subtitle": "Victorian Engineering Wonder",
+    "city": "Sukkur",
+    "imageUrl": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=900&auto=format&fit=crop&q=80",
+    "avatarUrl": "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=300&auto=format&fit=crop&q=80",
+    "description": "Cross the historic 1889 cantilever bridge over the flowing Indus River. Enjoy sunset boat rides and illuminated night views from Lab-e-Mehran park.",
+    "tag": "Iconic Landmark",
+    "ctaText": "Explore Sukkur",
+    "actionType": "place",
+    "targetId": "place-1"
+  },
+  {
+    "id": "story-2",
+    "title": "Sadhu Bela Island",
+    "subtitle": "Sacred Marble Temple",
+    "city": "Menghraj Island",
+    "imageUrl": "https://images.unsplash.com/photo-1548013146-72479768bada?w=900&auto=format&fit=crop&q=80",
+    "avatarUrl": "https://images.unsplash.com/photo-1548013146-72479768bada?w=300&auto=format&fit=crop&q=80",
+    "description": "Accessible only by wooden boats, Sadhu Bela is an ornate marble sanctuary surrounded by the waters of the Indus River since 1823.",
+    "tag": "Sacred Island",
+    "ctaText": "View Temple Details",
+    "actionType": "place",
+    "targetId": "place-2"
+  },
+  {
+    "id": "story-3",
+    "title": "Royal Coach VIP",
+    "subtitle": "First-Class Experience",
+    "city": "N-5 Corridor",
+    "imageUrl": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=900&auto=format&fit=crop&q=80",
+    "avatarUrl": "https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=300&auto=format&fit=crop&q=80",
+    "description": "Experience zero-gravity reclining leather seats, individual USB charging ports, climate control, and high-speed onboard WiFi.",
+    "tag": "Luxury Travel",
+    "ctaText": "Search VIP Buses",
+    "actionType": "bus"
+  },
+  {
+    "id": "story-4",
+    "title": "Hotel One Sukkur",
+    "subtitle": "Executive Stay & Dining",
+    "city": "Sukkur",
+    "imageUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=900&auto=format&fit=crop&q=80",
+    "avatarUrl": "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=300&auto=format&fit=crop&q=80",
+    "description": "Military Road's finest executive hotel featuring 24/7 concierge, gourmet multi-cuisine dining, and soundproof luxury rooms.",
+    "tag": "4-Star Hotel",
+    "ctaText": "View Hotel Rooms",
+    "actionType": "hotel",
+    "targetId": "hotel-1"
+  },
+  {
+    "id": "story-5",
+    "title": "Kot Diji Fort",
+    "subtitle": "18th-Century Fortress",
+    "city": "Khairpur",
+    "imageUrl": "https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=900&auto=format&fit=crop&q=80",
+    "avatarUrl": "https://images.unsplash.com/photo-1599571234909-29ed5d1321d6?w=300&auto=format&fit=crop&q=80",
+    "description": "Perched 110 feet on a limestone hill, Kot Diji's colossal bastions guard the date palm valleys with over 200 years of history.",
+    "tag": "Ancient Fortress",
+    "ctaText": "Sightseeing Guide",
+    "actionType": "place",
+    "targetId": "place-3"
+  },
+  {
+    "id": "story-6",
+    "title": "River Palla Fish",
+    "subtitle": "Indus Culinary Delight",
+    "city": "Lab-e-Mehran",
+    "imageUrl": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=900&auto=format&fit=crop&q=80",
+    "avatarUrl": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=300&auto=format&fit=crop&q=80",
+    "description": "Crisp fried spiced Indus Palla fish served fresh at Lab-e-Mehran riverfront with piping hot cardamom chai and naan.",
+    "tag": "Food & Culture",
+    "ctaText": "Corridor Food Stops",
+    "actionType": "food"
+  }
+]
+

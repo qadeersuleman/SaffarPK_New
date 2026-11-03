@@ -10,6 +10,7 @@ import {
   Animated,
   Image,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
@@ -26,16 +27,21 @@ import {
   HotelIcon,
   LandmarkIcon,
   SparklesIcon,
+  TicketIcon,
+  CopyIcon,
+  RoadIcon,
 } from '../../components/icons/AppIcons';
 import { ALL_STOPS, getFare, getEstimatedDurationMinutes } from '../../utils/routeUtils';
 import { RouteStop, Hotel, FamousPlace } from '../../types';
 import busesData from '../../data/buses.json';
 import hotelsData from '../../data/hotels.json';
 import placesData from '../../data/places.json';
+import storiesData from '../../data/stories.json';
 import { HotelCard } from '../../components/cards/HotelCard';
 import { PlaceCard } from '../../components/cards/PlaceCard';
 import { HotelDetailModal } from '../../components/modals/HotelDetailModal';
 import { PlaceDetailModal } from '../../components/modals/PlaceDetailModal';
+import { StoryViewerModal, StoryItem } from '../../components/modals/StoryViewerModal';
 import {
   FadeInUp,
   ScalePressable,
@@ -81,6 +87,46 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [activeCategory, setActiveCategory] = useState<CategoryFilterId>('all');
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
   const [selectedPlace, setSelectedPlace] = useState<FamousPlace | null>(null);
+
+  // Segmented Travel Mode ('bus' | 'hotel' | 'route')
+  const [travelMode, setTravelMode] = useState<'bus' | 'hotel' | 'route'>('bus');
+
+  // Hotel Quick Finder State
+  const [hotelCity, setHotelCity] = useState<'Sukkur' | 'Ghotki' | 'Rohri' | 'Daharki'>('Sukkur');
+  const [hotelNights, setHotelNights] = useState<number>(1);
+  const [hotelGuests, setHotelGuests] = useState<number>(2);
+
+  // Story Viewer State
+  const [isStoryModalVisible, setIsStoryModalVisible] = useState<boolean>(false);
+  const [storyInitialIndex, setStoryInitialIndex] = useState<number>(0);
+
+  // Promo Code Copied Feedback
+  const [copiedPromo, setCopiedPromo] = useState<boolean>(false);
+
+  const handleStoryAction = (story: StoryItem) => {
+    if (story.actionType === 'hotel' && story.targetId) {
+      const found = (hotelsData as Hotel[]).find(h => h.id === story.targetId);
+      if (found) setSelectedHotel(found);
+    } else if (story.actionType === 'place' && story.targetId) {
+      const found = (placesData as FamousPlace[]).find(p => p.id === story.targetId);
+      if (found) setSelectedPlace(found);
+    } else if (story.actionType === 'bus') {
+      onSearch({
+        origin,
+        destination,
+        date: selectedDate,
+        passengers,
+      });
+    } else {
+      Alert.alert(story.title, story.description);
+    }
+  };
+
+  const handleCopyPromo = () => {
+    setCopiedPromo(true);
+    Alert.alert('Promo Code Copied! 🎉', 'Code SAFFAR20 copied to clipboard. Apply at payment for 20% discount on buses and stays!');
+    setTimeout(() => setCopiedPromo(false), 3000);
+  };
 
   const filteredHotels = (hotelsData as Hotel[]).filter(h => {
     if (activeCategory === 'all') return true;
@@ -228,182 +274,558 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               Guaranteed seats & punctual departures every hour on N-5
             </Text>
           </FadeInUp>
+
+          {/* Corridor Instagram Stories Bar */}
+          <FadeInUp delay={90} distance={14} style={styles.storiesSection}>
+            <View style={styles.storiesHeaderRow}>
+              <Text style={styles.storiesSectionTitle}>Corridor Highlights</Text>
+              <Text style={styles.storiesSectionSub}>Watch Stories 🎬</Text>
+            </View>
+            <ScrollView
+              horizontal
+              nestedScrollEnabled={true}
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.storiesScroll}
+            >
+              {storiesData.map((story, idx) => (
+                <ScalePressable
+                  key={story.id}
+                  activeScale={0.88}
+                  onPress={() => {
+                    setStoryInitialIndex(idx);
+                    setIsStoryModalVisible(true);
+                  }}
+                  style={styles.storyBubbleItem}
+                >
+                  <View style={styles.storyRingGradient}>
+                    <Image source={{ uri: story.avatarUrl }} style={styles.storyAvatar} />
+                  </View>
+                  <Text style={styles.storyTitleText} numberOfLines={1}>
+                    {story.title}
+                  </Text>
+                </ScalePressable>
+              ))}
+            </ScrollView>
+          </FadeInUp>
         </ImageBackground>
 
         {/* Floating Route Booking Card with Entrance Animation */}
         <FadeInUp delay={120} distance={28} style={styles.selectorWrapper}>
           <Card variant="elevated" style={styles.bookingCard}>
-            <View style={styles.cardHeaderRow}>
-              <View>
-                <Text style={styles.selectorTitle}>Where are you going?</Text>
-                <Text style={styles.selectorSub}>
-                  Select your stations on the Sukkur ⇄ Obuaro route
+            {/* Segmented Travel Mode Switcher */}
+            <View style={styles.modeTabBar}>
+              <ScalePressable
+                activeScale={0.94}
+                onPress={() => setTravelMode('bus')}
+                style={[styles.modeTab, travelMode === 'bus' ? styles.modeTabActive : null]}
+              >
+                <Text style={styles.modeTabEmoji}>🚌</Text>
+                <Text
+                  style={[
+                    styles.modeTabText,
+                    travelMode === 'bus' ? styles.modeTabTextActive : null,
+                  ]}
+                >
+                  Bus Coaches
                 </Text>
-              </View>
-              <Badge label="N-5 Corridor" variant="category" />
+              </ScalePressable>
+
+              <ScalePressable
+                activeScale={0.94}
+                onPress={() => setTravelMode('hotel')}
+                style={[styles.modeTab, travelMode === 'hotel' ? styles.modeTabActive : null]}
+              >
+                <Text style={styles.modeTabEmoji}>🏨</Text>
+                <Text
+                  style={[
+                    styles.modeTabText,
+                    travelMode === 'hotel' ? styles.modeTabTextActive : null,
+                  ]}
+                >
+                  Stays & Rooms
+                </Text>
+              </ScalePressable>
+
+              <ScalePressable
+                activeScale={0.94}
+                onPress={() => setTravelMode('route')}
+                style={[styles.modeTab, travelMode === 'route' ? styles.modeTabActive : null]}
+              >
+                <Text style={styles.modeTabEmoji}>🗺️</Text>
+                <Text
+                  style={[
+                    styles.modeTabText,
+                    travelMode === 'route' ? styles.modeTabTextActive : null,
+                  ]}
+                >
+                  Route Map
+                </Text>
+              </ScalePressable>
             </View>
 
-            {/* Interactive Origin & Destination Selector Box */}
-            <View style={styles.routeBox}>
-              {/* Origin Picker with Fluid Swap Animation */}
-              <Animated.View
-                style={{
-                  opacity: swapOpacity,
-                  transform: [{ translateY: swapOriginY }],
-                }}
-              >
-                <ScalePressable
-                  activeScale={0.98}
-                  onPress={() => setPickingFor('origin')}
-                  style={styles.stopButton}
-                >
-                  <View style={styles.pinCircleGreen}>
-                    <LocationPinIcon size={18} color="#16A34A" />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.stopLabel}>DEPARTURE TERMINAL</Text>
-                    <Text style={styles.stopName}>{origin.name}</Text>
-                    <Text style={styles.stopLandmark} numberOfLines={1}>
-                      {origin.landmark}
+            {travelMode === 'bus' && (
+              <>
+                <View style={styles.cardHeaderRow}>
+                  <View>
+                    <Text style={styles.selectorTitle}>Where are you going?</Text>
+                    <Text style={styles.selectorSub}>
+                      Select your stations on the Sukkur ⇄ Obuaro route
                     </Text>
                   </View>
-                  <View style={styles.urduBadge}>
-                    <Text style={styles.urduName}>{origin.urduName}</Text>
-                  </View>
-                </ScalePressable>
-              </Animated.View>
+                  <Badge label="N-5 Corridor" variant="category" />
+                </View>
 
-              {/* Swap Button Divider with Spring Physics */}
-              <View style={styles.swapDividerRow}>
-                <View style={styles.dividerLine} />
-                <ScalePressable
-                  activeScale={0.86}
-                  onPress={handleSwap}
-                  style={styles.swapButton}
-                >
-                  <Animated.View style={{ transform: [{ rotate: spin }] }}>
-                    <SwapIcon size={20} color={colors.primary} />
-                  </Animated.View>
-                </ScalePressable>
-                <View style={styles.dividerLine} />
-              </View>
-
-              {/* Destination Picker with Fluid Swap Animation */}
-              <Animated.View
-                style={{
-                  opacity: swapOpacity,
-                  transform: [{ translateY: swapDestY }],
-                }}
-              >
-                <ScalePressable
-                  activeScale={0.98}
-                  onPress={() => setPickingFor('destination')}
-                  style={styles.stopButton}
-                >
-                  <View style={styles.pinCircleOrange}>
-                    <LocationPinIcon size={18} color={colors.primary} />
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.stopLabel}>ARRIVAL TERMINAL</Text>
-                    <Text style={styles.stopName}>{destination.name}</Text>
-                    <Text style={styles.stopLandmark} numberOfLines={1}>
-                      {destination.landmark}
-                    </Text>
-                  </View>
-                  <View style={styles.urduBadge}>
-                    <Text style={styles.urduName}>{destination.urduName}</Text>
-                  </View>
-                </ScalePressable>
-              </Animated.View>
-            </View>
-
-            {/* Travel Date & Passenger Count Selection */}
-            <View style={styles.metaRow}>
-              {/* Date Selector */}
-              <View style={styles.metaBlock}>
-                <Text style={styles.metaLabel}>TRAVEL DATE</Text>
-                <View style={styles.dateSelector}>
-                  {(['Today', 'Tomorrow'] as const).map(d => (
+                {/* Interactive Origin & Destination Selector Box */}
+                <View style={styles.routeBox}>
+                  {/* Origin Picker with Fluid Swap Animation */}
+                  <Animated.View
+                    style={{
+                      opacity: swapOpacity,
+                      transform: [{ translateY: swapOriginY }],
+                    }}
+                  >
                     <ScalePressable
-                      key={d}
-                      activeScale={0.94}
-                      onPress={() => setSelectedDate(d)}
-                      style={[
-                        styles.dateChip,
-                        selectedDate === d ? styles.dateChipActive : null,
-                      ]}
+                      activeScale={0.98}
+                      onPress={() => setPickingFor('origin')}
+                      style={styles.stopButton}
                     >
-                      <Text
+                      <View style={styles.pinCircleGreen}>
+                        <LocationPinIcon size={18} color="#16A34A" />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.stopLabel}>DEPARTURE TERMINAL</Text>
+                        <Text style={styles.stopName}>{origin.name}</Text>
+                        <Text style={styles.stopLandmark} numberOfLines={1}>
+                          {origin.landmark}
+                        </Text>
+                      </View>
+                      <View style={styles.urduBadge}>
+                        <Text style={styles.urduName}>{origin.urduName}</Text>
+                      </View>
+                    </ScalePressable>
+                  </Animated.View>
+
+                  {/* Swap Button Divider with Spring Physics */}
+                  <View style={styles.swapDividerRow}>
+                    <View style={styles.dividerLine} />
+                    <ScalePressable
+                      activeScale={0.86}
+                      onPress={handleSwap}
+                      style={styles.swapButton}
+                    >
+                      <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                        <SwapIcon size={20} color={colors.primary} />
+                      </Animated.View>
+                    </ScalePressable>
+                    <View style={styles.dividerLine} />
+                  </View>
+
+                  {/* Destination Picker with Fluid Swap Animation */}
+                  <Animated.View
+                    style={{
+                      opacity: swapOpacity,
+                      transform: [{ translateY: swapDestY }],
+                    }}
+                  >
+                    <ScalePressable
+                      activeScale={0.98}
+                      onPress={() => setPickingFor('destination')}
+                      style={styles.stopButton}
+                    >
+                      <View style={styles.pinCircleOrange}>
+                        <LocationPinIcon size={18} color={colors.primary} />
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.stopLabel}>ARRIVAL TERMINAL</Text>
+                        <Text style={styles.stopName}>{destination.name}</Text>
+                        <Text style={styles.stopLandmark} numberOfLines={1}>
+                          {destination.landmark}
+                        </Text>
+                      </View>
+                      <View style={styles.urduBadge}>
+                        <Text style={styles.urduName}>{destination.urduName}</Text>
+                      </View>
+                    </ScalePressable>
+                  </Animated.View>
+                </View>
+
+                {/* Travel Date & Passenger Count Selection */}
+                <View style={styles.metaRow}>
+                  {/* Date Selector */}
+                  <View style={styles.metaBlock}>
+                    <Text style={styles.metaLabel}>TRAVEL DATE</Text>
+                    <View style={styles.dateSelector}>
+                      {(['Today', 'Tomorrow'] as const).map(d => (
+                        <ScalePressable
+                          key={d}
+                          activeScale={0.94}
+                          onPress={() => setSelectedDate(d)}
+                          style={[
+                            styles.dateChip,
+                            selectedDate === d ? styles.dateChipActive : null,
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.dateChipText,
+                              selectedDate === d ? styles.dateChipTextActive : null,
+                            ]}
+                          >
+                            {d}
+                          </Text>
+                        </ScalePressable>
+                      ))}
+                    </View>
+                  </View>
+
+                  {/* Passengers Count with Scale Animation */}
+                  <View style={styles.metaBlock}>
+                    <Text style={styles.metaLabel}>PASSENGERS</Text>
+                    <View style={styles.passengerCounter}>
+                      <ScalePressable
+                        activeScale={0.82}
+                        onPress={() => handlePassengerChange(Math.max(1, passengers - 1))}
+                        style={styles.counterBtn}
+                      >
+                        <Text style={styles.counterBtnText}>-</Text>
+                      </ScalePressable>
+                      <Animated.Text
                         style={[
-                          styles.dateChipText,
-                          selectedDate === d ? styles.dateChipTextActive : null,
+                          styles.passengerCountText,
+                          { transform: [{ scale: countScale }] },
                         ]}
                       >
-                        {d}
+                        {passengers}
+                      </Animated.Text>
+                      <ScalePressable
+                        activeScale={0.82}
+                        onPress={() => handlePassengerChange(Math.min(4, passengers + 1))}
+                        style={styles.counterBtn}
+                      >
+                        <Text style={styles.counterBtnText}>+</Text>
+                      </ScalePressable>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Estimated Fare & Duration Peek */}
+                <View style={styles.tripPeek}>
+                  <View style={styles.peekItem}>
+                    <ClockIcon size={18} color={colors.textSecondary} />
+                    <Text style={styles.peekText}>Est. ~{estDuration} mins</Text>
+                  </View>
+                  <View style={styles.peekDivider} />
+                  <View style={styles.peekItem}>
+                    <Text style={styles.peekText}>Fares starting</Text>
+                    <Text style={styles.peekFare}>PKR {minFare}</Text>
+                  </View>
+                </View>
+
+                {/* Search Buses CTA */}
+                <Button
+                  title="Search Buses & Timings"
+                  onPress={() =>
+                    onSearch({
+                      origin,
+                      destination,
+                      date: selectedDate,
+                      passengers,
+                    })
+                  }
+                  size="large"
+                  style={styles.searchButton}
+                />
+              </>
+            )}
+
+            {travelMode === 'hotel' && (
+              <View style={styles.hotelFinderBox}>
+                <View style={styles.cardHeaderRow}>
+                  <View>
+                    <Text style={styles.selectorTitle}>Find Executive Stays</Text>
+                    <Text style={styles.selectorSub}>
+                      Partner hotels & resorts across the corridor
+                    </Text>
+                  </View>
+                  <Badge label="Agoda/Booking Verified" variant="success" />
+                </View>
+
+                <Text style={styles.finderLabel}>SELECT CITY / CORRIDOR TERMINAL</Text>
+                <View style={styles.cityChipsRow}>
+                  {(['Sukkur', 'Rohri', 'Ghotki', 'Daharki'] as const).map(c => (
+                    <ScalePressable
+                      key={c}
+                      activeScale={0.92}
+                      onPress={() => setHotelCity(c)}
+                      style={[styles.cityChip, hotelCity === c ? styles.cityChipActive : null]}
+                    >
+                      <Text style={[styles.cityChipText, hotelCity === c ? styles.cityChipTextActive : null]}>
+                        {c}
                       </Text>
                     </ScalePressable>
                   ))}
                 </View>
-              </View>
 
-              {/* Passengers Count with Scale Animation */}
-              <View style={styles.metaBlock}>
-                <Text style={styles.metaLabel}>PASSENGERS</Text>
-                <View style={styles.passengerCounter}>
-                  <ScalePressable
-                    activeScale={0.82}
-                    onPress={() => handlePassengerChange(Math.max(1, passengers - 1))}
-                    style={styles.counterBtn}
-                  >
-                    <Text style={styles.counterBtnText}>-</Text>
-                  </ScalePressable>
-                  <Animated.Text
-                    style={[
-                      styles.passengerCountText,
-                      { transform: [{ scale: countScale }] },
-                    ]}
-                  >
-                    {passengers}
-                  </Animated.Text>
-                  <ScalePressable
-                    activeScale={0.82}
-                    onPress={() => handlePassengerChange(Math.min(4, passengers + 1))}
-                    style={styles.counterBtn}
-                  >
-                    <Text style={styles.counterBtnText}>+</Text>
-                  </ScalePressable>
+                <View style={styles.metaRow}>
+                  <View style={styles.metaBlock}>
+                    <Text style={styles.metaLabel}>STAY DURATION</Text>
+                    <View style={styles.dateSelector}>
+                      {[1, 2, 3].map(n => (
+                        <ScalePressable
+                          key={n}
+                          activeScale={0.94}
+                          onPress={() => setHotelNights(n)}
+                          style={[styles.dateChip, hotelNights === n ? styles.dateChipActive : null]}
+                        >
+                          <Text style={[styles.dateChipText, hotelNights === n ? styles.dateChipTextActive : null]}>
+                            {n} {n === 1 ? 'Night' : 'Nights'}
+                          </Text>
+                        </ScalePressable>
+                      ))}
+                    </View>
+                  </View>
+
+                  <View style={styles.metaBlock}>
+                    <Text style={styles.metaLabel}>GUESTS</Text>
+                    <View style={styles.passengerCounter}>
+                      <ScalePressable
+                        activeScale={0.82}
+                        onPress={() => setHotelGuests(Math.max(1, hotelGuests - 1))}
+                        style={styles.counterBtn}
+                      >
+                        <Text style={styles.counterBtnText}>-</Text>
+                      </ScalePressable>
+                      <Text style={styles.passengerCountText}>{hotelGuests}</Text>
+                      <ScalePressable
+                        activeScale={0.82}
+                        onPress={() => setHotelGuests(Math.min(6, hotelGuests + 1))}
+                        style={styles.counterBtn}
+                      >
+                        <Text style={styles.counterBtnText}>+</Text>
+                      </ScalePressable>
+                    </View>
+                  </View>
                 </View>
-              </View>
-            </View>
 
-            {/* Estimated Fare & Duration Peek */}
-            <View style={styles.tripPeek}>
-              <View style={styles.peekItem}>
-                <ClockIcon size={18} color={colors.textSecondary} />
-                <Text style={styles.peekText}>Est. ~{estDuration} mins</Text>
-              </View>
-              <View style={styles.peekDivider} />
-              <View style={styles.peekItem}>
-                <Text style={styles.peekText}>Fares starting</Text>
-                <Text style={styles.peekFare}>PKR {minFare}</Text>
-              </View>
-            </View>
+                <View style={styles.tripPeek}>
+                  <View style={styles.peekItem}>
+                    <ShieldIcon size={18} color="#16A34A" />
+                    <Text style={styles.peekText}>Free Cancellation Guaranteed</Text>
+                  </View>
+                  <View style={styles.peekDivider} />
+                  <View style={styles.peekItem}>
+                    <Text style={styles.peekText}>Stays from</Text>
+                    <Text style={styles.peekFare}>PKR 4,900</Text>
+                  </View>
+                </View>
 
-            {/* Search Buses CTA */}
-            <Button
-              title="Search Buses & Timings"
-              onPress={() =>
-                onSearch({
-                  origin,
-                  destination,
-                  date: selectedDate,
-                  passengers,
-                })
-              }
-              size="large"
-              style={styles.searchButton}
-            />
+                <Button
+                  title={`View Available Rooms in ${hotelCity}`}
+                  onPress={() => {
+                    setActiveCategory('hotels');
+                    Alert.alert(
+                      `Accommodations in ${hotelCity}`,
+                      `Showing verified executive rooms in ${hotelCity} for ${hotelGuests} guests (${hotelNights} night). Browse options below.`
+                    );
+                  }}
+                  size="large"
+                  style={styles.searchButton}
+                />
+              </View>
+            )}
+
+            {travelMode === 'route' && (
+              <View style={styles.routeOverviewBox}>
+                <View style={styles.corridorRouteHead}>
+                  <View>
+                    <Text style={styles.selectorTitle}>N-5 Highway Corridor</Text>
+                    <Text style={styles.selectorSub}>Sukkur Terminal ⇄ Obuaro Terminal</Text>
+                  </View>
+                  <Badge label="160 KM Corridor" variant="category" />
+                </View>
+
+                <View style={styles.corridorStopsList}>
+                  {ALL_STOPS.map((s, idx) => (
+                    <ScalePressable
+                      key={s.id}
+                      activeScale={0.96}
+                      onPress={() => {
+                        setOrigin(s);
+                        setTravelMode('bus');
+                      }}
+                      style={styles.corridorStopRow}
+                    >
+                      <View style={styles.corridorStopDotWrap}>
+                        <View
+                          style={[
+                            styles.corridorStopDot,
+                            idx === 0 && { backgroundColor: '#16A34A' },
+                            idx === ALL_STOPS.length - 1 && { backgroundColor: colors.primary },
+                          ]}
+                        />
+                        {idx < ALL_STOPS.length - 1 && <View style={styles.corridorStopLine} />}
+                      </View>
+                      <View style={{ flex: 1 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                          <Text style={styles.corridorStopName}>{s.name}</Text>
+                          <Text style={styles.corridorStopUrdu}>{s.urduName}</Text>
+                        </View>
+                        <Text style={styles.corridorStopDesc}>{s.landmark}</Text>
+                      </View>
+                    </ScalePressable>
+                  ))}
+                </View>
+
+                <Button
+                  title="Select Route & Search Coaches"
+                  onPress={() => setTravelMode('bus')}
+                  size="large"
+                  style={styles.searchButton}
+                />
+              </View>
+            )}
           </Card>
+        </FadeInUp>
+
+        {/* Live Next Bus Countdown Ticker */}
+        <FadeInUp delay={140} distance={16} style={styles.nextDepartureCard}>
+          <View style={styles.nextDepLeft}>
+            <View style={styles.livePulseCircle}>
+              <PulseBeacon size={9} pulseSize={26} color="#22C55E" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={styles.nextDepLabel}>NEXT DEPARTURE • IN 18 MINS</Text>
+                <Badge label="Fast Boarding" variant="success" />
+              </View>
+              <Text style={styles.nextDepTitle}>Saffar Prime Executive • Sukkur ➔ Ghotki</Text>
+              <Text style={styles.nextDepSeats}>Departs 01:15 PM • Only 5 Seats Left • PKR 600</Text>
+            </View>
+          </View>
+          <ScalePressable
+            activeScale={0.92}
+            onPress={() =>
+              onSearch({
+                origin: ALL_STOPS[0],
+                destination: ALL_STOPS[2],
+                date: 'Today',
+                passengers: 1,
+              })
+            }
+            style={styles.quickBookBtn}
+          >
+            <Text style={styles.quickBookBtnText}>Book Now</Text>
+          </ScalePressable>
+        </FadeInUp>
+
+        {/* Exclusive Corridor Launch Voucher Banner */}
+        <FadeInUp delay={160} distance={18} style={styles.voucherContainer}>
+          <View style={styles.voucherCard}>
+            <View style={styles.voucherLeft}>
+              <View style={styles.ticketIconWrap}>
+                <TicketIcon size={24} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.voucherBadge}>FLAT 20% OFF FIRST TRIP</Text>
+                <Text style={styles.voucherTitle}>Use Code: SAFFAR20</Text>
+                <Text style={styles.voucherSub}>Valid on all luxury coaches & partner hotels</Text>
+              </View>
+            </View>
+            <View style={styles.voucherDivider} />
+            <ScalePressable
+              activeScale={0.88}
+              onPress={handleCopyPromo}
+              style={[styles.copyBtn, copiedPromo ? styles.copyBtnDone : null]}
+            >
+              <Text style={[styles.copyBtnText, copiedPromo ? styles.copyBtnTextDone : null]}>
+                {copiedPromo ? 'COPIED! ✓' : 'COPY'}
+              </Text>
+            </ScalePressable>
+          </View>
+        </FadeInUp>
+
+        {/* Live Highway Weather & Telemetry Widget */}
+        <FadeInUp delay={180} distance={18} style={styles.telemetryCard}>
+          <View style={styles.telemetryItem}>
+            <Text style={styles.telemetryEmoji}>☀️</Text>
+            <View>
+              <Text style={styles.telemetryTitle}>Corridor Weather</Text>
+              <Text style={styles.telemetryValue}>29°C Clear Skies</Text>
+            </View>
+          </View>
+          <View style={styles.telemetrySeparator} />
+          <View style={styles.telemetryItem}>
+            <Text style={styles.telemetryEmoji}>🛣️</Text>
+            <View>
+              <Text style={styles.telemetryTitle}>N-5 Highway Traffic</Text>
+              <Text style={styles.telemetryValue}>Smooth (95 km/h)</Text>
+            </View>
+          </View>
+          <View style={styles.telemetrySeparator} />
+          <View style={styles.telemetryItem}>
+            <Text style={styles.telemetryEmoji}>🛡️</Text>
+            <View>
+              <Text style={styles.telemetryTitle}>NHMP Patrol</Text>
+              <Text style={styles.telemetryValue}>Route Secured</Text>
+            </View>
+          </View>
+        </FadeInUp>
+
+        {/* Interactive N-5 Route Stepper Strip */}
+        <FadeInUp delay={200} distance={20} style={styles.routeStripSection}>
+          <View style={styles.stripHeader}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <RoadIcon size={18} color={colors.primary} />
+              <Text style={styles.stripTitle}>N-5 Highway Route Progress</Text>
+            </View>
+            <Text style={styles.stripDistance}>160 km Total • 6 Terminals</Text>
+          </View>
+
+          <ScrollView
+            horizontal
+            nestedScrollEnabled={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.stripScroll}
+          >
+            {ALL_STOPS.map((stop, i) => {
+              const isOrigin = stop.id === origin.id;
+              const isDest = stop.id === destination.id;
+              return (
+                <ScalePressable
+                  key={stop.id}
+                  activeScale={0.92}
+                  onPress={() => {
+                    if (stop.id !== origin.id) {
+                      setDestination(stop);
+                    }
+                  }}
+                  style={[
+                    styles.stripStopItem,
+                    isOrigin ? styles.stripStopItemOrigin : null,
+                    isDest ? styles.stripStopItemDest : null,
+                  ]}
+                >
+                  <View style={styles.stripMarkerRow}>
+                    <View
+                      style={[
+                        styles.stripDot,
+                        isOrigin
+                          ? { backgroundColor: '#16A34A' }
+                          : isDest
+                          ? { backgroundColor: colors.primary }
+                          : null,
+                      ]}
+                    />
+                    {i < ALL_STOPS.length - 1 && <View style={styles.stripConnector} />}
+                  </View>
+                  <Text style={[styles.stripStopName, (isOrigin || isDest) && styles.stripStopNameActive]}>
+                    {stop.name}
+                  </Text>
+                  <Text style={styles.stripStopSeq}>Stop #{stop.sequence}</Text>
+                </ScalePressable>
+              );
+            })}
+          </ScrollView>
         </FadeInUp>
 
         {/* Live Bus Tracking Banner with Radar Animation */}
@@ -739,6 +1161,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         visible={selectedPlace !== null}
         place={selectedPlace}
         onClose={() => setSelectedPlace(null)}
+      />
+
+      {/* Visual Story Viewer Modal */}
+      <StoryViewerModal
+        visible={isStoryModalVisible}
+        stories={storiesData as StoryItem[]}
+        initialIndex={storyInitialIndex}
+        onClose={() => setIsStoryModalVisible(false)}
+        onAction={handleStoryAction}
       />
     </View>
   );
@@ -1409,5 +1840,437 @@ const styles = StyleSheet.create({
     paddingLeft: spacing.lg,
     paddingRight: spacing.sm,
     paddingVertical: spacing.xs,
+  },
+  storiesSection: {
+    marginTop: spacing.md,
+  },
+  storiesHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.xs + 2,
+  },
+  storiesSectionTitle: {
+    ...typography.caption,
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#E2E8F0',
+    letterSpacing: 0.6,
+  },
+  storiesSectionSub: {
+    ...typography.caption,
+    fontSize: 11,
+    color: '#FF7A33',
+    fontWeight: '700',
+  },
+  storiesScroll: {
+    paddingVertical: 4,
+    gap: 14,
+  },
+  storyBubbleItem: {
+    alignItems: 'center',
+    width: 66,
+  },
+  storyRingGradient: {
+    width: 58,
+    height: 58,
+    borderRadius: 29,
+    padding: 2.5,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.sm,
+  },
+  storyAvatar: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 27,
+    borderWidth: 2,
+    borderColor: '#090D16',
+  },
+  storyTitleText: {
+    ...typography.caption,
+    fontSize: 11,
+    color: '#CBD5E1',
+    fontWeight: '700',
+    marginTop: 5,
+    textAlign: 'center',
+  },
+  modeTabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#F1F5F9',
+    borderRadius: borderRadius.lg,
+    padding: 3,
+    marginBottom: spacing.md,
+  },
+  modeTab: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 9,
+    borderRadius: borderRadius.md,
+    gap: 5,
+  },
+  modeTabActive: {
+    backgroundColor: '#FFFFFF',
+    ...shadows.sm,
+  },
+  modeTabEmoji: {
+    fontSize: 14,
+  },
+  modeTabText: {
+    ...typography.caption,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#64748B',
+  },
+  modeTabTextActive: {
+    color: colors.primary,
+    fontWeight: '900',
+  },
+  hotelFinderBox: {
+    marginTop: spacing.xs,
+  },
+  finderLabel: {
+    ...typography.caption,
+    fontSize: 11,
+    fontWeight: '800',
+    color: colors.textMuted,
+    marginBottom: spacing.xs,
+    letterSpacing: 0.6,
+  },
+  cityChipsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: spacing.md,
+  },
+  cityChip: {
+    flex: 1,
+    paddingVertical: 10,
+    backgroundColor: '#F8FAFC',
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+  },
+  cityChipActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  cityChipText: {
+    ...typography.caption,
+    fontSize: 12,
+    fontWeight: '800',
+    color: colors.textSecondary,
+  },
+  cityChipTextActive: {
+    color: '#FFFFFF',
+  },
+  routeOverviewBox: {
+    marginTop: spacing.xs,
+  },
+  corridorRouteHead: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  corridorStopsList: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: borderRadius.xl,
+    padding: spacing.md,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    marginBottom: spacing.lg,
+  },
+  corridorStopRow: {
+    flexDirection: 'row',
+    paddingVertical: 8,
+    alignItems: 'flex-start',
+  },
+  corridorStopDotWrap: {
+    alignItems: 'center',
+    width: 24,
+    marginRight: 10,
+    marginTop: 3,
+  },
+  corridorStopDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#94A3B8',
+  },
+  corridorStopLine: {
+    width: 2,
+    height: 24,
+    backgroundColor: '#CBD5E1',
+    marginTop: 2,
+  },
+  corridorStopName: {
+    ...typography.bodyMedium,
+    fontWeight: '800',
+    color: colors.dark,
+    fontSize: 14,
+  },
+  corridorStopUrdu: {
+    fontSize: 14,
+    color: colors.primary,
+    fontWeight: '700',
+  },
+  corridorStopDesc: {
+    ...typography.caption,
+    fontSize: 11,
+    color: '#64748B',
+  },
+  nextDepartureCard: {
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.lg,
+    backgroundColor: '#FFFFFF',
+    borderRadius: borderRadius.xl,
+    padding: spacing.md,
+    borderWidth: 1.5,
+    borderColor: '#DCFCE7',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    ...shadows.sm,
+  },
+  nextDepLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flex: 1,
+    marginRight: spacing.sm,
+  },
+  livePulseCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: 'rgba(34, 197, 94, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  nextDepLabel: {
+    ...typography.caption,
+    fontSize: 10,
+    fontWeight: '900',
+    color: '#16A34A',
+    letterSpacing: 0.5,
+  },
+  nextDepTitle: {
+    ...typography.bodyMedium,
+    fontSize: 13,
+    fontWeight: '800',
+    color: colors.dark,
+    marginTop: 2,
+  },
+  nextDepSeats: {
+    ...typography.caption,
+    fontSize: 11,
+    color: '#64748B',
+    marginTop: 1,
+  },
+  quickBookBtn: {
+    backgroundColor: '#16A34A',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: borderRadius.md,
+  },
+  quickBookBtnText: {
+    ...typography.caption,
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#FFFFFF',
+  },
+  voucherContainer: {
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md,
+  },
+  voucherCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF7ED',
+    borderRadius: borderRadius.xl,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 85, 0, 0.35)',
+    padding: spacing.md,
+    ...shadows.sm,
+  },
+  voucherLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    flex: 1,
+  },
+  ticketIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 85, 0, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  voucherBadge: {
+    ...typography.caption,
+    fontSize: 10,
+    fontWeight: '900',
+    color: colors.primary,
+    letterSpacing: 0.5,
+  },
+  voucherTitle: {
+    ...typography.bodyMedium,
+    fontSize: 14,
+    fontWeight: '900',
+    color: colors.dark,
+  },
+  voucherSub: {
+    ...typography.caption,
+    fontSize: 11,
+    color: '#78350F',
+    marginTop: 1,
+  },
+  voucherDivider: {
+    width: 1.5,
+    height: 38,
+    backgroundColor: 'rgba(255, 85, 0, 0.25)',
+    marginHorizontal: spacing.sm,
+  },
+  copyBtn: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: borderRadius.md,
+  },
+  copyBtnDone: {
+    backgroundColor: '#16A34A',
+  },
+  copyBtnText: {
+    ...typography.caption,
+    fontSize: 11,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: 0.5,
+  },
+  copyBtnTextDone: {
+    color: '#FFFFFF',
+  },
+  telemetryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FFFFFF',
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 10,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    ...shadows.sm,
+  },
+  telemetryItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flex: 1,
+  },
+  telemetryEmoji: {
+    fontSize: 16,
+  },
+  telemetryTitle: {
+    ...typography.caption,
+    fontSize: 10,
+    color: '#64748B',
+    fontWeight: '700',
+  },
+  telemetryValue: {
+    ...typography.caption,
+    fontSize: 11,
+    color: colors.dark,
+    fontWeight: '800',
+  },
+  telemetrySeparator: {
+    width: 1,
+    height: 24,
+    backgroundColor: '#E2E8F0',
+    marginHorizontal: 4,
+  },
+  routeStripSection: {
+    marginTop: spacing.xl,
+  },
+  stripHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.xs + 2,
+  },
+  stripTitle: {
+    ...typography.bodyMedium,
+    fontSize: 14,
+    fontWeight: '800',
+    color: colors.dark,
+  },
+  stripDistance: {
+    ...typography.caption,
+    fontSize: 11,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  stripScroll: {
+    paddingLeft: spacing.lg,
+    paddingRight: spacing.sm,
+    paddingVertical: spacing.xs,
+    gap: 12,
+  },
+  stripStopItem: {
+    width: 115,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 10,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    ...shadows.sm,
+  },
+  stripStopItemOrigin: {
+    borderColor: '#16A34A',
+    backgroundColor: '#F0FDF4',
+  },
+  stripStopItemDest: {
+    borderColor: colors.primary,
+    backgroundColor: '#FFF7ED',
+  },
+  stripMarkerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  stripDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#94A3B8',
+  },
+  stripConnector: {
+    flex: 1,
+    height: 2,
+    backgroundColor: '#E2E8F0',
+    marginLeft: 4,
+  },
+  stripStopName: {
+    ...typography.bodyMedium,
+    fontSize: 13,
+    fontWeight: '800',
+    color: colors.dark,
+  },
+  stripStopNameActive: {
+    color: colors.primary,
+  },
+  stripStopSeq: {
+    ...typography.caption,
+    fontSize: 10,
+    color: '#94A3B8',
+    marginTop: 2,
   },
 });
