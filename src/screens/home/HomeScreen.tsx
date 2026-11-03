@@ -42,6 +42,7 @@ import { PlaceCard } from '../../components/cards/PlaceCard';
 import { HotelDetailModal } from '../../components/modals/HotelDetailModal';
 import { PlaceDetailModal } from '../../components/modals/PlaceDetailModal';
 import { StoryViewerModal, StoryItem } from '../../components/modals/StoryViewerModal';
+import { SaffarLogo } from '../../components/brand/SaffarLogo';
 import {
   FadeInUp,
   ScalePressable,
@@ -253,9 +254,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <View style={styles.topHeader}>
             <View>
               <Text style={styles.greetingText}>Khush Amdeed, {userName} 👋</Text>
-              <Text style={styles.heroLogo}>
-                Saffar<Text style={{ color: colors.primary }}>PK</Text>
-              </Text>
+              <View style={{ marginTop: 2 }}>
+                <SaffarLogo variant="header" theme="white" size="medium" />
+              </View>
             </View>
             <FloatingElement distance={4} duration={2600}>
               <View style={styles.corridorBadge}>

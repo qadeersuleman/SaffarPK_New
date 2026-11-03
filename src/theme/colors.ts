@@ -1,10 +1,10 @@
 export const colors = {
-  // Electric Flame / Modern Mobility Orange (Punchy, energetic, ultra-premium)
-  primary: '#FF5500',
-  primaryDark: '#D94500',
-  primaryLight: '#FFF0EB',
-  primaryGlow: 'rgba(255, 85, 0, 0.35)',
-  primaryMuted: '#FF8A50',
+  // Sunset Coral Orange (Figma Reference #F65D3A - Vibrant, modern, ultra-warm)
+  primary: '#F65D3A',
+  primaryDark: '#DE431F',
+  primaryLight: '#FFF0EC',
+  primaryGlow: 'rgba(246, 93, 58, 0.35)',
+  primaryMuted: '#FF866B',
 
   // Clean Crisp Luxury Canvas (Zero dingy or yellowish tint)
   background: '#F3F5F9', // Ultra-clean premium slate-blue canvas
@@ -29,7 +29,7 @@ export const colors = {
   // Refined Micro-Borders
   border: '#E2E8F0',
   borderLight: '#EDF2F7',
-  borderOrange: '#FFCCBA',
+  borderOrange: '#FFD0C5',
   borderDark: '#1E293B',
 
   // Modern State Accents
@@ -48,7 +48,7 @@ export const colors = {
 
   // VIP Bus Seats
   seatAvailable: '#FFFFFF',
-  seatSelected: '#FF5500',
+  seatSelected: '#F65D3A',
   seatBooked: '#E2E8F0',
   seatFemale: '#FFF1F2',
   seatFemaleBorder: '#FDA4AF',
@@ -81,7 +81,7 @@ export const shadows = {
     elevation: 8,
   },
   glowOrange: {
-    shadowColor: '#FF5500',
+    shadowColor: '#F65D3A',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.38,
     shadowRadius: 16,

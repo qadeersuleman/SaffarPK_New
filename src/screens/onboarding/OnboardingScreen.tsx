@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import { Button } from '../../components/buttons/Button';
+import { SaffarLogo } from '../../components/brand/SaffarLogo';
 import {
   BusIllustration,
   ShieldIcon,
@@ -86,12 +87,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
       {/* Top Bar with Skip */}
       <View style={styles.topBar}>
-        <View style={styles.brandRow}>
-          <BusIcon size={26} color={colors.primary} />
-          <Text style={styles.brandText}>
-            Saffar<Text style={{ color: colors.primary }}>PK</Text>
-          </Text>
-        </View>
+        <SaffarLogo variant="header" theme="white" size="small" />
         {currentIndex < SLIDES.length - 1 && (
           <TouchableOpacity activeOpacity={0.7} onPress={onComplete} style={styles.skipBtn}>
             <Text style={styles.skipText}>Skip</Text>

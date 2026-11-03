@@ -1,14 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   Animated,
   StatusBar,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, typography, spacing, borderRadius } from '../../theme';
-import { BusIllustration } from '../../components/icons/AppIcons';
+import { colors } from '../../theme';
+import { SaffarLogo } from '../../components/brand/SaffarLogo';
+
+const { width } = Dimensions.get('window');
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -16,91 +19,142 @@ interface SplashScreenProps {
 
 export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   const insets = useSafeAreaInsets();
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
-  const busTranslateX = useRef(new Animated.Value(-120)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
+
+  // Entrance & Breathing Animations
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const logoScale = useRef(new Animated.Value(0.85)).current;
+  const rippleScale = useRef(new Animated.Value(0.95)).current;
+  const rippleOpacity = useRef(new Animated.Value(0.6)).current;
+  const bottomDotScale = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    if (Platform.OS === 'android') {
+      (StatusBar as any).setBackgroundColor?.('#F65D3A');
+      (StatusBar as any).setTranslucent?.(true);
+    }
+
+    // 1. Initial Logo Entrance
     Animated.parallel([
-      Animated.timing(fadeAnim, {
+      Animated.timing(logoOpacity, {
         toValue: 1,
         duration: 800,
         useNativeDriver: true,
       }),
-      Animated.spring(scaleAnim, {
+      Animated.spring(logoScale, {
         toValue: 1,
         friction: 6,
-        tension: 50,
-        useNativeDriver: true,
-      }),
-      Animated.spring(busTranslateX, {
-        toValue: 0,
-        friction: 7,
         tension: 40,
         useNativeDriver: true,
       }),
-      Animated.timing(progressAnim, {
+      Animated.timing(bottomDotScale, {
         toValue: 1,
-        duration: 2200,
-        useNativeDriver: false,
+        duration: 900,
+        delay: 300,
+        useNativeDriver: true,
       }),
     ]).start();
 
+    // 2. Continuous Organic Ripple Beacon Loop
+    const rippleLoop = Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
+          Animated.timing(rippleScale, {
+            toValue: 1.05,
+            duration: 1200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rippleOpacity, {
+            toValue: 1,
+            duration: 1200,
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.parallel([
+          Animated.timing(rippleScale, {
+            toValue: 0.96,
+            duration: 1200,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rippleOpacity, {
+            toValue: 0.65,
+            duration: 1200,
+            useNativeDriver: true,
+          }),
+        ]),
+      ])
+    );
+
+    rippleLoop.start();
+
+    // 3. Navigation Timer
     const timer = setTimeout(() => {
-      onFinish();
-    }, 2500);
+      // Gentle fade out exit
+      Animated.timing(logoOpacity, {
+        toValue: 0,
+        duration: 350,
+        useNativeDriver: true,
+      }).start(() => {
+        onFinish();
+      });
+    }, 2400);
 
-    return () => clearTimeout(timer);
-  }, [fadeAnim, scaleAnim, busTranslateX, progressAnim, onFinish]);
-
-  const progressWidth = progressAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0%', '100%'],
-  });
+    return () => {
+      clearTimeout(timer);
+      rippleLoop.stop();
+    };
+  }, [logoOpacity, logoScale, rippleScale, rippleOpacity, bottomDotScale, onFinish]);
 
   return (
     <View style={styles.container}>
+      {/* Full Screen Edge-to-Edge Figma Sunset Coral Orange Background */}
       <StatusBar barStyle="light-content" />
 
-      {/* Ambient Radial Glow */}
-      <View style={styles.glowCircle} />
-      <View style={styles.glowCircle2} />
-
+      {/* Subtle Ambient Radial Backlight */}
       <Animated.View
         style={[
-          styles.content,
+          styles.ambientBacklight,
           {
-            opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
+            opacity: rippleOpacity,
+            transform: [{ scale: rippleScale }],
+          },
+        ]}
+      />
+
+      {/* Centered SaffarPK Figma-Style Logo Lockup */}
+      <Animated.View
+        style={[
+          styles.logoWrapper,
+          {
+            opacity: logoOpacity,
+            transform: [{ scale: logoScale }],
           },
         ]}
       >
-        {/* Animated Luxury Bus Illustration */}
-        <Animated.View style={{ transform: [{ translateX: busTranslateX }] }}>
-          <View style={styles.illustrationCard}>
-            <BusIllustration width={300} height={140} />
-          </View>
-        </Animated.View>
-
-        <Text style={styles.logoTitle}>
-          Saffar<Text style={styles.logoHighlight}>PK</Text>
-        </Text>
-        <Text style={styles.tagline}>Your journey, just a tap away.</Text>
-
-        <View style={styles.routePill}>
-          <View style={styles.routePulseDot} />
-          <Text style={styles.routeText}>Sukkur ⇄ Obuaro Express Corridor</Text>
-        </View>
+        <SaffarLogo
+          variant="horizontal"
+          theme="white"
+          size="large"
+          tagline="YOUR JOURNEY, JUST A TAP AWAY"
+          showTagline={true}
+        />
       </Animated.View>
 
-      {/* Bottom Loading Progress Bar */}
-      <View style={[styles.footer, { bottom: insets.bottom > 0 ? insets.bottom + 24 : 44 }]}>
-        <View style={styles.progressBarBg}>
-          <Animated.View style={[styles.progressBarFill, { width: progressWidth }]} />
+      {/* Elegant Minimal Bottom Loading Indicator */}
+      <Animated.View
+        style={[
+          styles.bottomIndicator,
+          {
+            bottom: insets.bottom > 0 ? insets.bottom + 28 : 44,
+            opacity: bottomDotScale,
+          },
+        ]}
+      >
+        <View style={styles.dotRow}>
+          <View style={[styles.dot, styles.dotActive]} />
+          <View style={styles.dot} />
+          <View style={styles.dot} />
         </View>
-        <Text style={styles.footerNote}>Premium Intercity Transit • Sindh, Pakistan</Text>
-      </View>
+      </Animated.View>
     </View>
   );
 };
@@ -108,104 +162,41 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#F65D3A',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.xl,
   },
-  glowCircle: {
+  ambientBacklight: {
     position: 'absolute',
-    top: '25%',
-    width: 320,
-    height: 320,
-    borderRadius: 160,
-    backgroundColor: colors.primary,
-    opacity: 0.18,
+    width: width * 0.9,
+    height: width * 0.9,
+    borderRadius: (width * 0.9) / 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
-  glowCircle2: {
-    position: 'absolute',
-    bottom: '20%',
-    width: 260,
-    height: 260,
-    borderRadius: 130,
-    backgroundColor: '#38BDF8',
-    opacity: 0.08,
-  },
-  content: {
+  logoWrapper: {
     alignItems: 'center',
-    width: '100%',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
   },
-  illustrationCard: {
-    paddingVertical: spacing.lg,
+  bottomIndicator: {
+    position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logoTitle: {
-    ...typography.h1,
-    fontSize: 48,
-    lineHeight: 54,
-    color: colors.textWhite,
-    letterSpacing: -1.2,
-    marginTop: spacing.md,
-  },
-  logoHighlight: {
-    color: colors.primary,
-  },
-  tagline: {
-    ...typography.bodyLarge,
-    fontSize: 17,
-    color: '#94A3B8',
-    marginTop: spacing.sm,
-    letterSpacing: 0.4,
-    textAlign: 'center',
-  },
-  routePill: {
+  dotRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: spacing.xl,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm + 2,
-    borderRadius: borderRadius.full,
-    backgroundColor: 'rgba(255, 85, 0, 0.14)',
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 85, 0, 0.4)',
   },
-  routePulseDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.primary,
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
   },
-  routeText: {
-    color: colors.primaryLight,
-    fontSize: 13,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
-  footer: {
-    position: 'absolute',
-    width: '80%',
-    alignItems: 'center',
-  },
-  progressBarBg: {
-    width: '100%',
-    height: 4,
-    backgroundColor: colors.darkBorder,
-    borderRadius: 2,
-    overflow: 'hidden',
-    marginBottom: spacing.md,
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: colors.primary,
-    borderRadius: 2,
-  },
-  footerNote: {
-    ...typography.caption,
-    fontSize: 12,
-    color: '#64748B',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
+  dotActive: {
+    width: 22,
+    borderRadius: 3,
+    backgroundColor: '#FFFFFF',
   },
 });

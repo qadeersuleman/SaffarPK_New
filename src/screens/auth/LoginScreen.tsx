@@ -14,6 +14,7 @@ import { colors, typography, spacing, borderRadius, shadows } from '../../theme'
 import { Button } from '../../components/buttons/Button';
 import { Input } from '../../components/inputs/Input';
 import { Card } from '../../components/cards/Card';
+import { SaffarLogo } from '../../components/brand/SaffarLogo';
 import {
   BusIcon,
   ShieldIcon,
@@ -65,13 +66,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
         <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
           {/* Header Banner */}
           <View style={styles.header}>
-            <View style={styles.logoBadge}>
-              <BusIcon size={32} color={colors.primary} />
-            </View>
-            <Text style={styles.title}>
-              Saffar<Text style={{ color: colors.primary }}>PK</Text>
-            </Text>
-            <Text style={styles.subtitle}>Sukkur ⇄ Obuaro Express Corridor</Text>
+            <SaffarLogo
+              variant="stacked"
+              theme="white"
+              size="large"
+              tagline="SUKKUR ⇄ OBUARO CORRIDOR"
+            />
           </View>
 
           {/* Form Card */}
