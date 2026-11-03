@@ -6,17 +6,15 @@ import {
   TouchableOpacity,
   StatusBar,
   Animated,
+  Image,
+  Dimensions,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle, Path } from 'react-native-svg';
 import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
-import { Button } from '../../components/buttons/Button';
-import { SaffarLogo } from '../../components/brand/SaffarLogo';
-import {
-  BusIllustration,
-  ShieldIcon,
-  LocationPinIcon,
-  BusIcon,
-} from '../../components/icons/AppIcons';
+import { ScalePressable } from '../../components/animations';
+
+const { width } = Dimensions.get('window');
 
 interface OnboardingScreenProps {
   onComplete: () => void;
@@ -25,55 +23,48 @@ interface OnboardingScreenProps {
 const SLIDES = [
   {
     id: '1',
-    title: 'Sukkur ⇄ Obuaro Corridor',
-    subtitle: 'Direct Express Transit',
+    image: require('../../assets/images/onboarding_1.png'),
+    title: 'Explore The World With\nSaffarPK',
     description:
-      'Guaranteed seats connecting Sukkur, Pano Aqil, Ghotki, Mirpur Mathelo, Daharki, and Obuaro along the N-5 Highway with punctual departures.',
-    renderHero: () => <BusIllustration width={300} height={140} />,
+      'Discover seamless intercity journeys across the Sukkur to Obuaro corridor. Guaranteed seats, luxury coaches, and live tracking at your fingertips.',
   },
   {
     id: '2',
-    title: 'Reserve Your Preferred Seat',
-    subtitle: 'Interactive Visual Cabin',
+    image: require('../../assets/images/onboarding_2.png'),
+    title: 'Make Memories That Last\na Lifetime',
     description:
-      'Choose window or aisle seats, executive luxury recliners, and family-dedicated rows with our 10-minute instant seat hold.',
-    renderHero: () => (
-      <View style={styles.iconHeroBox}>
-        <View style={styles.outerShieldRing}>
-          <ShieldIcon size={64} color={colors.primary} />
-        </View>
-        <Text style={styles.heroSubTag}>Guaranteed Reservation • No Overcrowding</Text>
-      </View>
-    ),
+      'Experience VIP reclining seats, onboard climate control, high-speed WiFi, and 24/7 highway safety for your family and solo trips.',
   },
   {
     id: '3',
-    title: 'Live Tracking & Instant Pay',
-    subtitle: 'Zero Guesswork, 100% Peace of Mind',
+    image: require('../../assets/images/onboarding_3.png'),
+    title: 'Plan Your Dream Trip\nWith SaffarPK',
     description:
-      'Track your bus along the N-5 corridor in real-time and pay seamlessly via Easypaisa, JazzCash, or on-board boarding.',
-    renderHero: () => (
-      <View style={styles.iconHeroBox}>
-        <View style={styles.outerPinRing}>
-          <LocationPinIcon size={64} color={colors.primary} />
-        </View>
-        <Text style={styles.heroSubTag}>Live GPS Speed & Stop Estimates</Text>
-      </View>
-    ),
+      'Reserve your seat in seconds, track your coach in real-time with live GPS, and pay effortlessly via Easypaisa, JazzCash, or on-board.',
   },
 ];
 
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }) => {
+  const insets = useSafeAreaInsets();
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Transition animations
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideTranslateX = useRef(new Animated.Value(0)).current;
 
   const handleNext = () => {
     if (currentIndex < SLIDES.length - 1) {
       Animated.sequence([
-        Animated.timing(fadeAnim, { toValue: 0.2, duration: 150, useNativeDriver: true }),
-        Animated.timing(fadeAnim, { toValue: 1, duration: 250, useNativeDriver: true }),
+        Animated.parallel([
+          Animated.timing(fadeAnim, { toValue: 0.15, duration: 160, useNativeDriver: true }),
+          Animated.timing(slideTranslateX, { toValue: -30, duration: 160, useNativeDriver: true }),
+        ]),
+        Animated.parallel([
+          Animated.timing(fadeAnim, { toValue: 1, duration: 240, useNativeDriver: true }),
+          Animated.spring(slideTranslateX, { toValue: 0, friction: 7, tension: 45, useNativeDriver: true }),
+        ]),
       ]).start();
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(prev => prev + 1);
     } else {
       onComplete();
     }
@@ -81,188 +72,235 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({ onComplete }
 
   const slide = SLIDES[currentIndex];
 
-  return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-      <StatusBar barStyle="light-content" />
+  // Circular progress calculations for the right action button
+  const progressSize = 58;
+  const strokeWidth = 3.2;
+  const radius = (progressSize - strokeWidth * 2) / 2; // 25.8
+  const circumference = 2 * Math.PI * radius; // ~162.1
+  const progressRatio = (currentIndex + 1) / SLIDES.length;
+  const strokeDashoffset = circumference - circumference * progressRatio;
 
-      {/* Top Bar with Skip */}
+  return (
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 24 }]}>
+      <StatusBar barStyle="dark-content" />
+
+      {/* Top Bar with Skip Button */}
       <View style={styles.topBar}>
-        <SaffarLogo variant="header" theme="white" size="small" />
-        {currentIndex < SLIDES.length - 1 && (
-          <TouchableOpacity activeOpacity={0.7} onPress={onComplete} style={styles.skipBtn}>
-            <Text style={styles.skipText}>Skip</Text>
-          </TouchableOpacity>
-        )}
+        <View style={{ flex: 1 }} />
+        <TouchableOpacity activeOpacity={0.7} onPress={onComplete} style={styles.skipBtn}>
+          <Text style={styles.skipText}>Skip</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Hero Showcase Area */}
-      <View style={styles.heroSection}>
-        <Animated.View style={[styles.heroCard, { opacity: fadeAnim }]}>
-          {slide.renderHero()}
+      {/* Main Content Area */}
+      <View style={styles.contentContainer}>
+        {/* Animated Hero Illustration with Baseline Divider */}
+        <Animated.View
+          style={[
+            styles.heroArea,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateX: slideTranslateX }],
+            },
+          ]}
+        >
+          <Image source={slide.image} style={styles.heroImage} resizeMode="contain" />
+          <View style={styles.horizontalDivider} />
+        </Animated.View>
+
+        {/* Text Area (Headings and Description) */}
+        <Animated.View
+          style={[
+            styles.textArea,
+            {
+              opacity: fadeAnim,
+              transform: [{ translateX: slideTranslateX }],
+            },
+          ]}
+        >
+          <Text style={styles.title}>{slide.title}</Text>
+          <Text style={styles.description}>{slide.description}</Text>
         </Animated.View>
       </View>
 
-      {/* Details Bottom Card */}
-      <View style={styles.detailsSection}>
-        {/* Pagination Dots */}
-        <View style={styles.paginationRow}>
-          {SLIDES.map((_, idx) => (
-            <View
-              key={idx}
-              style={[
-                styles.dot,
-                currentIndex === idx ? styles.dotActive : null,
-              ]}
+      {/* Bottom Controls Row: Pagination Dots on Left, Circular Progress Button on Right */}
+      <View style={styles.bottomControlsRow}>
+        {/* Left Pagination Dots */}
+        <View style={styles.dotsRow}>
+          {SLIDES.map((_, idx) => {
+            const isActive = currentIndex === idx;
+            return (
+              <TouchableOpacity
+                key={idx}
+                activeOpacity={0.7}
+                onPress={() => {
+                  if (idx !== currentIndex) {
+                    setCurrentIndex(idx);
+                  }
+                }}
+                style={[
+                  styles.dot,
+                  isActive ? styles.dotActive : styles.dotInactive,
+                ]}
+              />
+            );
+          })}
+        </View>
+
+        {/* Right Circular Progress Action Button */}
+        <ScalePressable
+          activeScale={0.9}
+          onPress={handleNext}
+          style={styles.progressBtnWrapper}
+        >
+          <Svg width={progressSize} height={progressSize} style={styles.progressSvg}>
+            {/* Background Track Circle */}
+            <Circle
+              cx={progressSize / 2}
+              cy={progressSize / 2}
+              r={radius}
+              stroke="#FED7AA"
+              strokeWidth={strokeWidth}
+              fill="none"
+              opacity={0.4}
             />
-          ))}
-        </View>
+            {/* Active Coral Orange Progress Arc */}
+            <Circle
+              cx={progressSize / 2}
+              cy={progressSize / 2}
+              r={radius}
+              stroke="#F65D3A"
+              strokeWidth={strokeWidth}
+              strokeDasharray={`${circumference}`}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              fill="none"
+              transform={`rotate(-90 ${progressSize / 2} ${progressSize / 2})`}
+            />
+          </Svg>
 
-        <Text style={styles.subtitle}>{slide.subtitle}</Text>
-        <Text style={styles.title}>{slide.title}</Text>
-        <Text style={styles.description}>{slide.description}</Text>
-
-        {/* Action Button */}
-        <View style={styles.bottomButtons}>
-          <Button
-            title={currentIndex === SLIDES.length - 1 ? 'Get Started' : 'Continue'}
-            onPress={handleNext}
-            variant="primary"
-            size="large"
-          />
-        </View>
+          {/* Inner Solid Coral-Orange Button with White Arrow */}
+          <View style={styles.innerOrangeBtn}>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none">
+              <Path
+                d="M9 5L16 12L9 19"
+                stroke="#FFFFFF"
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </Svg>
+          </View>
+        </ScalePressable>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark,
+    backgroundColor: '#FFFFFF',
     justifyContent: 'space-between',
   },
   topBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-  },
-  brandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  brandText: {
-    fontSize: 22,
-    fontWeight: '900',
-    color: colors.textWhite,
-    letterSpacing: -0.5,
+    paddingTop: spacing.xs,
+    height: 48,
   },
   skipBtn: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.darkElevated,
-    borderRadius: borderRadius.full,
-    borderWidth: 1,
-    borderColor: colors.darkBorder,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
   },
   skipText: {
-    ...typography.label,
-    fontSize: 13,
-    color: '#94A3B8',
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111827',
   },
-  heroSection: {
+  contentContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
   },
-  heroCard: {
+  heroArea: {
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: spacing.lg,
   },
-  iconHeroBox: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  heroImage: {
+    width: width * 0.78,
+    height: width * 0.72,
+    maxHeight: 290,
   },
-  outerShieldRing: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: 'rgba(255, 85, 0, 0.12)',
-    borderWidth: 2,
-    borderColor: 'rgba(255, 85, 0, 0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.md,
+  horizontalDivider: {
+    width: '92%',
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginTop: spacing.md,
   },
-  outerPinRing: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
-    backgroundColor: 'rgba(56, 189, 248, 0.12)',
-    borderWidth: 2,
-    borderColor: 'rgba(56, 189, 248, 0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.md,
-  },
-  heroSubTag: {
-    ...typography.caption,
-    fontSize: 13,
-    color: '#CBD5E1',
-    fontWeight: '700',
-    marginTop: spacing.xs,
-  },
-  detailsSection: {
-    backgroundColor: colors.surface,
-    borderTopLeftRadius: 36,
-    borderTopRightRadius: 36,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.xxl,
-    paddingBottom: spacing.xxxl,
-    ...shadows.lg,
-  },
-  paginationRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: spacing.lg,
-  },
-  dot: {
-    height: 6,
-    width: 10,
-    borderRadius: 3,
-    backgroundColor: '#CBD5E1',
-  },
-  dotActive: {
-    width: 32,
-    backgroundColor: colors.primary,
-  },
-  subtitle: {
-    ...typography.caption,
-    fontSize: 13,
-    color: colors.primaryDark,
-    textTransform: 'uppercase',
-    fontWeight: '800',
-    letterSpacing: 1.2,
+  textArea: {
+    paddingHorizontal: spacing.xxl,
+    paddingTop: spacing.xl,
   },
   title: {
-    ...typography.h2,
-    fontSize: 26,
-    lineHeight: 32,
-    color: colors.textPrimary,
-    marginTop: 6,
-    marginBottom: spacing.sm,
+    fontSize: 25,
+    fontWeight: '800',
+    color: '#111827',
+    lineHeight: 34,
+    letterSpacing: -0.4,
   },
   description: {
-    ...typography.bodyLarge,
-    color: colors.textSecondary,
-    lineHeight: 24,
-    marginBottom: spacing.xl,
+    fontSize: 14,
+    color: '#6B7280',
+    lineHeight: 22,
+    marginTop: 12,
   },
-  bottomButtons: {
-    marginTop: spacing.xs,
+  bottomControlsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.xxl,
+    paddingVertical: spacing.md,
+  },
+  dotsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  dot: {
+    height: 7,
+    borderRadius: 3.5,
+  },
+  dotActive: {
+    width: 26,
+    backgroundColor: '#F65D3A',
+  },
+  dotInactive: {
+    width: 7,
+    backgroundColor: '#FED7AA',
+  },
+  progressBtnWrapper: {
+    width: 58,
+    height: 58,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  progressSvg: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
+  innerOrangeBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#F65D3A',
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.sm,
   },
 });
