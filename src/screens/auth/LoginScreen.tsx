@@ -28,8 +28,9 @@ import { SignUpScreen } from './SignUpScreen';
 import { VerifyOtpScreen } from './VerifyOtpScreen';
 import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 import { ResetPasswordScreen } from './ResetPasswordScreen';
+import { AuthSuccessScreen } from './AuthSuccessScreen';
 
-export type AuthScreenStep = 'login' | 'signup' | 'forgot' | 'otp' | 'reset';
+export type AuthScreenStep = 'login' | 'signup' | 'forgot' | 'otp' | 'reset' | 'success';
 
 interface LoginScreenProps {
   onSuccess: (user: { name: string; phone: string }) => void;
@@ -44,9 +45,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
   const [showPassword, setShowPassword] = useState(false);
   const [countryCode, setCountryCode] = useState('+92');
 
-  // Track state for OTP and Reset flows
+  // Track state for OTP, Reset, and Auth Completion
   const [otpPhone, setOtpPhone] = useState('+92 300 1234567');
   const [otpTarget, setOtpTarget] = useState<'login' | 'reset'>('login');
+  const [authenticatedUser, setAuthenticatedUser] = useState<{ name: string; phone: string } | null>(null);
 
   const isValid = phone.length >= 7;
 
@@ -60,24 +62,39 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
       Alert.alert('Required', 'Please enter your password');
       return;
     }
-    onSuccess({
-      name: 'Muhammad Tariq',
+    const logged = {
+      name: 'Raju Ahamed',
       phone: `${countryCode} ${phone}`,
-    });
+    };
+    setAuthenticatedUser(logged);
+    setActiveStep('success');
   };
 
   const handleSocialLogin = (provider: string) => {
-    Alert.alert(`Connected with ${provider}`, 'Signing you in seamlessly with verified credentials...', [
-      {
-        text: 'Continue',
-        onPress: () =>
-          onSuccess({
-            name: `${provider} Traveler`,
-            phone: '+92 300 9876543',
-          }),
-      },
-    ]);
+    const logged = {
+      name: 'Raju Ahamed',
+      phone: '+92 300 9876543',
+    };
+    setAuthenticatedUser(logged);
+    setActiveStep('success');
   };
+
+  // 0. Render Auth Success Screen (Post-Authentication "You're all set!")
+  if (activeStep === 'success') {
+    return (
+      <AuthSuccessScreen
+        userName={authenticatedUser?.name}
+        onBegin={() => {
+          onSuccess(
+            authenticatedUser || {
+              name: 'Raju Ahamed',
+              phone: `${countryCode} ${phone}`,
+            },
+          );
+        }}
+      />
+    );
+  }
 
   // 1. Render Verify OTP screen
   if (activeStep === 'otp') {
@@ -89,10 +106,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onSuccess, onSkipGuest
           if (otpTarget === 'reset') {
             setActiveStep('reset');
           } else {
-            onSuccess({
+            const newUser = {
               name: 'Registered Traveler',
               phone: otpPhone,
-            });
+            };
+            setAuthenticatedUser(newUser);
+            setActiveStep('success');
           }
         }}
       />

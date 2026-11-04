@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, typography, spacing, borderRadius, shadows } from '../theme';
-import { BusIcon, LocationPinIcon, CalendarIcon, UserIcon } from '../components/icons/AppIcons';
+import {
+  HomeIcon,
+  BookmarkIcon,
+  BellIcon,
+  ChatIcon,
+  BusIcon,
+  LocationPinIcon,
+  CalendarIcon,
+  UserIcon,
+} from '../components/icons/AppIcons';
 import { ScalePressable } from '../components/animations';
 import { SplashScreen } from '../screens/splash/SplashScreen';
 import { OnboardingScreen } from '../screens/onboarding/OnboardingScreen';
@@ -16,6 +25,22 @@ import { TicketScreen } from '../screens/tickets/TicketScreen';
 import { TrackingScreen } from '../screens/tracking/TrackingScreen';
 import { TripsScreen } from '../screens/trips/TripsScreen';
 import { ProfileScreen } from '../screens/profile/ProfileScreen';
+
+// New Screens matching Figma Prototypes
+import { SearchHotelScreen } from '../screens/search/SearchHotelScreen';
+import { HotelSearchScreen, HotelSearchResultItem } from '../screens/search/HotelSearchScreen';
+import { HotelDetailsScreen, HotelDetailsData } from '../screens/hotel/HotelDetailsScreen';
+import { SelectRoomScreen, RoomItem } from '../screens/hotel/SelectRoomScreen';
+import { NotificationScreen } from '../screens/notifications/NotificationScreen';
+import { SavedScreen } from '../screens/saved/SavedScreen';
+import { ChatScreen } from '../screens/chat/ChatScreen';
+import { ConversationScreen } from '../screens/chat/ConversationScreen';
+import { MostVisitedScreen, FamousPlaceItem } from '../screens/places/MostVisitedScreen';
+import { PlaceDetailsScreen } from '../screens/places/PlaceDetailsScreen';
+import { ServicesScreen, ServiceItem } from '../screens/services/ServicesScreen';
+import { CategoriesScreen, CategoryGridItem } from '../screens/categories/CategoriesScreen';
+import { ExtraServicesScreen } from '../screens/services/ExtraServicesScreen';
+
 import { RouteStop, BusSchedule, PassengerInfo, Booking, PaymentMethod } from '../types';
 import routesData from '../data/routes.json';
 
@@ -28,9 +53,20 @@ type ActiveFlow =
   | 'seats'
   | 'passenger'
   | 'payment'
-  | 'ticket';
+  | 'ticket'
+  | 'search_hotel'
+  | 'hotel_search'
+  | 'hotel_details'
+  | 'select_room'
+  | 'notifications'
+  | 'most_visited'
+  | 'place_details'
+  | 'services'
+  | 'categories'
+  | 'extra_services'
+  | 'profile';
 
-type MainTab = 'home' | 'trips' | 'track' | 'profile';
+type MainTab = 'home' | 'saved' | 'notification' | 'chat';
 
 export const RootNavigator: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -39,6 +75,18 @@ export const RootNavigator: React.FC = () => {
 
   // User state
   const [user, setUser] = useState<{ name: string; phone: string } | null>(null);
+
+  // Selected hotel/place state for details & room selection
+  const [selectedHotel, setSelectedHotel] = useState<any>(null);
+
+  // Hotel Search Criteria state
+  const [hotelSearchCriteria, setHotelSearchCriteria] = useState({
+    location: 'Hunza Valley, Gilgit-Baltistan',
+    checkIn: '25 July',
+    checkOut: '27 July',
+    guests: '02 Guests',
+    rooms: '01 Room',
+  });
 
   // Booking Flow State
   const [searchParams, setSearchParams] = useState<{
@@ -228,7 +276,7 @@ export const RootNavigator: React.FC = () => {
       <TicketScreen
         booking={latestBooking}
         onTrackBus={() => {
-          setActiveTab('track');
+          setActiveTab('home');
           setCurrentFlow('main');
         }}
         onHome={() => {
@@ -239,43 +287,292 @@ export const RootNavigator: React.FC = () => {
     );
   }
 
-  // Main Bottom-Tab Layout
+  // 1. Search Hotel Form flow (Figma Image: Search Hotel)
+  if (currentFlow === 'search_hotel') {
+    return (
+      <SearchHotelScreen
+        onBack={() => setCurrentFlow('main')}
+        onSearch={params => {
+          setHotelSearchCriteria(params);
+          setCurrentFlow('hotel_search');
+        }}
+      />
+    );
+  }
+
+  // 2. Hotel Search Results flow (Figma Image: Search Results)
+  if (currentFlow === 'hotel_search') {
+    return (
+      <HotelSearchScreen
+        initialLocation={hotelSearchCriteria.location}
+        initialDates={`${hotelSearchCriteria.checkIn} to ${hotelSearchCriteria.checkOut}`}
+        initialGuests={`${hotelSearchCriteria.guests} | ${hotelSearchCriteria.rooms}`}
+        onBack={() => setCurrentFlow('main')}
+        onSelectHotel={hotel => {
+          setSelectedHotel(hotel);
+          setCurrentFlow('hotel_details');
+        }}
+      />
+    );
+  }
+
+  // 3. Most Visited Screen (Figma Image: Most Visited Places in Pakistan)
+  if (currentFlow === 'most_visited') {
+    return (
+      <MostVisitedScreen
+        onBack={() => setCurrentFlow('main')}
+        onSelectPlace={place => {
+          setSelectedHotel({
+            id: place.id,
+            name: place.name,
+            location: `${place.location}, ${place.country}`,
+            pricePerNight: place.price,
+            currency: place.currency,
+            rating: place.rating,
+            image: place.image,
+          });
+          setCurrentFlow('hotel_details');
+        }}
+      />
+    );
+  }
+
+  // 4. Hotel Details flow (Figma Image: Hotel Details)
+  if (currentFlow === 'hotel_details') {
+    return (
+      <HotelDetailsScreen
+        hotel={
+          selectedHotel
+            ? {
+                id: selectedHotel.id,
+                name: selectedHotel.name,
+                location: selectedHotel.location,
+                pricePerNight: selectedHotel.pricePerNight,
+                currency: selectedHotel.currency || '$',
+                rating: selectedHotel.rating,
+                reviewsCount: 150,
+                aboutText:
+                  'Experience bespoke luxury with panoramic mountain and ocean vistas. SaffarPK verified accommodations feature authentic regional architecture, world-class hospitality, tranquil suites, and personalized guided tours across Pakistan.',
+                images: [
+                  selectedHotel.image || require('../assets/images/hotel_details_hero.jpg'),
+                  require('../assets/images/room_deluxe.jpg'),
+                  require('../assets/images/hotel_thumb_1.jpg'),
+                  require('../assets/images/hotel_thumb_2.jpg'),
+                ],
+                facilities: ['Free Wifi', 'Pool', 'Breakfast', 'Lunch'],
+              }
+            : undefined
+        }
+        onBack={() => setCurrentFlow('main')}
+        onSelectRoom={() => setCurrentFlow('select_room')}
+      />
+    );
+  }
+
+  // 5. Select Room flow (Figma Image: Select Room)
+  if (currentFlow === 'select_room') {
+    return (
+      <SelectRoomScreen
+        hotelName={selectedHotel?.name || 'Hotel Niribili'}
+        onBack={() => setCurrentFlow('hotel_details')}
+        onSelectRoom={room => {
+          Alert.alert(
+            'Reservation Complete! 🎉',
+            `Your stay in ${room.name} has been successfully reserved! Check Notification tab for details.`,
+            [
+              {
+                text: 'View My Stays',
+                onPress: () => {
+                  setActiveTab('saved');
+                  setCurrentFlow('main');
+                },
+              },
+              {
+                text: 'Return Home',
+                onPress: () => {
+                  setActiveTab('home');
+                  setCurrentFlow('main');
+                },
+              },
+            ],
+          );
+        }}
+      />
+    );
+  }
+
+  // 6. Notifications Screen as flow if opened with back button
+  if (currentFlow === 'notifications') {
+    return (
+      <NotificationScreen
+        showBackButton
+        onBack={() => setCurrentFlow('main')}
+      />
+    );
+  }
+
+  // 7. Place Details flow (Figma Image: Place Details)
+  if (currentFlow === 'place_details') {
+    return (
+      <PlaceDetailsScreen
+        place={
+          selectedHotel
+            ? {
+                id: selectedHotel.id,
+                name: selectedHotel.name,
+                location: selectedHotel.location,
+                country: 'Pakistan',
+                price: selectedHotel.pricePerNight || 150,
+                currency: selectedHotel.currency || '$',
+                rating: selectedHotel.rating || 4.8,
+                reviewsCount: 150,
+                aboutText:
+                  'Experience bespoke luxury with panoramic mountain and ocean vistas. SaffarPK verified accommodations feature authentic regional architecture, world-class hospitality, tranquil suites, and personalized guided tours across Pakistan.',
+                images: [
+                  selectedHotel.image || require('../assets/images/place_mountain.jpg'),
+                  require('../assets/images/place_beach.jpg'),
+                  require('../assets/images/hotel_details_hero.jpg'),
+                ],
+                facilities: ['Free Wifi', 'Pool', 'Breakfast', 'Lunch'],
+              }
+            : undefined
+        }
+        onBack={() => setCurrentFlow('main')}
+        onBookNow={() => setCurrentFlow('select_room')}
+      />
+    );
+  }
+
+  // 8. Services flow (Figma Image: Services with Hotel/Flight/Bus/Boat tabs)
+  if (currentFlow === 'services') {
+    return (
+      <ServicesScreen
+        onBack={() => setCurrentFlow('main')}
+        onSelectServiceItem={item => {
+          setSelectedHotel(item);
+          setCurrentFlow('hotel_details');
+        }}
+        onBookBus={() => setCurrentFlow('search')}
+      />
+    );
+  }
+
+  // 9. Categories Grid flow (Figma Image: Categories 4-col grid)
+  if (currentFlow === 'categories') {
+    return (
+      <CategoriesScreen
+        onBack={() => setCurrentFlow('main')}
+        onSelectCategory={() => setCurrentFlow('most_visited')}
+      />
+    );
+  }
+
+  // 10. Extra Services flow (Figma Image: 7 Travel Utility Tools)
+  if (currentFlow === 'extra_services') {
+    return (
+      <ExtraServicesScreen
+        onBack={() => setCurrentFlow('main')}
+      />
+    );
+  }
+
+  // 11. Profile flow (Figma Image: My Profile)
+  if (currentFlow === 'profile') {
+    return (
+      <ProfileScreen
+        user={
+          user
+            ? {
+                name: user.name,
+                phone: user.phone,
+                address: 'Sukkur, Sindh - Pakistan',
+              }
+            : undefined
+        }
+        onBack={() => setCurrentFlow('main')}
+        onLogout={() => {
+          setUser(null);
+          setCurrentFlow('auth');
+        }}
+        onTrackBookings={() => {
+          if (latestBooking) {
+            setCurrentFlow('ticket');
+          } else {
+            Alert.alert(
+              'Active Booking Tracking',
+              'Saffar Prime Executive (SFK-9901-EX)\nSukkur Central ➔ Ghotki Bypass\nStatus: On-Time (ETA 40 mins)',
+            );
+          }
+        }}
+        onMyHistory={() => {
+          Alert.alert(
+            'Travel History',
+            '• Sukkur ⇄ Obuaro Corridor (16 Oct 2026)\n• Hunza Valley Tour (10 Sep 2026)\n• Lahore Heritage Visit (15 Aug 2026)',
+          );
+        }}
+      />
+    );
+  }
+
+  // Main Bottom-Tab Layout (Figma Images 1 & 2)
   return (
     <View style={styles.mainContainer}>
       <View style={styles.tabContent}>
         {activeTab === 'home' && (
           <HomeScreen
-            userName={user?.name || 'Traveler'}
+            userName={user?.name || 'Raju Ahamed'}
             onSearch={handleSearch}
-            onNavigateToTracking={() => setActiveTab('track')}
-          />
-        )}
-        {activeTab === 'trips' && (
-          <TripsScreen
-            bookings={allBookings}
-            onSelectBooking={booking => {
-              setLatestBooking(booking);
-              setCurrentFlow('ticket');
-            }}
-            onTrackBus={() => setActiveTab('track')}
-            onNewBooking={() => setActiveTab('home')}
-          />
-        )}
-        {activeTab === 'track' && (
-          <TrackingScreen onBack={() => setActiveTab('home')} />
-        )}
-        {activeTab === 'profile' && (
-          <ProfileScreen
-            user={user || undefined}
+            onOpenSearchHotelForm={() => setCurrentFlow('search_hotel')}
+            onOpenHotelSearch={() => setCurrentFlow('hotel_search')}
+            onOpenMostVisited={() => setCurrentFlow('most_visited')}
+            onOpenHotelDetails={id => setCurrentFlow('hotel_details')}
+            onOpenPlaceDetails={id => setCurrentFlow('place_details')}
+            onOpenCategories={() => setCurrentFlow('categories')}
+            onOpenServices={() => setCurrentFlow('services')}
+            onOpenExtraServices={() => setCurrentFlow('extra_services')}
+            onOpenProfile={() => setCurrentFlow('profile')}
+            onOpenNotifications={() => setActiveTab('notification')}
             onLogout={() => {
               setUser(null);
               setCurrentFlow('auth');
             }}
           />
         )}
+        {activeTab === 'saved' && (
+          <SavedScreen
+            onSelectPlace={place => {
+              setSelectedHotel({
+                id: place.id,
+                name: place.name,
+                location: `${place.location}, ${place.country}`,
+                pricePerNight: 150,
+                rating: place.rating,
+                image: place.image,
+              });
+              setCurrentFlow('place_details');
+            }}
+            onSelectEvent={event => {
+              Alert.alert(
+                event.title,
+                `${event.location}\n${event.joinedText}\nBooking is open! Would you like to reserve your pass?`,
+                [
+                  {
+                    text: 'Reserve Pass',
+                    onPress: () => setCurrentFlow('select_room'),
+                  },
+                  { text: 'Close', style: 'cancel' },
+                ],
+              );
+            }}
+          />
+        )}
+        {activeTab === 'notification' && (
+          <NotificationScreen onBack={() => setActiveTab('home')} />
+        )}
+        {activeTab === 'chat' && <ChatScreen />}
       </View>
 
-      {/* Modern High-End Bottom Navigation Bar */}
+      {/* Exact Figma Bottom Navigation Bar (Home | Saved | Notification | Chat) */}
       <View
         style={[
           styles.bottomNav,
@@ -284,12 +581,13 @@ export const RootNavigator: React.FC = () => {
           },
         ]}
       >
+        {/* Home */}
         <ScalePressable
           activeScale={0.88}
           onPress={() => setActiveTab('home')}
           style={[styles.navItem, activeTab === 'home' ? styles.navItemActive : null]}
         >
-          <BusIcon size={24} color={activeTab === 'home' ? colors.primary : '#94A3B8'} />
+          <HomeIcon size={24} color={activeTab === 'home' ? colors.primary : '#94A3B8'} />
           <Text
             style={[
               styles.navLabel,
@@ -300,51 +598,58 @@ export const RootNavigator: React.FC = () => {
           </Text>
         </ScalePressable>
 
+        {/* Saved */}
         <ScalePressable
           activeScale={0.88}
-          onPress={() => setActiveTab('trips')}
-          style={[styles.navItem, activeTab === 'trips' ? styles.navItemActive : null]}
+          onPress={() => setActiveTab('saved')}
+          style={[styles.navItem, activeTab === 'saved' ? styles.navItemActive : null]}
         >
-          <CalendarIcon size={24} color={activeTab === 'trips' ? colors.primary : '#94A3B8'} />
+          <BookmarkIcon
+            size={24}
+            color={activeTab === 'saved' ? colors.primary : '#94A3B8'}
+            filled={activeTab === 'saved'}
+          />
           <Text
             style={[
               styles.navLabel,
-              activeTab === 'trips' ? styles.navLabelActive : null,
+              activeTab === 'saved' ? styles.navLabelActive : null,
             ]}
           >
-            My Trips
+            Saved
           </Text>
         </ScalePressable>
 
+        {/* Notification */}
         <ScalePressable
           activeScale={0.88}
-          onPress={() => setActiveTab('track')}
-          style={[styles.navItem, activeTab === 'track' ? styles.navItemActive : null]}
+          onPress={() => setActiveTab('notification')}
+          style={[styles.navItem, activeTab === 'notification' ? styles.navItemActive : null]}
         >
-          <LocationPinIcon size={24} color={activeTab === 'track' ? colors.primary : '#94A3B8'} />
+          <BellIcon size={24} color={activeTab === 'notification' ? colors.primary : '#94A3B8'} />
           <Text
             style={[
               styles.navLabel,
-              activeTab === 'track' ? styles.navLabelActive : null,
+              activeTab === 'notification' ? styles.navLabelActive : null,
             ]}
           >
-            Live Track
+            Notification
           </Text>
         </ScalePressable>
 
+        {/* Chat */}
         <ScalePressable
           activeScale={0.88}
-          onPress={() => setActiveTab('profile')}
-          style={[styles.navItem, activeTab === 'profile' ? styles.navItemActive : null]}
+          onPress={() => setActiveTab('chat')}
+          style={[styles.navItem, activeTab === 'chat' ? styles.navItemActive : null]}
         >
-          <UserIcon size={24} color={activeTab === 'profile' ? colors.primary : '#94A3B8'} />
+          <ChatIcon size={24} color={activeTab === 'chat' ? colors.primary : '#94A3B8'} />
           <Text
             style={[
               styles.navLabel,
-              activeTab === 'profile' ? styles.navLabelActive : null,
+              activeTab === 'chat' ? styles.navLabelActive : null,
             ]}
           >
-            Profile
+            Chat
           </Text>
         </ScalePressable>
       </View>

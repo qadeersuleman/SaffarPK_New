@@ -5,160 +5,322 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  StatusBar,
-  Switch,
-  Alert,
   Image,
+  Alert,
+  Modal,
+  TextInput,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, typography, spacing, borderRadius } from '../../theme';
-import { Header } from '../../components/common/Header';
-import { Card } from '../../components/cards/Card';
-import { Button } from '../../components/buttons/Button';
+import { colors, typography, spacing, borderRadius, shadows } from '../../theme';
 import {
-  ShieldIcon,
-  UserIcon,
-  PhoneIcon,
+  ArrowBackIcon,
+  EditPencilIcon,
+  ReceiptSearchIcon,
+  HistoryClockIcon,
+  LightbulbIcon,
+  DollarPaymentIcon,
+  HelpCircleIcon,
+  InfoCircleIcon,
+  MedalBadgeIcon,
+  ChevronRightIcon,
 } from '../../components/icons/AppIcons';
-import { FadeInUp, ScalePressable } from '../../components/animations';
+import { Button } from '../../components/buttons/Button';
+import { FadeInUp } from '../../components/animations';
 
 interface ProfileScreenProps {
-  user?: { name: string; phone: string };
-  onLogout: () => void;
+  user?: { name: string; phone: string; address?: string };
+  onBack?: () => void;
+  onLogout?: () => void;
+  onTrackBookings?: () => void;
+  onMyHistory?: () => void;
 }
 
-export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) => {
+export const ProfileScreen: React.FC<ProfileScreenProps> = ({
+  user,
+  onBack,
+  onLogout,
+  onTrackBookings,
+  onMyHistory,
+}) => {
   const insets = useSafeAreaInsets();
-  const [smsAlerts, setSmsAlerts] = useState(true);
-  const [delayUpdates, setDelayUpdates] = useState(true);
 
-  const handleContactSupport = () => {
-    Alert.alert(
-      'SaffarPK Terminal Contacts',
-      'Sukkur Central Terminal: 071-5612345\nGhotki Bypass Terminal: 0723-681122\nObuaro Station Gate: 0723-559900\nWhatsApp Care: +92 300 1234567\nService Hours: 24/7 Daily'
-    );
+  const [userName, setUserName] = useState(user?.name || 'Raju Ahamed');
+  const [userAddress, setUserAddress] = useState(
+    user?.address || 'Sukkur, Sindh - Pakistan',
+  );
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [tempName, setTempName] = useState(userName);
+  const [tempAddress, setTempAddress] = useState(userAddress);
+
+  const [activeModal, setActiveModal] = useState<
+    'packing' | 'payment' | 'help' | 'legal' | null
+  >(null);
+
+  const handleSaveProfile = () => {
+    if (tempName.trim()) setUserName(tempName.trim());
+    if (tempAddress.trim()) setUserAddress(tempAddress.trim());
+    setEditModalVisible(false);
   };
+
+  const menuItems = [
+    {
+      id: 'edit_profile',
+      title: 'Edit profile',
+      icon: (color: string) => <EditPencilIcon size={22} color={color} />,
+      onPress: () => {
+        setTempName(userName);
+        setTempAddress(userAddress);
+        setEditModalVisible(true);
+      },
+    },
+    {
+      id: 'track_bookings',
+      title: 'Track My Bookings',
+      icon: (color: string) => <ReceiptSearchIcon size={22} color={color} />,
+      onPress: () => {
+        if (onTrackBookings) {
+          onTrackBookings();
+        } else {
+          Alert.alert(
+            'Track My Bookings',
+            'Saffar Prime Executive (SFK-9901-EX)\nStatus: On Route to Ghotki Bypass\nEstimated arrival: 45 mins',
+          );
+        }
+      },
+    },
+    {
+      id: 'my_history',
+      title: 'My History',
+      icon: (color: string) => <HistoryClockIcon size={22} color={color} />,
+      onPress: () => {
+        if (onMyHistory) {
+          onMyHistory();
+        } else {
+          Alert.alert(
+            'Travel History',
+            '• Sukkur ⇄ Obuaro (Completed: 28 Oct)\n• Hunza Valley Tour (Completed: 14 Sep)\n• Lahore Heritage Visit (Completed: 05 Aug)',
+          );
+        }
+      },
+    },
+    {
+      id: 'packing_tips',
+      title: 'Packing Tips',
+      icon: (color: string) => <LightbulbIcon size={22} color={color} />,
+      onPress: () => setActiveModal('packing'),
+    },
+    {
+      id: 'payment_method',
+      title: 'Payment Method',
+      icon: (color: string) => <DollarPaymentIcon size={22} color={color} />,
+      onPress: () => setActiveModal('payment'),
+    },
+    {
+      id: 'help_center',
+      title: 'Help Center',
+      icon: (color: string) => <HelpCircleIcon size={22} color={color} />,
+      onPress: () => setActiveModal('help'),
+    },
+    {
+      id: 'legal_info',
+      title: 'Legal Info',
+      icon: (color: string) => <InfoCircleIcon size={22} color={color} />,
+      onPress: () => setActiveModal('legal'),
+    },
+  ];
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <StatusBar barStyle="dark-content" />
-
-      <Header title="Passenger Profile" subtitle="Account & Terminal Support" showBack={false} />
+      {/* Top Header */}
+      <View style={styles.header}>
+        {onBack && (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={onBack}
+            style={styles.backButton}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <ArrowBackIcon size={22} color="#1E293B" />
+          </TouchableOpacity>
+        )}
+        <Text style={styles.headerTitle}>My Profile</Text>
+        <View style={styles.headerSpacer} />
+      </View>
 
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: insets.bottom + 80 },
+          { paddingBottom: insets.bottom + 40 },
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* User Card with Cover Photo */}
-        <FadeInUp delay={60} distance={16}>
-          <Card variant="elevated" style={styles.userCard}>
-            <View style={styles.userRow}>
-              <View style={styles.avatarCircle}>
-                <UserIcon size={36} color={colors.primary} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.userName}>{user?.name || 'Guest Traveler'}</Text>
-                <Text style={styles.userPhone}>{user?.phone || 'Browsing as Guest'}</Text>
-                <View style={styles.memberTag}>
-                  <Text style={styles.memberTagText}>Verified Corridor Passenger</Text>
+        {/* Profile Card Header */}
+        <FadeInUp delay={80} distance={15}>
+          <View style={styles.profileHeader}>
+            <View style={styles.avatarWrapper}>
+              <Image
+                source={require('../../assets/images/user_avatar.jpg')}
+                style={styles.avatarImage}
+                resizeMode="cover"
+              />
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => {
+                  setTempName(userName);
+                  setTempAddress(userAddress);
+                  setEditModalVisible(true);
+                }}
+                style={styles.editAvatarBadge}
+              >
+                <EditPencilIcon size={16} color="#FFFFFF" />
+              </TouchableOpacity>
+            </View>
+
+            <Text style={styles.userName}>{userName}</Text>
+
+            <View style={styles.badgeRow}>
+              <MedalBadgeIcon size={16} />
+              <Text style={styles.badgeText}>Premium User</Text>
+            </View>
+
+            <Text style={styles.userAddress}>My Address: {userAddress}</Text>
+          </View>
+        </FadeInUp>
+
+        {/* 7 Menu Items as Rounded Cards */}
+        <View style={styles.menuContainer}>
+          {menuItems.map((item, index) => (
+            <FadeInUp key={item.id} delay={120 + index * 40} distance={12}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={item.onPress}
+                style={styles.menuCard}
+              >
+                <View style={styles.menuIconBox}>
+                  {item.icon(colors.primary)}
                 </View>
-              </View>
-            </View>
-          </Card>
-        </FadeInUp>
+                <Text style={styles.menuTitle}>{item.title}</Text>
+                <ChevronRightIcon size={18} color="#94A3B8" />
+              </TouchableOpacity>
+            </FadeInUp>
+          ))}
+        </View>
 
-        {/* Notifications & Trip Alerts */}
-        <FadeInUp delay={140} distance={20}>
-          <Card variant="elevated" style={styles.sectionCard}>
-            <Text style={styles.cardHeading}>Trip Notifications & Alerts</Text>
-
-            <View style={styles.settingRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.settingLabel}>SMS Ticket & Digital Pass</Text>
-                <Text style={styles.settingSub}>Receive boarding links on your phone</Text>
-              </View>
-              <Switch
-                value={smsAlerts}
-                onValueChange={setSmsAlerts}
-                trackColor={{ false: '#CBD5E1', true: colors.primary }}
-                thumbColor={colors.surface}
-              />
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.settingRow}>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.settingLabel}>Highway Delay & Weather Alerts</Text>
-                <Text style={styles.settingSub}>Instant SMS notifications if N-5 traffic occurs</Text>
-              </View>
-              <Switch
-                value={delayUpdates}
-                onValueChange={setDelayUpdates}
-                trackColor={{ false: '#CBD5E1', true: colors.primary }}
-                thumbColor={colors.surface}
-              />
-            </View>
-          </Card>
-        </FadeInUp>
-
-        {/* Helpline and Terminal Info */}
-        <FadeInUp delay={220} distance={20}>
-          <Card variant="elevated" style={styles.sectionCard}>
-            <Text style={styles.cardHeading}>Help & Terminal Support</Text>
-
-            <ScalePressable
-              activeScale={0.97}
-              onPress={handleContactSupport}
-              style={styles.menuItem}
-            >
-              <View style={styles.menuIconCircle}>
-                <PhoneIcon size={20} color={colors.primary} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.menuTitle}>Terminal Helplines & WhatsApp</Text>
-                <Text style={styles.menuSub}>Direct line to Sukkur, Ghotki & Obuaro managers</Text>
-              </View>
-              <Text style={styles.menuChevron}>›</Text>
-            </ScalePressable>
-
-            <View style={styles.divider} />
-
-            <ScalePressable
-              activeScale={0.97}
-              onPress={() =>
-                Alert.alert(
-                  'Luggage Policy',
-                  'Each passenger is entitled to 15 kg of check-in luggage plus 1 personal laptop bag. Fragile items must be carried onboard.'
-                )
-              }
-              style={styles.menuItem}
-            >
-              <View style={styles.menuIconCircle}>
-                <ShieldIcon size={20} color={colors.primary} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.menuTitle}>Luggage & Travel Policy</Text>
-                <Text style={styles.menuSub}>Allowances, refunds and passenger safety</Text>
-              </View>
-              <Text style={styles.menuChevron}>›</Text>
-            </ScalePressable>
-          </Card>
-        </FadeInUp>
-
-        {/* Logout Button */}
-        <Button
-          title={user ? 'Sign Out' : 'Sign In with Phone'}
-          variant="outline"
-          onPress={onLogout}
-          style={{ marginTop: spacing.sm }}
-        />
-
-        <Text style={styles.versionText}>SaffarPK v1.0.0 • Upper Sindh Express Highway</Text>
+        {onLogout && (
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={onLogout}
+            style={styles.logoutBtn}
+          >
+            <Text style={styles.logoutBtnText}>Logout</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
+
+      {/* Edit Profile Modal */}
+      <Modal visible={editModalVisible} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalSheet}>
+            <Text style={styles.modalTitle}>Edit Profile</Text>
+
+            <Text style={styles.inputLabel}>Full Name</Text>
+            <TextInput
+              style={styles.input}
+              value={tempName}
+              onChangeText={setTempName}
+              placeholder="Enter your name"
+              placeholderTextColor="#94A3B8"
+            />
+
+            <Text style={styles.inputLabel}>Address</Text>
+            <TextInput
+              style={styles.input}
+              value={tempAddress}
+              onChangeText={setTempAddress}
+              placeholder="Enter your address"
+              placeholderTextColor="#94A3B8"
+            />
+
+            <View style={styles.modalBtnRow}>
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => setEditModalVisible(false)}
+                style={styles.cancelBtn}
+              >
+                <Text style={styles.cancelBtnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={handleSaveProfile}
+                style={styles.saveBtn}
+              >
+                <Text style={styles.saveBtnText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Info Modals */}
+      <Modal visible={activeModal !== null} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalSheet}>
+            {activeModal === 'packing' && (
+              <>
+                <Text style={styles.modalTitle}>🧳 Packing Tips</Text>
+                <Text style={styles.modalBody}>
+                  • Northern Areas: Windbreakers, thermal thermals, hiking boots.{'\n'}
+                  • Corridor Bus: Carry valid CNIC, digital ticket QR, water bottle.{'\n'}
+                  • Check-in weight: 15kg free per seat + 1 hand luggage.
+                </Text>
+              </>
+            )}
+
+            {activeModal === 'payment' && (
+              <>
+                <Text style={styles.modalTitle}>💳 Payment Methods</Text>
+                <Text style={styles.modalBody}>
+                  • EasyPaisa / JazzCash Mobile Wallets (Connected){'\n'}
+                  • SadaPay & NayaPay Virtual Cards{'\n'}
+                  • 1Link Visa & Mastercard Debit/Credit Cards{'\n'}
+                  • Cash on Boarding at Sukkur & Obuaro Terminals
+                </Text>
+              </>
+            )}
+
+            {activeModal === 'help' && (
+              <>
+                <Text style={styles.modalTitle}>🎧 SaffarPK Help Center</Text>
+                <Text style={styles.modalBody}>
+                  • 24/7 Helpline: +92 300 1234567{'\n'}
+                  • Sukkur Central Terminal: (071) 5612345{'\n'}
+                  • Obuaro Main Station: (0723) 559900{'\n'}
+                  • Email: support@saffarpk.com
+                </Text>
+              </>
+            )}
+
+            {activeModal === 'legal' && (
+              <>
+                <Text style={styles.modalTitle}>⚖️ Legal & Policies</Text>
+                <Text style={styles.modalBody}>
+                  • Passenger insurance coverage included on all verified routes.{'\n'}
+                  • Full fare refund available up to 2 hours before bus departure.{'\n'}
+                  • Strict safety and luggage compliance across Sindh & Punjab.
+                </Text>
+              </>
+            )}
+
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => setActiveModal(null)}
+              style={styles.closeModalBtn}
+            >
+              <Text style={styles.closeModalBtnText}>Got It</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -166,132 +328,216 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({ user, onLogout }) 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#FAFAFA',
   },
-  scrollContent: {
-    padding: spacing.lg,
-    paddingBottom: spacing.xxxl,
-    gap: spacing.lg,
-  },
-  userCard: {
-    padding: spacing.xl,
-    borderRadius: borderRadius.xxl,
-    backgroundColor: colors.surface,
-    borderWidth: 1.5,
-    borderColor: '#E2E8F0',
-  },
-  userRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.lg,
-  },
-  avatarCircle: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: colors.primaryLight,
-    borderWidth: 2,
-    borderColor: colors.borderOrange,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  userName: {
-    ...typography.h2,
-    fontSize: 22,
-    color: colors.textPrimary,
-  },
-  userPhone: {
-    ...typography.caption,
-    fontSize: 13,
-    color: colors.textSecondary,
-    marginTop: 2,
-  },
-  memberTag: {
-    marginTop: 8,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 3,
-    backgroundColor: '#DCFCE7',
-    borderRadius: borderRadius.full,
-    alignSelf: 'flex-start',
-  },
-  memberTagText: {
-    ...typography.caption,
-    fontSize: 11,
-    fontWeight: '800',
-    color: '#15803D',
-  },
-  sectionCard: {
-    padding: spacing.xl,
-    borderRadius: borderRadius.xxl,
-    backgroundColor: colors.surface,
-    borderWidth: 1.5,
-    borderColor: '#E2E8F0',
-  },
-  cardHeading: {
-    ...typography.h3,
-    fontSize: 18,
-    color: colors.textPrimary,
-    marginBottom: spacing.md,
-  },
-  settingRow: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F1F5F9',
   },
-  settingLabel: {
-    ...typography.label,
-    fontSize: 15,
-    color: colors.textPrimary,
+  backButton: {
+    width: 36,
+    height: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  settingSub: {
-    ...typography.caption,
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginTop: 2,
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+    textAlign: 'center',
   },
-  divider: {
-    height: 1.5,
-    backgroundColor: '#F1F5F9',
-    marginVertical: spacing.md,
+  headerSpacer: {
+    width: 36,
   },
-  menuItem: {
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
+  profileHeader: {
+    alignItems: 'center',
+    marginBottom: 26,
+  },
+  avatarWrapper: {
+    position: 'relative',
+    width: 104,
+    height: 104,
+    borderRadius: 52,
+    borderWidth: 3,
+    borderColor: '#FFFFFF',
+    ...shadows.md,
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 52,
+  },
+  editAvatarBadge: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  userName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginTop: 14,
+    letterSpacing: -0.3,
+  },
+  badgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.sm,
+    gap: 6,
+    marginTop: 5,
   },
-  menuIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#F8FAFC',
+  badgeText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#94A3B8',
+  },
+  userAddress: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#64748B',
+    marginTop: 6,
+  },
+  menuContainer: {
+    marginTop: 4,
+  },
+  menuCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#F1F5F9',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  menuIconBox: {
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },
   menuTitle: {
-    ...typography.label,
+    flex: 1,
+    marginLeft: 12,
     fontSize: 15,
-    color: colors.textPrimary,
+    fontWeight: '600',
+    color: '#1E293B',
   },
-  menuSub: {
-    ...typography.caption,
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginTop: 2,
+  logoutBtn: {
+    backgroundColor: '#F1F5F9',
+    borderRadius: 16,
+    paddingVertical: 14,
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 20,
   },
-  menuChevron: {
-    fontSize: 24,
-    color: colors.textMuted,
-    fontWeight: 'bold',
+  logoutBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#EF4444',
   },
-  versionText: {
-    ...typography.caption,
-    fontSize: 12,
-    color: colors.textMuted,
-    textAlign: 'center',
-    marginTop: spacing.md,
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  modalSheet: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 24,
+    padding: 24,
+    ...shadows.lg,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1E293B',
+    marginBottom: 12,
+  },
+  modalBody: {
+    fontSize: 14,
+    lineHeight: 22,
+    color: '#475569',
+    marginBottom: 20,
+  },
+  inputLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#64748B',
+    marginTop: 12,
+    marginBottom: 6,
+  },
+  input: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#1E293B',
+  },
+  modalBtnRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 20,
+  },
+  cancelBtn: {
+    flex: 1,
+    backgroundColor: '#F1F5F9',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  cancelBtnText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#64748B',
+  },
+  saveBtn: {
+    flex: 1,
+    backgroundColor: colors.primary,
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  saveBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  closeModalBtn: {
+    backgroundColor: colors.primary,
+    borderRadius: 14,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  closeModalBtnText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });
